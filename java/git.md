@@ -15,6 +15,11 @@ git：分布式版本控制系统，版本库存放在本地
 	git config --global user.name "Your Name"
 	git config --global user.email "email@example.com"
 
+## 配置全英文
+
+	# .bashrc中加入
+	alias git='LANG=en_GB git'
+
 ## 创建版本库
 
 	# 仓库目录
