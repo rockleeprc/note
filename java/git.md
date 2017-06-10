@@ -17,8 +17,10 @@ git：分布式版本控制系统，版本库存放在本地
 
 ## 配置全英文
 
-	# .bashrc中加入
+	# .bashrc中加入 git log时有中文乱码问题
 	alias git='LANG=en_GB git'
+	# git全英文信息提示 git log时中文没有乱码
+	alias git='LANG=en_US.UTF-8 git'
 
 ## 创建版本库
 
