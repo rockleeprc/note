@@ -100,6 +100,43 @@ static int i; A线程 i=1，B线程i=-1,不管两个线程以何种方式，何�
 7. 
 8. 对象构造函数执行先于finalize()
 
+# 线程状态
+
+	public enum State {
+		/**
+	    	刚刚创建的线程，还没开始执行，离开NEW状态后将不能在回到NEW状态
+		 */      
+		NEW,
+
+		/**
+	       	调用start()
+		 */
+		RUNNABLE,
+		
+		/**
+	       	在RUNNABLE状态中，遇到了synchronized，会进入到BLOCKED中，暂停线程执行，直到获取请求的锁
+		 */        
+		BLOCKED,
+
+		/**
+	       	进无时间限制的等待，wait()等待notify()，join()等待线程目标线程的终止
+		 */       
+		WAITING,
+
+		  /**
+	     	进有时间限制的等待，wait()等待notify()，join()等待线程目标线程的终止
+		 */     
+		TIMED_WAITING,
+
+		/**
+	       	线程执行结束，处于TERMINATED状态的线程不能在回到其它状态
+		 */
+		TERMINATED;
+  	}
+
+
+
+
 
 
 
