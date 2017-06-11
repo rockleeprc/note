@@ -1,0 +1,10 @@
+
+## 更新命令
+
+	sudo apt-get update
+	sudo apt-get upgrade
+    
+## 修改所有者和组
+
+	chown -R 用户名 目录名
+	hgrp -R 组名 目录名
