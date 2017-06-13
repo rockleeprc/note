@@ -13,7 +13,7 @@ We grow neither better nor worse as we grou old but more like ourselves.
 ## 单词短语
 
 	chicken 肌肉，不可数，鸡，可数
-	
+
 	tell 告诉
 	tell sb. to do sth. 告诉某人做某事
 	tell a lie 撒谎
