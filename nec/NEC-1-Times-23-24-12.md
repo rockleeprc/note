@@ -32,8 +32,13 @@ We grow neither better nor worse as we grou old but more like ourselves.
 	talk of 谈到
 
 	chat 聊天
-have a chat with sb. 和某人聊天
-chat with v.
+	have a chat with sb. 和某人聊天
+	chat with v.
+
+	true adj. 真实的
+	truth n.事实
+	come true 梦想成真
+	true lie 真实的谎言
 
 ## 重点语法
 
@@ -58,3 +63,25 @@ chat with v.
 	at + the + 职业's + shop
 	at the butcher's
 	at the greengrocer's
+
+	也：
+	肯定句中用too，否定句中用either
+
+	动词不定式：
+	1. 不能做谓语
+	2. to + 动词原形
+
+	some：
+	1. 可数名词复数 some books
+	2. 不可数名词	some milk
+	3. 征求对方意见时，希望得到对方肯定答复
+	What about ...? ...怎么样（征求对方意见）
+	Would you like ...? 你愿意...吗？
+	Would you like some bread?
+	Would you like some coffee?
+	What about some steak?
+	What about some chicken?
+	any：
+	1. 否定句
+	2. 疑问句 
+
