@@ -3,8 +3,21 @@
 
 	sudo apt-get update
 	sudo apt-get upgrade
-    
+
 ## 修改所有者和组
 
 	chown -R 用户名 目录名
 	hgrp -R 组名 目录名
+
+
+## gcc 安装
+
+gcc --version
+
+apt-get install gcc
+apt-get install g++
+apt-get install make
+apt-get install cmake
+
+gcc *.c -c *.out
+./*.out
