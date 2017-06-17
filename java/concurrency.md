@@ -103,50 +103,40 @@ static int i; A线程 i=1，B线程i=-1,不管两个线程以何种方式，何�
 ## 线程状态
 
 	public enum State {
-		/**
-	    	刚刚创建的线程，还没开始执行，离开NEW状态后将不能在回到NEW状态
-		 */      
+
+	  // 刚刚创建的线程，还没开始执行，离开NEW状态后将不能在回到NEW状态    
 		NEW,
 
-		/**
-	       	调用start()
-		 */
+		// 调用start()
 		RUNNABLE,
 
-		/**
-	       	在RUNNABLE状态中，遇到了synchronized，会进入到BLOCKED中，暂停线程执行，直到获取请求的锁
-		 */        
+		// 在RUNNABLE状态中，遇到了synchronized，会进入到BLOCKED中，暂停线程执行，直到获取请求的锁      
 		BLOCKED,
 
-		/**
-	       	进无时间限制的等待，wait()等待notify()，join()等待线程目标线程的终止
-		 */       
-		WAITING,
+   	// 进无时间限制的等待，wait()等待notify()，join()等待线程目标线程的终止  
 
-		  /**
-	     	进有时间限制的等待，wait()等待notify()，join()等待线程目标线程的终止
-		 */     
+		WAITING,
+   	// 进有时间限制的等待，wait()等待notify()，join()等待线程目标线程的终止   
+
 		TIMED_WAITING,
 
-		/**
-	       	线程执行结束，处于TERMINATED状态的线程不能在回到其它状态
-		 */
+   	// 线程执行结束，处于TERMINATED状态的线程不能在回到其它状态
 		TERMINATED;
   	}
 
 ## 线程基本操作
 
 ### 线程启动
-	
+
 	Thread t = new Thread();
 	t.start();
-	
+
 	Thread t = new Thread(new Runnable());
 	//调用Runnable.run()，见Thread.run()源码
 	t.start();
 
 ### 线程终止
-	
+
 	Thread t = new Thread();
 	t.start();
 	do something...
@@ -167,9 +157,23 @@ Thread.stop()直接终止线程，立即释放该线程持有的锁，当线程�
 		public static boolean interrupted();
 	}
 
-### 线程挂起 
+当使用Thread.sleep()时会抛出InterruptedExeption，此时线程的中断标记会被清除，如果需要终端标记，在catch{}中进行重置
 
-# todo 代码未写
+### 线程等待/唤醒
+	public class Object {
+		public final void wait() throws InterruptedException
+		public final native void notify();
+	}
+
+在当前对象上调用wait()后，当前线程会在该对象上等待，并且释放锁（slepp不释放资源），直到其他线程调用notify()
+
+一个线程调用Object.wait()后，当前线程对象会进入object对象的等待队列，Object.notify()被调用后，会从等待队列中随机选择一个线程唤醒，并不是先等待的线程优先被唤醒
+
+notifyAll()功能与notify()一样，但会唤醒等待队列中所有的线程，不是随机选择一个
+
+wait()/notify()在使用前都需要获取锁，所以必须在synchronized中调用
+
+### 线程挂起
 
 被suspend()的线程，必须要等到resume()后才能继续执行，suspend()使线程暂停的同时并不会释放任何资源，被挂起的线程状态仍然是RUNNABLE
 
