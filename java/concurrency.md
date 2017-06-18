@@ -126,7 +126,7 @@ static int i; A线程 i=1，B线程i=-1,不管两个线程以何种方式，何�
 
 ## 线程基本操作
 
-### 线程启动
+### start()
 
 	Thread t = new Thread();
 	t.start();
@@ -135,7 +135,7 @@ static int i; A线程 i=1，B线程i=-1,不管两个线程以何种方式，何�
 	//调用Runnable.run()，见Thread.run()源码
 	t.start();
 
-### 线程终止
+### stop()
 
 	Thread t = new Thread();
 	t.start();
@@ -144,7 +144,7 @@ static int i; A线程 i=1，B线程i=-1,不管两个线程以何种方式，何�
 
 Thread.stop()直接终止线程，立即释放该线程持有的锁，当线程执行到一半时，这种强行终止线程会导致数据不一致的发生
 
-### 线程中断
+### interrupt()
 
 线程中断并不会立刻退出，只是给线程发送一个通知，告诉目标线程，有人希望你退出，目标线程接到通知后如何处理，是由目标线程自行决定
 
@@ -159,7 +159,7 @@ Thread.stop()直接终止线程，立即释放该线程持有的锁，当线程�
 
 当使用Thread.sleep()时会抛出InterruptedExeption，此时线程的中断标记会被清除，如果需要终端标记，在catch{}中进行重置
 
-### 线程等待/唤醒
+### wait()/notify()
 	public class Object {
 		public final void wait() throws InterruptedException
 		public final native void notify();
@@ -173,8 +173,91 @@ notifyAll()功能与notify()一样，但会唤醒等待队列中所有的线程�
 
 wait()/notify()在使用前都需要获取锁，所以必须在synchronized中调用
 
-### 线程挂起
+### suspend()/resume()
 
 被suspend()的线程，必须要等到resume()后才能继续执行，suspend()使线程暂停的同时并不会释放任何资源，被挂起的线程状态仍然是RUNNABLE
 
 对于suspend()和resume()的行为可以使用wait()和notify()实现
+
+
+### join()yield()
+
+当前线程的输入可能以来于另外一个或多个线程的输出，此时当前线程就需要等待依赖的线程执行完毕后才能继续运行
+
+join()表示无限期等待，一直阻塞当前线程，直到目标线程执行完成
+
+yield()当前线程一些重要的工作已经完成，可以休息一下，给其它线程一些执行机会
+
+### daemon()
+
+一个Java应用程序内，只有守护线程时，Java虚拟机就会自动退出
+
+	t.setDaemon(true);
+	t.start();
+
+	Exception in thread "main" java.lang.IllegalThreadStateException
+
+setDaemon(true)一定要在start()前，不然会得到一个IllegalThreadStateException异常，setDaemon()设置失败，但程序仍能正常执行
+
+### synchronized
+
+volatile不能保证线层安全，它只能确保一个线程修改数据后，其它线程能够看到这个改动
+
+synchronized (instance){}：对给定对象进行加锁，进入同步代码前要获取instance对象的锁
+
+public void synchronized method(){}：对当前实例进行加锁，进入同步方法前需要获取当前实例的锁
+
+public static synchronized void method(){}：对当前类进行加锁，进入同步方法前需要获取当前类的锁
+
+## 同步控制
+
+### ReetrantLock
+
+	public class ReentrantLock implements Lock, java.io.Serializable {
+		// true，公平锁，公平锁实现必须依靠系统维护一个有序的队列，实现成本高，性能相对较低
+		// false，非公平锁，在锁的等待队列中随机挑选一个线程，会产生饥饿
+		public ReentrantLock(boolean fair)
+
+		// 获取锁，如果锁被占用则等待
+		public void lock();
+		// 释放锁
+		public void unlock();
+		// 尝试获取锁，如果成功返回true，失败返回false，不会等待，立即返回
+	 	public boolean tryLock();
+		// 在给定时间内尝试获取锁
+		public boolean tryLock(long timeout, TimeUnit unit) throws InterruptedException;
+		// 获取锁，但有限响应中断
+		public void lockInterruptibly() throws InterruptedException;
+	}
+
+
+### Condition
+
+public interface Condition {
+	// 当前线程等待，释放锁
+	void await() throws InterruptedException;
+	// 和await()相同，但不会在等待过程中响应中断
+	void awaitUninterruptibly();
+	// 唤醒一个等待的中的线程
+	void signal()
+}
+
+### Semaphore
+
+synchronized、ReentrantLock一次都只能允许一个线程访问一个资源，Semaphore可以指定多个线程同时访问一个资源，在执行操作前首先要获取许可，并在使用后释放许可
+
+### ReadWriteLock
+
+读写分离的锁
+
+### CountDownLatch
+
+控制线程等待，可以让一个线程等待直到倒计时结束，再开始执行
+
+### CyclieBarrier
+
+当线程到达栅栏位置时讲调用await()将线程阻塞，直到所有线程都到达栅栏，所有线程到达栅栏位置后，栅栏将打开，释放所有线程，栅栏被重置，以便下次继续使用
+
+### LockSupport
+
+线程阻塞工具类，在线程内任意位置让线程阻塞，不需要获得锁，不会抛出InterruptedException
