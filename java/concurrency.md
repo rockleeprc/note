@@ -233,14 +233,14 @@ public static synchronized void method(){}：对当前类进行加锁，进入�
 
 ### Condition
 
-public interface Condition {
-	// 当前线程等待，释放锁
-	void await() throws InterruptedException;
-	// 和await()相同，但不会在等待过程中响应中断
-	void awaitUninterruptibly();
-	// 唤醒一个等待的中的线程
-	void signal()
-}
+	public interface Condition {
+		// 当前线程等待，释放锁
+		void await() throws InterruptedException;
+		// 和await()相同，但不会在等待过程中响应中断
+		void awaitUninterruptibly();
+		// 唤醒一个等待的中的线程
+		void signal()
+	}
 
 ### Semaphore
 
