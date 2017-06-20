@@ -262,3 +262,46 @@ synchronized、ReentrantLock一次都只能允许一个线程访问一个资源�
 ### LockSupport
 
 线程阻塞工具类，在线程内任意位置让线程阻塞，不需要获得锁，不会抛出InterruptedException
+
+
+## 线程池
+
+### Executors
+	public class Executors {
+		/*固定数量的线程池，一个新任务提交时，线程池有空闲线程，立即执行，没有空闲线程，任务会被放到一个任务队列中，
+		等有空间线程时在执行*/
+		public static ExecutorService newFixedThreadPool(int nThreads);
+		/*只有一个线程，当多余一个任务时，任务讲被保存在任务队列中*/
+		public static ExecutorService newSingleThreadExecutor();
+		/*根据实际情况调整线程数量，线程池中的线程数量不确定，当有空间线程时优先使用空闲线程，
+		当没有空闲线程，又有新任务提交时，创建新线程执行*/
+		public static ExecutorService newCachedThreadPool();
+		/*一个线程，在设定的时间延时后执行任务*/
+		public static ScheduledExecutorService newSingleThreadScheduledExecutor();
+		/*可指定线程池大小，在设定的对任务进行调度*/
+		public static ScheduledExecutorService newScheduledThreadPool(int corePoolSize)
+	}
+
+### ScheduledExecutorService
+
+	public interface ScheduledExecutorService extends ExecutorService {
+		/*在给定的时间对任务调度一次*/
+		public ScheduledFuture<?> schedule(Runnable command,long delay, TimeUnit unit);
+		/*以上一个任务开始执行时间为起点，之后的period时间调度下一次任务，
+		后续的第一任务在initialDelay+period时执行，
+		后续的第二任务在initialDelay + 2 * period时执行，一次类推*/
+		public ScheduledFuture<?> scheduleAtFixedRate(Runnable command,long initialDelay,long period,TimeUnit unit);
+		/*在上一个任务结束后，经过delay时间，在调度*/
+		public ScheduledFuture<?> scheduleWithFixedDelay(Runnable command,long initialDelay,long delay,TimeUnit unit);
+	}
+
+调度程序不保证任务会无限期的持续调度，如果任务遇到异常，那么后续的所有任务讲都会停止执行
+
+	public ThreadPoolExecutor(int corePoolSize,//指定线程中的数量
+															int maximumPoolSize,//线程池中的最大线程数
+															long keepAliveTime,//线程池数量超过corePoolSize时，多余的空闲线程的存活时间
+															TimeUnit unit,//keepAliveTime单位
+															BlockingQueue<Runnable> workQueue,//被提交但未被执行的任务队列
+															ThreadFactory threadFactory,//线程工厂，用于创建线程
+															RejectedExecutionHandler handler//当任务太多来不及处理时的拒绝策略
+															)
