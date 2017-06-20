@@ -113,11 +113,10 @@ static int i; A线程 i=1，B线程i=-1,不管两个线程以何种方式，何�
 		// 在RUNNABLE状态中，遇到了synchronized，会进入到BLOCKED中，暂停线程执行，直到获取请求的锁      
 		BLOCKED,
 
-   	// 进无时间限制的等待，wait()等待notify()，join()等待线程目标线程的终止  
-
+   	// 进无时间限制的等待，wait()需要notify()唤醒，join()等待线程目标线程的终止  
 		WAITING,
-   	// 进有时间限制的等待，wait()等待notify()，join()等待线程目标线程的终止   
 
+   	// 进有时间限制的等待，wait()需要notify()唤醒，join()等待线程目标线程的终止   
 		TIMED_WAITING,
 
    	// 线程执行结束，处于TERMINATED状态的线程不能在回到其它状态
@@ -157,11 +156,11 @@ Thread.stop()直接终止线程，立即释放该线程持有的锁，当线程�
 		public static boolean interrupted();
 	}
 
-当使用Thread.sleep()时会抛出InterruptedExeption，此时线程的中断标记会被清除，如果需要终端标记，在catch{}中进行重置
+当使用Thread.sleep()时会抛出InterruptedExeption，此时线程的中断标记会被清除，如果需要中断 标记，在catch{}中进行重置
 
 ### wait()/notify()
 	public class Object {
-		public final void wait() throws InterruptedException
+		public final void wait() throws InterruptedException;
 		public final native void notify();
 	}
 
@@ -180,9 +179,9 @@ wait()/notify()在使用前都需要获取锁，所以必须在synchronized中�
 对于suspend()和resume()的行为可以使用wait()和notify()实现
 
 
-### join()yield()
+### join()/yield()
 
-当前线程的输入可能以来于另外一个或多个线程的输出，此时当前线程就需要等待依赖的线程执行完毕后才能继续运行
+当前线程的输入可能依赖于另外一个或多个线程的输出，此时当前线程就需要等待依赖的线程执行完毕后才能继续运行
 
 join()表示无限期等待，一直阻塞当前线程，直到目标线程执行完成
 
@@ -190,7 +189,7 @@ yield()当前线程一些重要的工作已经完成，可以休息一下，给�
 
 ### daemon()
 
-一个Java应用程序内，只有守护线程时，Java虚拟机就会自动退出
+一个Java应用程序内，只有守护线程时，Java虚拟机会自动退出
 
 	t.setDaemon(true);
 	t.start();
@@ -201,13 +200,13 @@ setDaemon(true)一定要在start()前，不然会得到一个IllegalThreadStateE
 
 ### synchronized
 
-volatile不能保证线层安全，它只能确保一个线程修改数据后，其它线程能够看到这个改动
+volatile不能保证线程安全，它只能确保一个线程修改数据后，其它线程能够看到这个改动
 
-synchronized (instance){}：对给定对象进行加锁，进入同步代码前要获取instance对象的锁
+synchronized (instance){} 对给定对象进行加锁，进入同步代码前要获取instance对象的锁
 
-public void synchronized method(){}：对当前实例进行加锁，进入同步方法前需要获取当前实例的锁
+public void synchronized method(){} 对当前实例进行加锁，进入同步方法前需要获取当前实例的锁
 
-public static synchronized void method(){}：对当前类进行加锁，进入同步方法前需要获取当前类的锁
+public static synchronized void method(){} 对当前类进行加锁，进入同步方法前需要获取当前类的锁
 
 ## 同步控制
 
@@ -226,21 +225,23 @@ public static synchronized void method(){}：对当前类进行加锁，进入�
 	 	public boolean tryLock();
 		// 在给定时间内尝试获取锁
 		public boolean tryLock(long timeout, TimeUnit unit) throws InterruptedException;
-		// 获取锁，但有限响应中断
+		// 获取锁，但优先响应中断
 		public void lockInterruptibly() throws InterruptedException;
+		// 返回一个绑定到此 Lock 实例上的 Condition 实例
+		public Condition newCondition();
 	}
 
 
 ### Condition
 
-public interface Condition {
-	// 当前线程等待，释放锁
-	void await() throws InterruptedException;
-	// 和await()相同，但不会在等待过程中响应中断
-	void awaitUninterruptibly();
-	// 唤醒一个等待的中的线程
-	void signal()
-}
+	public interface Condition {
+		// 当前线程等待，释放锁
+		void await() throws InterruptedException;
+		// 和await()相同，但不会在等待过程中响应中断
+		void awaitUninterruptibly();
+		// 唤醒一个等待的中的线程
+		void signal()
+	}
 
 ### Semaphore
 
@@ -256,7 +257,7 @@ synchronized、ReentrantLock一次都只能允许一个线程访问一个资源�
 
 ### CyclieBarrier
 
-当线程到达栅栏位置时讲调用await()将线程阻塞，直到所有线程都到达栅栏，所有线程到达栅栏位置后，栅栏将打开，释放所有线程，栅栏被重置，以便下次继续使用
+当线程到达栅栏位置时将调用await()将线程阻塞，直到所有线程都到达栅栏，所有线程到达栅栏位置后，栅栏将打开，释放所有线程，栅栏被重置，以便下次继续使用
 
 ### LockSupport
 
