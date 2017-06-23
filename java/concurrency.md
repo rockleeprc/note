@@ -104,22 +104,22 @@ static int i; A线程 i=1，B线程i=-1,不管两个线程以何种方式，何�
 
 	public enum State {
 
-	  // 刚刚创建的线程，还没开始执行，离开NEW状态后将不能在回到NEW状态    
+	  /*刚刚创建的线程，还没开始执行，离开NEW状态后将不能在回到NEW状态*/
 		NEW,
 
-		// 调用start()
+		/*调用start()*/
 		RUNNABLE,
 
-		// 在RUNNABLE状态中，遇到了synchronized，会进入到BLOCKED中，暂停线程执行，直到获取请求的锁      
+		/*在RUNNABLE状态中，遇到了synchronized，会进入到BLOCKED中，暂停线程执行，直到获取请求的锁*/      
 		BLOCKED,
 
-   	// 进无时间限制的等待，wait()需要notify()唤醒，join()等待线程目标线程的终止  
+   	/*进无时间限制的等待，wait()需要notify()唤醒，join()等待线程目标线程的终止*/
 		WAITING,
 
-   	// 进有时间限制的等待，wait()需要notify()唤醒，join()等待线程目标线程的终止   
+   	/*进有时间限制的等待，wait()需要notify()唤醒，join()等待线程目标线程的终止*/   
 		TIMED_WAITING,
 
-   	// 线程执行结束，处于TERMINATED状态的线程不能在回到其它状态
+   	/*线程执行结束，处于TERMINATED状态的线程不能在回到其它状态*/
 		TERMINATED;
   	}
 
@@ -131,7 +131,7 @@ static int i; A线程 i=1，B线程i=-1,不管两个线程以何种方式，何�
 	t.start();
 
 	Thread t = new Thread(new Runnable());
-	//调用Runnable.run()，见Thread.run()源码
+	/*调用Runnable.run()，见Thread.run()源码*/
 	t.start();
 
 ### stop()
@@ -148,11 +148,11 @@ Thread.stop()直接终止线程，立即释放该线程持有的锁，当线程�
 线程中断并不会立刻退出，只是给线程发送一个通知，告诉目标线程，有人希望你退出，目标线程接到通知后如何处理，是由目标线程自行决定
 
 	public class Thread implements Runnable{
-		//设置中断标志位
+		/*设置中断标志位*/
 		public void interrupt();
-		//判断当前线程是否被中断
+		/*判断当前线程是否被中断*/
 		public boolean isInterrupted();
-		//判断线程的中断状态，清除当前线程的中断标志位
+		/*判断线程的中断状态，清除当前线程的中断标志位*/
 		public static boolean interrupted();
 	}
 
@@ -213,21 +213,21 @@ public static synchronized void method(){} 对当前类进行加锁，进入同�
 ### ReetrantLock
 
 	public class ReentrantLock implements Lock, java.io.Serializable {
-		// true，公平锁，公平锁实现必须依靠系统维护一个有序的队列，实现成本高，性能相对较低
-		// false，非公平锁，在锁的等待队列中随机挑选一个线程，会产生饥饿
+		/*true，公平锁，公平锁实现必须依靠系统维护一个有序的队列，实现成本高，性能相对较低
+			false，非公平锁，在锁的等待队列中随机挑选一个线程，会产生饥饿*/
 		public ReentrantLock(boolean fair)
 
-		// 获取锁，如果锁被占用则等待
+		/*获取锁，如果锁被占用则等待*/
 		public void lock();
-		// 释放锁
+		/*释放锁*/
 		public void unlock();
-		// 尝试获取锁，如果成功返回true，失败返回false，不会等待，立即返回
+		/*尝试获取锁，如果成功返回true，失败返回false，不会等待，立即返回*/
 	 	public boolean tryLock();
-		// 在给定时间内尝试获取锁
+		/*在给定时间内尝试获取锁*/
 		public boolean tryLock(long timeout, TimeUnit unit) throws InterruptedException;
-		// 获取锁，但优先响应中断
+		/*获取锁，但优先响应中断*/
 		public void lockInterruptibly() throws InterruptedException;
-		// 返回一个绑定到此 Lock 实例上的 Condition 实例
+		/*返回一个绑定到此 Lock 实例上的 Condition 实例*/
 		public Condition newCondition();
 	}
 
@@ -235,11 +235,11 @@ public static synchronized void method(){} 对当前类进行加锁，进入同�
 ### Condition
 
 	public interface Condition {
-		// 当前线程等待，释放锁
+		/*当前线程等待，释放锁*/
 		void await() throws InterruptedException;
-		// 和await()相同，但不会在等待过程中响应中断
+		/*和await()相同，但不会在等待过程中响应中断*/
 		void awaitUninterruptibly();
-		// 唤醒一个等待的中的线程
+		/*唤醒一个等待的中的线程*/
 		void signal()
 	}
 
@@ -297,11 +297,11 @@ synchronized、ReentrantLock一次都只能允许一个线程访问一个资源�
 
 调度程序不保证任务会无限期的持续调度，如果任务遇到异常，那么后续的所有任务讲都会停止执行
 
-	public ThreadPoolExecutor(int corePoolSize,//指定线程中的数量
-															int maximumPoolSize,//线程池中的最大线程数
-															long keepAliveTime,//线程池数量超过corePoolSize时，多余的空闲线程的存活时间
-															TimeUnit unit,//keepAliveTime单位
-															BlockingQueue<Runnable> workQueue,//被提交但未被执行的任务队列
-															ThreadFactory threadFactory,//线程工厂，用于创建线程
-															RejectedExecutionHandler handler//当任务太多来不及处理时的拒绝策略
-															)
+	public ThreadPoolExecutor(int corePoolSize,/*指定线程中的数量*/
+														int maximumPoolSize,/*线程池中的最大线程数*/
+														long keepAliveTime,/*线程池数量超过corePoolSize时，多余的空闲线程的存活时间*/
+														TimeUnit unit,/*keepAliveTime单位
+														BlockingQueue<Runnable> workQueue,/*被提交但未被执行的任务队列*/
+														ThreadFactory threadFactory,/*线程工厂，用于创建线程*/
+														RejectedExecutionHandler handler/*当任务太多来不及处理时的拒绝策略*/
+														)
