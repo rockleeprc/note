@@ -298,3 +298,63 @@ synchronized、ReentrantLock一次都只能允许一个线程访问一个资源�
 														ThreadFactory threadFactory,/*线程工厂，用于创建线程*/
 														RejectedExecutionHandler handler/*当任务太多来不及处理时的拒绝策略*/
 														)
+
+## 并发容器
+
+### CopyOnWriteArrayList
+
+### BlockingQueue
+
+### SkipList
+
+## “锁”优化
+
+性能优化时根据运行时的真实情况对各个资源点进行权衡这种的过程
+
+### 减小锁时间
+
+如果线程持有锁时间越长，锁的竞争程度就越激烈，减小锁的持有时间有助于降低锁冲突的可能性，进而提高并发能力
+
+	/*整个方法都被加锁*/
+	public synchronized void synMethod(){
+		...
+		doSomething();/*重量级方法*/
+		mutexMethod();
+		doSomething();/*重量级方法*/
+		...
+	}
+
+	public void synMethod(){
+		...
+		doSomething();
+		/*只在必要时进行同步，减小线程持有锁的时间*/
+		synchronized(this){
+			mutexMethod();
+		}
+		doSomething();
+		...
+	}
+
+### 减小锁粒度
+
+缩小锁对象的范围，从而减少锁冲突的可能性，进而提高并发能力
+
+参见ConcurrentHashMap.java
+
+### 读写分离锁替换独占锁
+
+在读多写少的场合，读写分离锁效率更高
+
+### 锁分离
+
+参考LinkedBlockingQueue.java实现
+
+### 锁粗化
+
+JVM遇到连续地对同一把锁不断的请求和释放操作时，会把所有的锁操作整合成对锁的一次请求，从而减少对锁的请求同步次数
+
+## ThreadLoacl
+
+## CAS
+
+CAS(V,E,N) 仅当V.value==E时，才会将V.setValue(N)
