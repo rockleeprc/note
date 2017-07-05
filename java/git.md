@@ -57,7 +57,6 @@ git：分布式版本控制系统，版本库存放在本地
 
 	# 初始化目录为git可以管理的仓库 初始化后learngit目录下会多出一个.git目录 用来管理跟踪版本库的
 	$ git init
-	初始化空的 Git 仓库于 /home/mint/github/learngit/.git/
 
 ## 文件添加到版本库
 
