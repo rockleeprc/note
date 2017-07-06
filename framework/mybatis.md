@@ -16,3 +16,14 @@
 ### Mapper
 
 一个interface没有实现类，MyBatis根据这个接口生成代理对象，代理对象根据接口全路径+方法名去匹配xml文件中的sql，生命周期在一个SqlSession事物内
+
+
+## 参数传递
+### Map
+影响可读性
+
+### @Param
+参数<5时最佳选择
+
+### JavaBean
+多参数时最佳选择

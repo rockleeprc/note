@@ -62,9 +62,3 @@ apt-get install virtualbox
 apt-get install virtualbox-dkms
 apt-get install virtualbox-source
 apt-get install virtualbox-qt
-
-
-## remarkable
-https://remarkableapp.github.io/linux/download.html
-sudo apt-get install python3-gtkspellcheck
-remarkable &
