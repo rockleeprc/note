@@ -32,3 +32,11 @@
 
 
 ## 重点语法
+
+	时间表达：
+	3：08 It's eight past three./It is six ten.
+	9:15 It's a quarter past nine. 
+	10:30 It's half past ten.
+	6:40 It's twenty to seven.
+	3:45 It's aquarter to four.
+ 
