@@ -56,3 +56,9 @@ gcc *.c -c *.out
 
 ## mysql
 sudo apt-get install mysql-server
+
+## virtualbox
+apt-get install virtualbox
+apt-get install virtualbox-dkms
+apt-get install virtualbox-source
+apt-get install virtualbox-qt

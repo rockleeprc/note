@@ -69,19 +69,22 @@ synchronized、重入锁都会在访问临界区资源前得到临界区的锁�
 
 在无锁的基础上扩展，要求所有线程都必须在有限步内完成，避免出现饥饿现象
 
-## Java内存模型
+## 线程安全性
 
 ### 原子性 Atomicity
 
-一个操作不可中断，多个线程一起执行时，一个操作一旦开始，就不会被其他线程干扰
+一个线程对共享变量进行读/写操作，在其它线程看来该操作要么执行结束，要么从未发生
 
-static int i; A线程 i=1，B线程i=-1,不管两个线程以何种方式，何种步调工作，i的值要么是1,要么是-1
+	static int i;
+	A线程 i=1;
+	B线程i=-1;
+不管两个线程以何种方式，何种步调工作，i的值要么是1,要么是-1
 
 32位系统中long类型的读写不是原子性的，因为long占用64位空间，两个线程同时对long进行读/写操作，线程间的结果有干扰的可能发生
 
 ### 可见性 Visibility
 
-当一个线程修改了某共享变量的值，其他线程是否能够立即知道这个修改
+一个线程对共享变量进行操作，后续访问该变量的线程可能无法立刻读取到最新的结果，甚至永远无法读取到
 
 ### 有序性 Ordering
 
@@ -100,26 +103,22 @@ static int i; A线程 i=1，B线程i=-1,不管两个线程以何种方式，何�
 7.
 8. 对象构造函数执行先于finalize()
 
+## 线程同步机制
+
 ## 线程状态
 
 	public enum State {
-
-	  // 刚刚创建的线程，还没开始执行，离开NEW状态后将不能在回到NEW状态    
+	  /*刚刚创建的线程，还没开始执行，离开NEW状态后将不能在回到NEW状态*/
 		NEW,
-
-		// 调用start()
+		/*调用start()*/
 		RUNNABLE,
-
-		// 在RUNNABLE状态中，遇到了synchronized，会进入到BLOCKED中，暂停线程执行，直到获取请求的锁      
+		/*在RUNNABLE状态中，遇到了synchronized，会进入到BLOCKED中，暂停线程执行，直到获取请求的锁*/      
 		BLOCKED,
-
-   	// 进无时间限制的等待，wait()需要notify()唤醒，join()等待线程目标线程的终止  
+   		/*进无时间限制的等待，wait()需要notify()唤醒，join()等待线程目标线程的终止*/
 		WAITING,
-
-   	// 进有时间限制的等待，wait()需要notify()唤醒，join()等待线程目标线程的终止   
+	   	/*进有时间限制的等待，wait()需要notify()唤醒，join()等待线程目标线程的终止*/   
 		TIMED_WAITING,
-
-   	// 线程执行结束，处于TERMINATED状态的线程不能在回到其它状态
+   		/*线程执行结束，处于TERMINATED状态的线程不能在回到其它状态*/
 		TERMINATED;
   	}
 
@@ -131,7 +130,7 @@ static int i; A线程 i=1，B线程i=-1,不管两个线程以何种方式，何�
 	t.start();
 
 	Thread t = new Thread(new Runnable());
-	//调用Runnable.run()，见Thread.run()源码
+	/*调用Runnable.run()，见Thread.run()源码*/
 	t.start();
 
 ### stop()
@@ -148,11 +147,11 @@ Thread.stop()直接终止线程，立即释放该线程持有的锁，当线程�
 线程中断并不会立刻退出，只是给线程发送一个通知，告诉目标线程，有人希望你退出，目标线程接到通知后如何处理，是由目标线程自行决定
 
 	public class Thread implements Runnable{
-		//设置中断标志位
+		/*设置中断标志位*/
 		public void interrupt();
-		//判断当前线程是否被中断
+		/*判断当前线程是否被中断*/
 		public boolean isInterrupted();
-		//判断线程的中断状态，清除当前线程的中断标志位
+		/*判断线程的中断状态，清除当前线程的中断标志位*/
 		public static boolean interrupted();
 	}
 
@@ -200,34 +199,37 @@ setDaemon(true)一定要在start()前，不然会得到一个IllegalThreadStateE
 
 ### synchronized
 
-volatile不能保证线程安全，它只能确保一个线程修改数据后，其它线程能够看到这个改动
-
 synchronized (instance){} 对给定对象进行加锁，进入同步代码前要获取instance对象的锁
 
 public void synchronized method(){} 对当前实例进行加锁，进入同步方法前需要获取当前实例的锁
 
 public static synchronized void method(){} 对当前类进行加锁，进入同步方法前需要获取当前类的锁
 
+### volatile
+
+volatile不能保证线程安全，它只能确保一个线程修改数据后，其它线程能够看到这个改动
+
+volatile仅能保证写操作的原子性，不能保证read-modify-write/check-then-act的原子性
+
 ## 同步控制
 
 ### ReetrantLock
 
 	public class ReentrantLock implements Lock, java.io.Serializable {
-		// true，公平锁，公平锁实现必须依靠系统维护一个有序的队列，实现成本高，性能相对较低
-		// false，非公平锁，在锁的等待队列中随机挑选一个线程，会产生饥饿
+		/*true，公平锁，公平锁实现必须依靠系统维护一个有序的队列，实现成本高，性能相对较低
+			false，非公平锁，在锁的等待队列中随机挑选一个线程，会产生饥饿*/
 		public ReentrantLock(boolean fair)
-
-		// 获取锁，如果锁被占用则等待
+		/*获取锁，如果锁被占用则等待*/
 		public void lock();
-		// 释放锁
+		/*释放锁*/
 		public void unlock();
-		// 尝试获取锁，如果成功返回true，失败返回false，不会等待，立即返回
+		/*尝试获取锁，如果成功返回true，失败返回false，不会等待，立即返回*/
 	 	public boolean tryLock();
-		// 在给定时间内尝试获取锁
+		/*在给定时间内尝试获取锁*/
 		public boolean tryLock(long timeout, TimeUnit unit) throws InterruptedException;
-		// 获取锁，但优先响应中断
+		/*获取锁，但优先响应中断*/
 		public void lockInterruptibly() throws InterruptedException;
-		// 返回一个绑定到此 Lock 实例上的 Condition 实例
+		/*返回一个绑定到此 Lock 实例上的 Condition 实例*/
 		public Condition newCondition();
 	}
 
@@ -235,11 +237,11 @@ public static synchronized void method(){} 对当前类进行加锁，进入同�
 ### Condition
 
 	public interface Condition {
-		// 当前线程等待，释放锁
+		/*当前线程等待，释放锁*/
 		void await() throws InterruptedException;
-		// 和await()相同，但不会在等待过程中响应中断
+		/*和await()相同，但不会在等待过程中响应中断*/
 		void awaitUninterruptibly();
-		// 唤醒一个等待的中的线程
+		/*唤醒一个等待的中的线程*/
 		void signal()
 	}
 
@@ -297,11 +299,71 @@ synchronized、ReentrantLock一次都只能允许一个线程访问一个资源�
 
 调度程序不保证任务会无限期的持续调度，如果任务遇到异常，那么后续的所有任务讲都会停止执行
 
-	public ThreadPoolExecutor(int corePoolSize,//指定线程中的数量
-															int maximumPoolSize,//线程池中的最大线程数
-															long keepAliveTime,//线程池数量超过corePoolSize时，多余的空闲线程的存活时间
-															TimeUnit unit,//keepAliveTime单位
-															BlockingQueue<Runnable> workQueue,//被提交但未被执行的任务队列
-															ThreadFactory threadFactory,//线程工厂，用于创建线程
-															RejectedExecutionHandler handler//当任务太多来不及处理时的拒绝策略
-															)
+	public ThreadPoolExecutor(int corePoolSize,/*线程池中的线程数量*/
+				int maximumPoolSize,/*线程池中最大线程数*/
+				long keepAliveTime,/*线程池数量超过corePoolSize时，多余的空闲线程的存活时间*/
+				TimeUnit unit,/*keepAliveTime单位*/
+				BlockingQueue<Runnable> workQueue,/*线程被提交，但未被执行的任务队列*/
+				ThreadFactory threadFactory,/*线程工厂，用于创建线程*/
+				RejectedExecutionHandler handler/*当任务太多来不及处理时的拒绝策略*/
+				)
+
+## 并发容器
+
+### CopyOnWriteArrayList
+
+### BlockingQueue
+
+### SkipList
+
+## “锁”优化
+
+性能优化时根据运行时的真实情况对各个资源点进行权衡这种的过程
+
+### 减小锁时间
+
+如果线程持有锁时间越长，锁的竞争程度就越激烈，减小锁的持有时间有助于降低锁冲突的可能性，进而提高并发能力
+
+	/*整个方法都被加锁*/
+	public synchronized void synMethod(){
+		...
+		doSomething();/*重量级方法*/
+		mutexMethod();
+		doSomething();/*重量级方法*/
+		...
+	}
+
+	public void synMethod(){
+		...
+		doSomething();
+		/*只在必要时进行同步，减小线程持有锁的时间*/
+		synchronized(this){
+			mutexMethod();
+		}
+		doSomething();
+		...
+	}
+
+### 减小锁粒度
+
+缩小锁对象的范围，从而减少锁冲突的可能性，进而提高并发能力
+
+参见ConcurrentHashMap.java
+
+### 读写分离锁替换独占锁
+
+在读多写少的场合，读写分离锁效率更高
+
+### 锁分离
+
+参考LinkedBlockingQueue.java实现
+
+### 锁粗化
+
+JVM遇到连续地对同一把锁不断的请求和释放操作时，会把所有的锁操作整合成对锁的一次请求，从而减少对锁的请求同步次数
+
+## ThreadLoacl
+
+## CAS
+
+CAS(V,E,N) 仅当V.value==E时，才会将V.setValue(N)

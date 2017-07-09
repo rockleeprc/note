@@ -15,6 +15,33 @@ git：分布式版本控制系统，版本库存放在本地
 	git config --global user.name "Your Name"
 	git config --global user.email "email@example.com"
 
+### 新环境配置
+	# 设置用户名
+	$ git config --global user.name "yan.li"
+	# 设置邮箱
+	$ git config --global user.email "yan.li@tadu.com"
+	# 生成rsa
+	$ ssh-keygen.exe -C "yan.li@tadu.com" -t rsa
+	Generating public/private rsa key pair.
+	Enter file in which to save the key (/c/Users/Administrator/.ssh/id_rsa):
+	Enter passphrase (empty for no passphrase):
+	Enter same passphrase again:
+	Your identification has been saved in /c/Users/Administrator/.ssh/id_rsa.
+	Your public key has been saved in /c/Users/Administrator/.ssh/id_rsa.pub.
+	The key fingerprint is:
+	SHA256:thfH2u+0ilLnNhXemwWdf2LzDEsWB1K+Ne8ZO0KCSvA yan.li@tadu.com
+	The key's randomart image is:
+	+---[RSA 2048]----+
+	|             ..  |
+	|            ...  |
+	|     .       ..+o|
+	|      o   ..  ++=|
+	|       ES...oo.Bo|
+	|      .....=+ X.O|
+	|        .. .+oo++|
+	|         ....++  |
+	+----[SHA256]-----+
+
 ## 配置全英文
 
 	# .bashrc中加入 git log时有中文乱码问题
@@ -27,16 +54,15 @@ git：分布式版本控制系统，版本库存放在本地
 	# 仓库目录
 	$ mkdir learngit
 	$ cd learngit/
-	
+
 	# 初始化目录为git可以管理的仓库 初始化后learngit目录下会多出一个.git目录 用来管理跟踪版本库的
 	$ git init
-	初始化空的 Git 仓库于 /home/mint/github/learngit/.git/
 
 ## 文件添加到版本库
 
 	# 工作区文件提交到Stage
 	$ git add readme.txt
-	
+
 	# Stage文件提交到master分支 -m表示提交说明
 	$ git commit -m "wrote a readme file"
 	[master （根提交） 38cfbae] wrote a readme file
@@ -46,7 +72,7 @@ git：分布式版本控制系统，版本库存放在本地
 	# git提交分为两部 1.add 2.commit
 	# 可以add多个文件 一次commit提交
 	git add f1.txt f2.txt
-	
+
 	$ git commit -m "wrote 2 files"
 	[master 1576f69] wrote 2 files
 	2 files changed, 3 insertions(+)
@@ -67,7 +93,7 @@ git：分布式版本控制系统，版本库存放在本地
 		修改：     readme.txt
 
 	修改尚未加入提交（使用 "git add" 和/或 "git commit -a"）
-	
+
 	# 查看版本库修改内容 +代表新增的内容
 	$ git diff
 	diff --git a/readme.txt b/readme.txt
@@ -78,7 +104,7 @@ git：分布式版本控制系统，版本库存放在本地
 	-This is a readme.txt file for git.
 	+This is a test readme.txt file for git.
 	+
-	+update 
+	+update
 	+create
 
 ## 日志查看
@@ -107,10 +133,10 @@ git：分布式版本控制系统，版本库存放在本地
 	0b858d00cc1935b46ccad7fba76a058af8a19aa8 update readme.txt
 	1576f693898a8719d8460bd4064e787f9644dda5 wrote 2 files
 	38cfbae1444108849ae1e7f9eebfa9136a645c99 wrote a readme file
-	
+
 ## 版本回退
 
-	# 当前版本是HEAD 上一个版本是HEAD^ 
+	# 当前版本是HEAD 上一个版本是HEAD^
 	$ git reset --hard HEAD^
 	HEAD 现在位于 0b858d0 update readme.txt
 
@@ -118,14 +144,14 @@ git：分布式版本控制系统，版本库存放在本地
 	$ git reset --hard 38cfbae1444108849ae1e7f9eebfa9136a645c99
 
 	# 查看每一次命令记录
-	$ git reflog 
+	$ git reflog
 	38cfbae HEAD@{0}: reset: moving to 38cfbae1444108849ae1e7f9eebfa9136a645c99
 	0b858d0 HEAD@{1}: reset: moving to HEAD^
 	b90457c HEAD@{2}: commit: wrote callback
 	0b858d0 HEAD@{3}: commit: update readme.txt
 	1576f69 HEAD@{4}: commit: wrote 2 files
 	38cfbae HEAD@{5}: commit (initial): wrote a readme file
-	
+
 	# 回退到指定版本
 	git reset --hard b90457c
 	HEAD 现在位于 b90457c wrote callback
@@ -135,11 +161,11 @@ git：分布式版本控制系统，版本库存放在本地
 	# readme.txt自修改后还没有被放到暂存区，现在，撤销修改就回到和版本库一模一样的状态
 	# readme.txt已经添加到暂存区后，又作了修改，现在，撤销修改就回到添加到暂存区后的状态
 	$ git checkout -- readme.txt
-	
-	# 撤销Stage中的修改 把Stage的修改重新放回工作区 然后使用git checkout --彻底还原 
+
+	# 撤销Stage中的修改 把Stage的修改重新放回工作区 然后使用git checkout --彻底还原
 	$ git reset HEAD readme.txt
 	重置后取消暂存的变更：
-	
+
 	# 查看工作区和版本库里面最新版本的区别
 	$ git diff HEAD -- readme.txt
 	diff --git a/readme.txt b/readme.txt
@@ -148,21 +174,21 @@ git：分布式版本控制系统，版本库存放在本地
 	+++ b/readme.txt
 	@@ -2,3 +2,4 @@ This is a test readme.txt file for git.
 	 call back
-	 update 
+	 update
 	 create
 	+delete
-	
+
 * 撤销工作区修改：
 	git checkout -- file
 
 * 撤销Stage修改:
-	git reset HEAD file 
+	git reset HEAD file
 	git checkout -- file
 
 ## 删除
 
 	# 删除test.txt文件 如果需要恢复使用git checkout -- test.txt
-	$ git status 
+	$ git status
 	位于分支 master
 	尚未暂存以备提交的变更：
 	  （使用 "git add/rm <文件>..." 更新要提交的内容）
@@ -171,11 +197,11 @@ git：分布式版本控制系统，版本库存放在本地
 		删除：     test.txt
 
 	修改尚未加入提交（使用 "git add" 和/或 "git commit -a"）
-	
+
 	# 从版本库中删除
-	$ git rm test.txt 
+	$ git rm test.txt
 	rm 'test.txt'
-	
+
 	# 提交到分支 彻底删除
 	$ git commit -m "rm test.txt"
 	[master 5c6c45c] rm test.txt
@@ -203,43 +229,43 @@ git：分布式版本控制系统，版本库存放在本地
 	$ git checkout dev
 	Switched to branch 'dev'
 
-	# 以上命令可以合并为一条命令 -b创建dev分支后切换到dev上 
+	# 以上命令可以合并为一条命令 -b创建dev分支后切换到dev上
 	$ git checkout -b dev
 	切换到一个新分支 'dev'
-	
+
 	# 查看分支
 	$ git branch
 	* dev
 	$ git branch -a
-	
+
 ## 分支合并
 
 	# msater分支
-	$ git status 
+	$ git status
 	位于分支 master
 	您的分支与上游分支 'origin/master' 一致。
 	无文件要提交，干净的工作区
-	
+
 	# 合并dev分支到当前分支 “Fast-forward”是直接把master指向dev的当前提交
 	$ git merge dev
 	更新 a5d884d..7e9121b
 	Fast-forward
 	 gitcommd.txt | 1 +
 	 1 file changed, 1 insertion(+)
-	
+
 	# 分支合并图			 
 	$ git log --graph
 
-	 
+
 ## 删除分支
 
-	# 删除本地已经合并的分支 
+	# 删除本地已经合并的分支
 	$ git branch -d dev
 	已删除分支 dev（曾为 7e9121b）。
-	
+
 	# 删除本地未合并的分支
 	$ git branch -D dev
-	
+
 	# 删除远程分支
 	$ git push origin --delete dev
 	To https://github.com/rockleeprc/firstproject.git
@@ -261,7 +287,7 @@ git：分布式版本控制系统，版本库存放在本地
 	======= #dev分支内容
 	brach dev hello tom
 	>>>>>>> dev
-	
+
 ## 分支管理策略
 
 	# 分支合并时使用Fast forward模式 删除分支后会丢失分支信息
@@ -279,7 +305,7 @@ git：分布式版本控制系统，版本库存放在本地
 	Merge made by the 'recursive' strategy.
 	 gitcommd.txt | 3 +++
 	 1 file changed, 3 insertions(+)
-	 
+
 	# 禁用Fast forward 查看日志可以看到merge后的分支信息
 	$ git log --graph --pretty=onelin
 	*   b5e5e04c6627528076b7b1e2b63545331003ece5 merge no-ff
@@ -304,7 +330,7 @@ git：分布式版本控制系统，版本库存放在本地
 	HEAD is now at b5e5e04 merge no-ff
 
 	# 查看
-	$ git stash list 
+	$ git stash list
 	stash@{0}: WIP on master: b5e5e04 merge no-ff
 
 	# 把stash内容恢复到工作去 删除stash内容
@@ -345,6 +371,3 @@ git：分布式版本控制系统，版本库存放在本地
 	$ git branch --set-upstream branch-name origin/branch-name
 
 # todo标签管理
-
-
-
