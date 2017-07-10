@@ -34,6 +34,13 @@
 	witness 目击,目睹
 	scan 浏览
 
+	tongue twister 绕口两
+	have a dirty tongue 爱说脏话f
+	have a bitter tongue 尖酸刻薄
+
+	for + 时间 表示一段时间
+	for a week 一周时间
+
 ## 重点语法
 
 	# have/has用法
@@ -41,6 +48,12 @@
 	I have a book.
 	I haven't a book./I don't have a book.
 	Do you have a book?
+	2. 万能动词:得,吃
+	I hava a bad cold today.
+	Do you have bad cold today?
+	She doesn't have a bad cold today.
+	否定:don't 不能使用haven't
+
 
 	#else
 	What else? 其他什么
