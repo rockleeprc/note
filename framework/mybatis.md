@@ -27,7 +27,7 @@
 
 ### JavaBean
 多参数时最佳选择
-<<<<<<< HEAD
+
 
 ## MyBatis核心组件
 
@@ -230,5 +230,4 @@ sqlSession.selectList("com.xxx.xxx.xxx.selectById",params);
 	    }
 	  }
 	}
-=======
->>>>>>> 05b2dfd0683ceb6c0481615bf1bee031a439e02f
+
