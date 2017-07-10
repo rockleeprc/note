@@ -43,13 +43,13 @@
 
 * TypeHandler：负责java数据类型和jdbc数据类型之间的映射和转换；
 
-* MappedStatement：MappedStatement维护了一条<select|update|delete|insert>节点的封装；
-
 * SqlSource：负责根据用户传递的parameterObject，动态地生成SQL语句，将信息封装到BoundSql对象中，并返回；
 
 * BoundSql：表示动态生成的SQL语句以及相应的参数信息；
 
 * Configuration：MyBatis所有的配置信息都维持在Configuration对象之中；
+
+* MappedStatement：MappedStatement维护了一条<select|update|delete|insert>节点的封装；
 
 ## SqlSession源码
 
@@ -60,7 +60,7 @@ sqlSession.selectList("com.xxx.xxx.xxx.selectById",params);
 	  public <E> List<E> selectList(String statement, Object parameter) {
 	    return this.selectList(statement, parameter, RowBounds.DEFAULT);
 	  }
-	
+
 	  @Override
 	  public <E> List<E> selectList(String statement, Object parameter, RowBounds rowBounds) {
 	    try {
@@ -79,17 +79,17 @@ sqlSession.selectList("com.xxx.xxx.xxx.selectById",params);
 *Mapper.xml配置文件信息会被维护成一个MappedStatement对象，保存在Configuration中的一个Map中
 
 ## Executor源码
-	
+
 	public abstract class BaseExecutor implements Executor {
 	  @Override
 	  public <E> List<E> query(MappedStatement ms, Object parameter, RowBounds rowBounds, ResultHandler resultHandler) throws SQLException {
 		// 1. 根据具体传入的参数，动态地生成需要执行的SQL语句，用BoundSql对象表示  
 	    BoundSql boundSql = ms.getBoundSql(parameter);
-		// 2. 为当前的查询创建一个缓存Key 
+		// 2. 为当前的查询创建一个缓存Key
 	    CacheKey key = createCacheKey(ms, parameter, rowBounds, boundSql);
 	    return query(ms, parameter, rowBounds, resultHandler, key, boundSql);
 	 }
-	
+
 	  @SuppressWarnings("unchecked")
 	  @Override
 	  public <E> List<E> query(MappedStatement ms, Object parameter, RowBounds rowBounds, ResultHandler resultHandler, CacheKey key, BoundSql boundSql) throws SQLException {
@@ -127,12 +127,12 @@ sqlSession.selectList("com.xxx.xxx.xxx.selectById",params);
 	    }
 	    return list;
 	  }
-	
+
 	  private <E> List<E> queryFromDatabase(MappedStatement ms, Object parameter, RowBounds rowBounds, ResultHandler resultHandler, CacheKey key, BoundSql boundSql) throws SQLException {
 	    List<E> list;
 	    localCache.putObject(key, EXECUTION_PLACEHOLDER);
 	    try {
-			//4. 执行查询，返回List 结果，然后    将查询的结果放入缓存之中 
+			//4. 执行查询，返回List 结果，然后    将查询的结果放入缓存之中
 	      list = doQuery(ms, parameter, rowBounds, resultHandler, boundSql);
 	    } finally {
 	      localCache.removeObject(key);
@@ -143,7 +143,7 @@ sqlSession.selectList("com.xxx.xxx.xxx.selectById",params);
 	    }
 	    return list;
 	  }
-	
+
 	｝
 
 	public class SimpleExecutor extends BaseExecutor {
@@ -152,11 +152,11 @@ sqlSession.selectList("com.xxx.xxx.xxx.selectById",params);
 	    Statement stmt = null;
 	    try {
 	      Configuration configuration = ms.getConfiguration();
-			//5. 根据既有的参数，创建StatementHandler对象来执行查询操作 
+			//5. 根据既有的参数，创建StatementHandler对象来执行查询操作
 	      StatementHandler handler = configuration.newStatementHandler(wrapper, ms, parameter, rowBounds, resultHandler, boundSql);
 			//6. 创建java.Sql.Statement对象，传递给StatementHandler对象  
 	      stmt = prepareStatement(handler, ms.getStatementLog());
-			//7. 调用StatementHandler.query()方法，返回List结果集 
+			//7. 调用StatementHandler.query()方法，返回List结果集
 	      return handler.<E>query(stmt, resultHandler);
 	    } finally {
 	      closeStatement(stmt);
@@ -218,7 +218,7 @@ sqlSession.selectList("com.xxx.xxx.xxx.selectById",params);
 	            jdbcType = configuration.getJdbcTypeForNull();
 	          }
 	          try {
-				// 设置参数 
+				// 设置参数
 	            typeHandler.setParameter(ps, i + 1, value, jdbcType);
 	          } catch (TypeException e) {
 	            throw new TypeException("Could not set parameters for mapping: " + parameterMapping + ". Cause: " + e, e);
@@ -230,4 +230,3 @@ sqlSession.selectList("com.xxx.xxx.xxx.selectById",params);
 	    }
 	  }
 	}
-
