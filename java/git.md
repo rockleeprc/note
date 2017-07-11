@@ -233,11 +233,37 @@ git：分布式版本控制系统，版本库存放在本地
 	$ git checkout -b dev
 	切换到一个新分支 'dev'
 
+## 分支查看
+
 	# 查看分支
 	$ git branch
 	* dev
-	$ git branch -a
 
+	# 查看当前分支从哪个分支
+	$ git branch -vv
+	* develop          4d7ddbf [origin/develop] Merge branch 'develop' into feature/qaccommunity_myCount
+	  feature/cms_mail 026eb8d [origin/feature/cms_mail] 邮箱密码过期，修改邮箱密码
+	  master           203eee8 [origin/master] init
+
+	# 查看远程分支
+	$ git branch -a
+	* develop
+	  feature/cms_mail
+	  master
+	  remotes/origin/HEAD -> origin/master
+	  remotes/origin/develop
+	  remotes/origin/feature/add_advert_channel
+	  remotes/origin/feature/add_ip_sync_file
+	  remotes/origin/feature/android3.80_bookPartError_youhua
+		remotes/origin/feature/cms_interactive_fiction
+		remotes/origin/feature/cms_ios2.0
+		remotes/origin/feature/cms_ios2.20_umeng
+		remotes/origin/feature/cms_mail
+		remotes/origin/feature/cms_miss_package
+		remotes/origin/feature/cms_red_package_youhua
+		remotes/origin/feature/cms_test
+
+		
 ## 分支合并
 
 	# msater分支
