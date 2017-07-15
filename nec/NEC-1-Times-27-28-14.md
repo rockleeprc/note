@@ -5,7 +5,7 @@
 ## 单词短语
 
 	live 长期居住
-		live in 居住在大的地方，比如城市 
+		live in 居住在大的地方，比如城市
 		live at 居住在小的地方，比如街道
 		live  show 现场演出
 		make a living 谋生
@@ -26,17 +26,16 @@
 	have lunch/eat lunch 吃午餐
 
 	arrive in/at
-	
+
 	get 得到，到达（got口语中）
 	reach 到达
 
 
 ## 重点语法
 
-	时间表达：
+	# 时间表达：
 	3：08 It's eight past three./It is six ten.
-	9:15 It's a quarter past nine. 
+	9:15 It's a quarter past nine.
 	10:30 It's half past ten.
 	6:40 It's twenty to seven.
 	3:45 It's aquarter to four.
- 
