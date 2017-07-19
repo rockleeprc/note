@@ -17,17 +17,12 @@
 
 一个interface没有实现类，MyBatis根据这个接口生成代理对象，代理对象根据接口全路径+方法名去匹配xml文件中的sql，生命周期在一个SqlSession事物内
 
-
 ## 参数传递
-### Map
-影响可读性
+* Map:影响可读性
 
-### @Param
-参数<5时最佳选择
+* @Param:参数<5时最佳选择
 
-### JavaBean
-多参数时最佳选择
-
+* JavaBean:多参数时最佳选择
 
 ## MyBatis核心组件
 
@@ -64,9 +59,9 @@ sqlSession.selectList("com.xxx.xxx.xxx.selectById",params);
 	  @Override
 	  public <E> List<E> selectList(String statement, Object parameter, RowBounds rowBounds) {
 	    try {
-		// 通过com.xxx.xxx.xxx.selectById在Configuration中查找MappedStatement
+				// 通过com.xxx.xxx.xxx.selectById在Configuration中查找MappedStatement
 	      MappedStatement ms = configuration.getMappedStatement(statement);
-		// 将MappedStatement委托给Executor执行器执行
+				// 将MappedStatement委托给Executor执行器执行
 	      return executor.query(ms, wrapCollection(parameter), rowBounds, Executor.NO_RESULT_HANDLER);
 	    } catch (Exception e) {
 	      throw ExceptionFactory.wrapException("Error querying database.  Cause: " + e, e);
@@ -83,9 +78,9 @@ xxMapper.xml配置文件信息会被维护成一个MappedStatement对象，保�
 	public abstract class BaseExecutor implements Executor {
 	  @Override
 	  public <E> List<E> query(MappedStatement ms, Object parameter, RowBounds rowBounds, ResultHandler resultHandler) throws SQLException {
-		// 1. 根据具体传入的参数，动态地生成需要执行的SQL语句，用BoundSql对象表示  
+			// 1. 根据具体传入的参数，动态地生成需要执行的SQL语句，用BoundSql对象表示  
 	    BoundSql boundSql = ms.getBoundSql(parameter);
-		// 2. 为当前的查询创建一个缓存Key
+			// 2. 为当前的查询创建一个缓存Key
 	    CacheKey key = createCacheKey(ms, parameter, rowBounds, boundSql);
 	    return query(ms, parameter, rowBounds, resultHandler, key, boundSql);
 	 }
@@ -105,10 +100,10 @@ xxMapper.xml配置文件信息会被维护成一个MappedStatement对象，保�
 	      queryStack++;
 	      list = resultHandler == null ? (List<E>) localCache.getObject(key) : null;
 	      if (list != null) {
-			// 3. 缓存中获取  
+					// 3. 缓存中获取  
 	        handleLocallyCachedOutputParameters(ms, key, parameter, boundSql);
 	      } else {
-			// 3. 缓存中没有值，直接从数据库中读取数据  
+					// 3. 缓存中没有值，直接从数据库中读取数据  
 	        list = queryFromDatabase(ms, parameter, rowBounds, resultHandler, key, boundSql);
 	      }
 	    } finally {
@@ -132,7 +127,7 @@ xxMapper.xml配置文件信息会被维护成一个MappedStatement对象，保�
 	    List<E> list;
 	    localCache.putObject(key, EXECUTION_PLACEHOLDER);
 	    try {
-			//4. 执行查询，返回List 结果，然后    将查询的结果放入缓存之中
+				//4. 执行查询，返回List 结果，然后    将查询的结果放入缓存之中
 	      list = doQuery(ms, parameter, rowBounds, resultHandler, boundSql);
 	    } finally {
 	      localCache.removeObject(key);
@@ -152,11 +147,11 @@ xxMapper.xml配置文件信息会被维护成一个MappedStatement对象，保�
 	    Statement stmt = null;
 	    try {
 	      Configuration configuration = ms.getConfiguration();
-			//5. 根据既有的参数，创建StatementHandler对象来执行查询操作
+				//5. 根据既有的参数，创建StatementHandler对象来执行查询操作
 	      StatementHandler handler = configuration.newStatementHandler(wrapper, ms, parameter, rowBounds, resultHandler, boundSql);
-			//6. 创建java.Sql.Statement对象，传递给StatementHandler对象  
+				//6. 创建java.Sql.Statement对象，传递给StatementHandler对象  
 	      stmt = prepareStatement(handler, ms.getStatementLog());
-			//7. 调用StatementHandler.query()方法，返回List结果集
+				//7. 调用StatementHandler.query()方法，返回List结果集
 	      return handler.<E>query(stmt, resultHandler);
 	    } finally {
 	      closeStatement(stmt);
@@ -166,7 +161,7 @@ xxMapper.xml配置文件信息会被维护成一个MappedStatement对象，保�
 	  private Statement prepareStatement(StatementHandler handler, Log statementLog) throws SQLException {
 	    Statement stmt;
 	    Connection connection = getConnection(statementLog);
-		// 对创建的Statement对象设置参数，即设置SQL 语句中 ? 设置为指定的参数
+			// 对创建的Statement对象设置参数，即设置SQL 语句中 ? 设置为指定的参数
 	    stmt = handler.prepare(connection, transaction.getTimeout());
 	    handler.parameterize(stmt);
 	    return stmt;
@@ -179,15 +174,23 @@ xxMapper.xml配置文件信息会被维护成一个MappedStatement对象，保�
 2. 为查询创建缓存，以提高性能；
 3. 创建JDBC的Statement连接对象，传递给StatementHandler对象，返回List查询结果；
 
-
 ## StatementHandler
 
 	public class PreparedStatementHandler extends BaseStatementHandler {
 	  @Override
 	  public void parameterize(Statement statement) throws SQLException {
- 		//使用ParameterHandler对象来完成对Statement的设值    
+ 			//使用DefaultParameterHandler对象来完成对Statement的设值    
 	    parameterHandler.setParameters((PreparedStatement) statement);
 	  }
+
+		@Override
+		public <E> List<E> query(Statement statement, ResultHandler resultHandler) throws SQLException {
+			// 1.调用preparedStatemnt.execute()方法，然后将resultSet交给ResultSetHandler处理   
+			PreparedStatement ps = (PreparedStatement) statement;
+			ps.execute();
+			// 2.使用ResultHandler来处理ResultSet
+			return resultSetHandler.<E> handleResultSets(ps);
+		}
 	}
 
 	public class DefaultParameterHandler implements ParameterHandler {
@@ -211,14 +214,14 @@ xxMapper.xml配置文件信息会被维护成一个MappedStatement对象，保�
 	            MetaObject metaObject = configuration.newMetaObject(parameterObject);
 	            value = metaObject.getValue(propertyName);
 	          }
-				// 每一个Mapping都有一个TypeHandler，根据TypeHandler来对preparedStatement进行设置参数  
+						// 每一个Mapping都有一个TypeHandler，根据TypeHandler来对preparedStatement进行设置参数  
 	          TypeHandler typeHandler = parameterMapping.getTypeHandler();
 	          JdbcType jdbcType = parameterMapping.getJdbcType();
 	          if (value == null && jdbcType == null) {
 	            jdbcType = configuration.getJdbcTypeForNull();
 	          }
 	          try {
-				// 设置参数
+							// 设置参数
 	            typeHandler.setParameter(ps, i + 1, value, jdbcType);
 	          } catch (TypeException e) {
 	            throw new TypeException("Could not set parameters for mapping: " + parameterMapping + ". Cause: " + e, e);
@@ -228,5 +231,48 @@ xxMapper.xml配置文件信息会被维护成一个MappedStatement对象，保�
 	        }
 	      }
 	    }
+	  }
+	}
+
+## ResultSetHandler
+
+	public class DefaultResultSetHandler implements ResultSetHandler {
+		@Override
+	  public List<Object> handleResultSets(Statement stmt) throws SQLException {
+	    ErrorContext.instance().activity("handling results").object(mappedStatement.getId());
+
+	    final List<Object> multipleResults = new ArrayList<Object>();
+
+	    int resultSetCount = 0;
+	    ResultSetWrapper rsw = getFirstResultSet(stmt);
+
+	    List<ResultMap> resultMaps = mappedStatement.getResultMaps();
+	    int resultMapCount = resultMaps.size();
+	    validateResultMapsCount(rsw, resultMapCount);
+	    while (rsw != null && resultMapCount > resultSetCount) {
+	      ResultMap resultMap = resultMaps.get(resultSetCount);
+				//将resultSet
+	      handleResultSet(rsw, resultMap, multipleResults, null);
+	      rsw = getNextResultSet(stmt);
+	      cleanUpAfterHandlingResultSet();
+	      resultSetCount++;
+	    }
+
+	    String[] resultSets = mappedStatement.getResultSets();
+	    if (resultSets != null) {
+	      while (rsw != null && resultSetCount < resultSets.length) {
+	        ResultMapping parentMapping = nextResultMaps.get(resultSets[resultSetCount]);
+	        if (parentMapping != null) {
+	          String nestedResultMapId = parentMapping.getNestedResultMapId();
+	          ResultMap resultMap = configuration.getResultMap(nestedResultMapId);
+	          handleResultSet(rsw, resultMap, null, parentMapping);
+	        }
+	        rsw = getNextResultSet(stmt);
+	        cleanUpAfterHandlingResultSet();
+	        resultSetCount++;
+	      }
+	    }
+
+	    return collapseSingleResultList(multipleResults);
 	  }
 	}
