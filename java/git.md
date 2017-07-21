@@ -211,7 +211,6 @@ git：分布式版本控制系统，版本库存放在本地
 
 ## 提交分支到远程仓库
 
-
 	# 本地仓库关联远程仓库
 	$ git remote add origin git@github.com:rockleeprc/learngit.git
 
@@ -219,7 +218,8 @@ git：分布式版本控制系统，版本库存放在本地
 	$ git push -u origin master
 	# 推送最新的修改
 	$ git push origin master
-
+	# 提交本地到分支到远程分支
+	$ git push origin local_branch:remote_branch
 
 ## 创建分支
 
