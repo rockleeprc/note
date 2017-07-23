@@ -357,8 +357,118 @@ JVM使用native方式时需要调用本地方法栈
 
 ## 堆参数配置
 
+### 初始堆和最大堆
+
+	# 初始堆内存大小
+	-Xms5m
+	# 最大堆内存大小 
+	-Xmx20m 
+
+* JVM会尽可能维持在Xms空间范围内运行，初始堆空间耗尽，JVM对堆空间进行扩展，上限是Xmx
+
+* 将-Xms与-Xmx设置相等，好处是可以减少程序运行时进行垃圾回收的次数，从而提高性能
+
+### 新生代
+
+* -XX:SurvivorRatio，设置eden与survivor的比例
+
+* -XX:NewRatio，设置老年代与新生代的比例
+
+* 新生代基本的分配策略：尽可能将对象预留在新生代，减少老年代GC的次数
+
+---
+
+	byte[] b = null;
+	for (int i = 0; i < 10; i++) {
+		b = new byte[1 * 1024 * 1024];
+	}
+
+* 分配10MB数组，通过新生代配置，测试JVM内存使用情况
+
+---
+
+	-Xmx20m -Xms20m -Xmn2m   -XX:SurvivorRatio=2 -XX:+PrintGCDetails
+
+	Heap
+	 PSYoungGen      total 1536K, used 674K [0x00000000ffe00000, 0x0000000100000000, 0x0000000100000000)
+	  eden space 1024K, 65% used [0x00000000ffe00000,0x00000000ffea8818,0x00000000fff00000)
+	  from space 512K, 0% used [0x00000000fff80000,0x00000000fff80000,0x0000000100000000)
+	  to   space 512K, 0% used [0x00000000fff00000,0x00000000fff00000,0x00000000fff80000)
+	 ParOldGen       total 18432K, used 10240K [0x00000000fec00000, 0x00000000ffe00000, 0x00000000ffe00000)
+	  object space 18432K, 55% used [0x00000000fec00000,0x00000000ff6000a0,0x00000000ffe00000)
+	 PSPermGen       total 21504K, used 2546K [0x00000000f9a00000, 0x00000000faf00000, 0x00000000fec00000)
+	  object space 21504K, 11% used [0x00000000f9a00000,0x00000000f9c7cbd8,0x00000000faf00000)
+
+* -Xmn2m：新生代配置为2m
+
+* -XX:SurvivorRatio=eden/from=eden/to
+
+* total 1536K，1024(eden ) + 512(form/to)
+
+* -Xmn2m = 1024k(eden) + 512k(from) + 512k(to)
+
+* 对象进入老年代，增加GC发生的几率
+
+---
+	
+	-Xmx20m -Xms20m -Xmn7m   -XX:SurvivorRatio=2 -XX:+PrintGCDetails
+	
+	[GC [PSYoungGen: 3785K->1512K(5632K)] 3785K->1528K(18944K), 0.0012047 secs] [Times: user=0.00 sys=0.00, real=0.00 secs] 
+	[GC [PSYoungGen: 4673K->1528K(5632K)] 4689K->1552K(18944K), 0.0016908 secs] [Times: user=0.00 sys=0.00, real=0.00 secs] 
+	[GC [PSYoungGen: 4631K->1528K(5632K)] 4655K->1560K(18944K), 0.0007706 secs] [Times: user=0.00 sys=0.00, real=0.00 secs] 
+	Heap
+	 PSYoungGen      total 5632K, used 2634K [0x00000000ff900000, 0x0000000100000000, 0x0000000100000000)
+	  eden space 4096K, 27% used [0x00000000ff900000,0x00000000ffa14820,0x00000000ffd00000)
+	  from space 1536K, 99% used [0x00000000ffd00000,0x00000000ffe7e020,0x00000000ffe80000)
+	  to   space 1536K, 0% used [0x00000000ffe80000,0x00000000ffe80000,0x0000000100000000)
+	 ParOldGen       total 13312K, used 32K [0x00000000fec00000, 0x00000000ff900000, 0x00000000ff900000)
+	  object space 13312K, 0% used [0x00000000fec00000,0x00000000fec08000,0x00000000ff900000)
+	 PSPermGen       total 21504K, used 2546K [0x00000000f9a00000, 0x00000000faf00000, 0x00000000fec00000)
+	  object space 21504K, 11% used [0x00000000f9a00000,0x00000000f9c7cbd8,0x00000000faf00000)
+
+* 程序中每申请一次空间，都会废弃上次申请的内存，新生代中有效的回收了这部分失效的内存
+
+* 没有任何对象进入到老年代
+
+* 新生代区域有足够的空间，所有数组都会被分配到新生代中
+
+---
+
+	-Xmx20m -Xms20m -Xmn15m   -XX:SurvivorRatio=8 -XX:+PrintGCDetails
+	
+	Heap
+	 PSYoungGen      total 13824K, used 11525K [0x00000000ff100000, 0x0000000100000000, 0x0000000100000000)
+	  eden space 12288K, 93% used [0x00000000ff100000,0x00000000ffc41738,0x00000000ffd00000)
+	  from space 1536K, 0% used [0x00000000ffe80000,0x00000000ffe80000,0x0000000100000000)
+	  to   space 1536K, 0% used [0x00000000ffd00000,0x00000000ffd00000,0x00000000ffe80000)
+	 ParOldGen       total 5120K, used 0K [0x00000000fea00000, 0x00000000fef00000, 0x00000000ff100000)
+	  object space 5120K, 0% used [0x00000000fea00000,0x00000000fea00000,0x00000000fef00000)
+	 PSPermGen       total 21504K, used 2546K [0x00000000f9800000, 0x00000000fad00000, 0x00000000fea00000)
+	  object space 21504K, 11% used [0x00000000f9800000,0x00000000f9a7cbd8,0x00000000fad00000)
+
+* 新生代total 13824K，满足程序10MB的数组分配，所有分配都在eden区完成，没有触发GC，from/to使用率为0
+
+---
+	
+	-Xmx20m -Xms20m  -XX:NewRatio=2 -XX:+PrintGCDetails
+	
+	[GC [PSYoungGen: 5954K->488K(6656K)] 5954K->1536K(20480K), 0.0014987 secs] [Times: user=0.00 sys=0.00, real=0.00 secs] 
+	Heap
+	 PSYoungGen      total 6656K, used 5800K [0x00000000ff900000, 0x0000000100000000, 0x0000000100000000)
+	  eden space 6144K, 86% used [0x00000000ff900000,0x00000000ffe300c8,0x00000000fff00000)
+	  from space 512K, 95% used [0x00000000fff00000,0x00000000fff7a020,0x00000000fff80000)
+	  to   space 512K, 0% used [0x00000000fff80000,0x00000000fff80000,0x0000000100000000)
+	 ParOldGen       total 13824K, used 1048K [0x00000000feb80000, 0x00000000ff900000, 0x00000000ff900000)
+	  object space 13824K, 7% used [0x00000000feb80000,0x00000000fec86010,0x00000000ff900000)
+	 PSPermGen       total 21504K, used 2546K [0x00000000f9980000, 0x00000000fae80000, 0x00000000feb80000)
+	  object space 21504K, 11% used [0x00000000f9980000,0x00000000f9bfcbd8,0x00000000fae80000)
 
 
+* -XX:NewRatio=老年代/新生代，设置新生代和老年代的比例
+
+*  PSYoungGen + ParOldGen = -Xms20m
+
+* 新生代GC时有1MB数组存活，from/to不足1MB，需要老年代进行空间担保，有1MB数组进入老年代
 
 ## 参数配置 总结
 
