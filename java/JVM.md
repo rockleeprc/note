@@ -171,7 +171,7 @@ JVM使用native方式时需要调用本地方法栈
 
 * JVM中的一项优化技术，对于线程私有对象，可以将它们打散，分配在栈上，而不是分配在堆上，好处是在函数调用结束后可以自行销毁，不需要gc介入
 
-* 逃逸分析的目的是判断对象的作用域是否可能逃逸出函数体
+
 	
 ---
 	//u可以被任何线程所访问，u是个逃逸对象
@@ -189,7 +189,33 @@ JVM使用native方式时需要调用本地方法栈
         u.name="geym";
 	}
 
-* p34 逃逸分析例子，无法复现
+* 逃逸分析的目的是判断对象的作用域是否可能逃逸出函数体
+
+---
+
+	public static class User {
+		public int id = 0;
+		public String name = "";
+	}
+
+	public static void alloc() {
+		User u = new User();
+		u.id = 5;
+		u.name = "geym";
+	}
+
+	public static void main(String[] args) throws InterruptedException {
+		long b = System.currentTimeMillis();
+		for (int i = 0; i < Integer.MAX_VALUE; i++) {
+			alloc();
+		}
+		long e = System.currentTimeMillis();
+		System.out.println(e - b);
+	}
+
+	-server -Xmx10m -Xms10m -XX:+DoEscapeAnalysis -XX:+PrintGC -XX:-UseTLAB  -XX:+EliminateAllocations
+
+* JDK1.7，关闭逃逸分析和标量替换，User对象总是分配在栈上，无法复现书中P35页的情景
 
 ## 方法区
 
@@ -229,7 +255,112 @@ JVM使用native方式时需要调用本地方法栈
 
 * 在产生94个代理对象后，Perm区内存溢出
 
-## 参数配置
+## JVM跟踪调试参数配置
+
+### -XX:+PrintGC
+
+	[GC 7634K->608K(94208K), 0.0011779 secs]
+	[GC gc前->gc后(堆总大小),gc所花费时间]
+
+* 打印gc日志，每次gc打印一行，堆空间使用7634K，gc后使用量608K，堆空间总大小94208K
+
+
+### -XX:+PrintGCDetails
+	
+	[GC [PSYoungGen: 7634K->568K(28672K)] 7634K->568K(94208K), 0.0014397 secs] [Times: user=0.00 sys=0.00, real=0.00 secs] 
+	[Full GC [PSYoungGen: 568K->0K(28672K)] [ParOldGen: 0K->465K(65536K)] 568K->465K(94208K) [PSPermGen: 2541K->2540K(21504K)], 0.0113967 secs] [Times: user=0.01 sys=0.00, real=0.01 secs] 
+	Heap
+	 PSYoungGen      total 28672K, used 737K [0x00000000e0000000, 0x00000000e2000000, 0x0000000100000000)
+	  eden space 24576K, 3% used [0x00000000e0000000,0x00000000e00b85e8,0x00000000e1800000)
+	  from space 4096K, 0% used [0x00000000e1800000,0x00000000e1800000,0x00000000e1c00000)
+	  to   space 4096K, 0% used [0x00000000e1c00000,0x00000000e1c00000,0x00000000e2000000)
+	 ParOldGen       total 65536K, used 465K [0x00000000a0000000, 0x00000000a4000000, 0x00000000e0000000)
+	  object space 65536K, 0% used [0x00000000a0000000,0x00000000a0074620,0x00000000a4000000)
+	 PSPermGen       total 21504K, used 2547K [0x000000009ae00000, 0x000000009c300000, 0x00000000a0000000)
+	  object space 21504K, 11% used [0x000000009ae00000,0x000000009b07cde8,0x000000009c300000)
+
+* 打印的日志比-XX:+PrintGC更详细
+
+* 在JVM推出前会打印堆的详细信息
+
+* Full GC 同时回收新生代、老年代、永久代内存
+
+### -XX:+PrintHeapAtGC(-XX:+PrintGC )
+	
+	{Heap before GC invocations=1 (full 0):
+	 PSYoungGen      total 28672K, used 7143K [0x00000000e0000000, 0x00000000e2000000, 0x0000000100000000)
+	  eden space 24576K, 29% used [0x00000000e0000000,0x00000000e06f9c98,0x00000000e1800000)
+	  from space 4096K, 0% used [0x00000000e1c00000,0x00000000e1c00000,0x00000000e2000000)
+	  to   space 4096K, 0% used [0x00000000e1800000,0x00000000e1800000,0x00000000e1c00000)
+	 ParOldGen       total 65536K, used 0K [0x00000000a0000000, 0x00000000a4000000, 0x00000000e0000000)
+	  object space 65536K, 0% used [0x00000000a0000000,0x00000000a0000000,0x00000000a4000000)
+	 PSPermGen       total 21504K, used 2541K [0x000000009ae00000, 0x000000009c300000, 0x00000000a0000000)
+	  object space 21504K, 11% used [0x000000009ae00000,0x000000009b07b610,0x000000009c300000)
+	[GC 7143K->584K(94208K), 0.0011442 secs]
+	Heap after GC invocations=1 (full 0):
+	 PSYoungGen      total 28672K, used 584K [0x00000000e0000000, 0x00000000e2000000, 0x0000000100000000)
+	  eden space 24576K, 0% used [0x00000000e0000000,0x00000000e0000000,0x00000000e1800000)
+	  from space 4096K, 14% used [0x00000000e1800000,0x00000000e1892020,0x00000000e1c00000)
+	  to   space 4096K, 0% used [0x00000000e1c00000,0x00000000e1c00000,0x00000000e2000000)
+	 ParOldGen       total 65536K, used 0K [0x00000000a0000000, 0x00000000a4000000, 0x00000000e0000000)
+	  object space 65536K, 0% used [0x00000000a0000000,0x00000000a0000000,0x00000000a4000000)
+	 PSPermGen       total 21504K, used 2541K [0x000000009ae00000, 0x000000009c300000, 0x00000000a0000000)
+	  object space 21504K, 11% used [0x000000009ae00000,0x000000009b07b610,0x000000009c300000)
+	}
+
+* 在每次GC前后分别打印堆信息
+
+### -XX:+PrintGCTimeStamps(-XX:+PrintGC )
+
+	0.092: [GC 7634K->608K(94208K), 0.0131102 secs]
+	0.105: [Full GC 608K->465K(94208K), 0.0116195 secs]
+
+* 每次gc时打印发生时间，时间为虚拟机启动后的时间偏移量 
+
+### -Xloggc:E:\gc.log (-XX:+PrintGC)
+
+* 打印gc日志到文件
+
+### -verbose:class
+
+	[Opened D:\Java\jdk1.7.0_79\jre\lib\rt.jar]
+	[Loaded java.lang.Object from D:\Java\jdk1.7.0_79\jre\lib\rt.jar]
+	[Loaded java.io.Serializable from D:\Java\jdk1.7.0_79\jre\lib\rt.jar]
+	[Loaded java.lang.Comparable from D:\Java\jdk1.7.0_79\jre\lib\rt.jar]
+	[Loaded java.lang.CharSequence from D:\Java\jdk1.7.0_79\jre\lib\rt.jar]
+	[Loaded java.lang.String from D:\Java\jdk1.7.0_79\jre\lib\rt.jar]
+	[Loaded java.lang.reflect.GenericDeclaration from D:\Java\jdk1.7.0_79\jre\lib\rt.jar]
+	[Loaded java.lang.reflect.Type from D:\Java\jdk1.7.0_79\jre\lib\rt.jar]
+	[Loaded java.lang.reflect.AnnotatedElement from D:\Java\jdk1.7.0_79\jre\lib\rt.jar]
+	[Loaded java.lang.Class from D:\Java\jdk1.7.0_79\jre\lib\rt.jar]
+	...
+
+* 跟踪类的加载和卸载
+
+* 单独跟踪加载/卸载信息
+	* -XX:+TraceClassLoading
+	* -XX:+TraceClassUnloading
+
+### -XX:+PrintVMOptions(-XX:+TraceClassLoading -XX:+TraceClassUnloading )
+
+	VM option '+TraceClassLoading'
+	VM option '+TraceClassUnloading'
+	VM option '+PrintVMOptions'
+
+* 打印JVM接受到的额命令
+
+###  -XX:+PrintCommandLineFlags
+
+	-XX:InitialHeapSize=100631424 -XX:MaxHeapSize=1610102784 -XX:+PrintCommandLineFlags -XX:+TraceClassLoading -XX:+TraceClassUnloading -XX:+UseCompressedOops -XX:-UseLargePagesIndividualAllocation -XX:+UseParallelGC 
+
+* 打印JVM显示和隐含的参数
+
+## 堆参数配置
+
+
+
+
+## 参数配置 总结
 
 	-server		切换server模式
 
@@ -245,6 +376,8 @@ JVM使用native方式时需要调用本地方法栈
 	-XX:+DoEscapeAnalysis	启用逃逸分析
 	-XX:+EliminateAllocations	开启标量替换（默认）
   
+	-XX:+PrintReferenceGC	跟踪软引用、若引用、虚引用、Finallize队列
+
 
 ## Linux下性能监控工具
 
