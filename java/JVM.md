@@ -252,7 +252,7 @@ JVM使用native方式时需要调用本地方法栈
 
 * 显示系统中各个进程的资源占用情况
 
-
+---
     $ top
 
     top - 22:32:11 up 12 days, 21:58,  1 user,  load average: 1.70, 1.98, 2.26
@@ -267,7 +267,7 @@ JVM使用native方式时需要调用本地方法栈
 
 ### vmstat
 * 查看内存,交互分区,I/O操作,上下文切换,时钟中断,CPU使用情况
-
+---
 
     # 采样一次,共计3次
     $ vmstat 1 3
@@ -282,7 +282,7 @@ JVM使用native方式时需要调用本地方法栈
 ### iostat
 * 详细I/O信息
 
-
+---
     $ sudo apt install sysstat
 
     # 输出信息每1秒采样一次,合计采样2次
@@ -298,7 +298,7 @@ JVM使用native方式时需要调用本地方法栈
 ### jstat
 * 用于观察Java应用程序运行时的相关工具
 
-
+---
     # 与GC相关的堆信息
     $ jstat -gc 1938
      S0C    S1C    S0U    S1U      EC       EU        OC         OU       MC     MU    CCSC   CCSU   YGC     YGCT    FGC    FGCT     GCT   
@@ -331,7 +331,7 @@ JVM使用native方式时需要调用本地方法栈
 
 ### jinfo
 * 查看正在运行Java应用程序的扩展参数
-
+---
 
     # 显示是否打印GC日志信息
     $ jinfo -flag PrintGCDetails 1938
@@ -354,7 +354,7 @@ JVM使用native方式时需要调用本地方法栈
 ### jhat
 * 分析Java应用程序堆快照内容
 
-
+---
     # 分析heap.hprof,放问127.0.0.1:7000
     $ jhat heap.hprof
     Reading from heap.hprof...
@@ -372,7 +372,7 @@ JVM使用native方式时需要调用本地方法栈
 
 ### jstack
 * 查看Java应用程序的线程堆栈
-
+---
 
   # 查看线程堆栈信息
   $ jstack -l 1938
@@ -391,7 +391,7 @@ JVM使用native方式时需要调用本地方法栈
 
 ### jcmd
 * JDK1.7新增的多功能工具,支持导出堆信息,查看Java进程,导出线程信息,执行GC
-
+---
 
     # 1938进程所支持的命令
     $ jcmd 1938 help
