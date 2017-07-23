@@ -374,6 +374,10 @@ JVM使用native方式时需要调用本地方法栈
 
 * -XX:NewRatio，设置老年代与新生代的比例
 
+* 新生代设置的较大，会减小老年代的空间，老年代空间减小后对gc行为影响很大
+
+* 新生代大小一般设置为堆空间的1/3-1/4左右
+
 * 新生代基本的分配策略：尽可能将对象预留在新生代，减少老年代GC的次数
 
 ---
@@ -470,7 +474,36 @@ JVM使用native方式时需要调用本地方法栈
 
 * 新生代GC时有1MB数组存活，from/to不足1MB，需要老年代进行空间担保，有1MB数组进入老年代
 
-## 参数配置 总结
+### 导出堆信息
+
+    public static void main(String[] args) {
+        Vector v=new Vector();
+        for(int i=0;i<25;i++)
+            v.add(new byte[1*1024*1024]);
+    }
+
+	-Xmx20m -Xms5m -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=d:/a.dump
+
+
+## 直接内存
+
+	# 设置最大直接内存
+	-XX:MaxDirectMemorySize=10m
+
+* 直接内存默认的大小等于堆内存空间
+
+* 申请直接需要花费比申请堆内存更多地时间
+
+* 适用于申请次数少，访问较频繁的场合，如果内存空间本身需要频繁申请，并不适合直接内存。
+
+
+## JVM工作模式
+
+* Client，启动快，优化少
+
+* Server，在启动时尝试收集更多的系统性能西西你，使用复杂的优化算法对程序进行优化，启动时需要更长时间
+
+## 参数配置总结
 
 	-server		切换server模式
 
