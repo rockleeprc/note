@@ -607,23 +607,24 @@ JVM使用native方式时需要调用本地方法栈
       0.00   2.16  16.01  35.07  97.65  95.47     25    0.245     1    0.074    0.319
 
 ### jinfo
-* 查看正在运行Java应用程序的扩展参数
----
 
     # 显示是否打印GC日志信息
     $ jinfo -flag PrintGCDetails 1938
     -XX:-PrintGCDetails
 
+* 查看正在运行Java应用程序的扩展参数
+
 ### jmap
+	
+	# 生成1938进程的Java程序对象统计信息
+	$ jmap -histo 1938
+	$ jmap -histo 1938 >/xx/xx/log.txt
+	
+	# dump当前Java程序的堆快照
+	$ jmap -dump:format=b,file=/home/mint/heap.hprof 1938
+	Dumping heap to /home/mint/heap.hprof ...
+	Heap dump file created
 
-    # 生成1938进程的Java程序对象统计信息
-    $ jmap -histo 1938
-    $ jmap -histo 1938 >/xx/xx/log.txt
-
-    # dump当前Java程序的堆快照
-    $ jmap -dump:format=b,file=/home/mint/heap.hprof 1938
-    Dumping heap to /home/mint/heap.hprof ...
-    Heap dump file created
 
 * 生成Java程序的堆Dump文件,查看堆内存对象实例的统计信息
 ---
@@ -679,9 +680,7 @@ JVM使用native方式时需要调用本地方法栈
 * 查看JVM堆的使用情况
 
 ### jhat
-* 分析Java应用程序堆快照内容
 
----
     # 分析heap.hprof,放问127.0.0.1:7000
     $ jhat heap.hprof
     Reading from heap.hprof...
@@ -697,26 +696,26 @@ JVM使用native方式时需要调用本地方法栈
     # Object Query Language (OQL) query
     select file.path.value.toString() from java.io.File file
 
-### jstack
-* 查看Java应用程序的线程堆栈
-
+* 分析Java应用程序堆快照内容
 ---
 
-  # 查看线程堆栈信息
-  $ jstack -l 1938
-  2017-07-19 23:52:04
-  Full thread dump Java HotSpot(TM) 64-Bit Server VM (25.131-b11 mixed mode):
+    # 查看线程堆栈信息
+    $ jstack -l 1938
+    2017-07-19 23:52:04
+    Full thread dump Java HotSpot(TM) 64-Bit Server VM (25.131-b11 mixed mode):
 
-  "Attach Listener" #43 daemon prio=9 os_prio=0 tid=0x00007f4ec4001000 nid=0x1c32 waiting on condition [0x0000000000000000]
-     java.lang.Thread.State: RUNNABLE
+    "Attach Listener" #43 daemon prio=9 os_prio=0 tid=0x00007f4ec4001000 nid=0x1c32 waiting on condition [0x0000000000000000]
+       java.lang.Thread.State: RUNNABLE
 
-     Locked ownable synchronizers:
-  	- None
+       Locked ownable synchronizers:
+    	- None
 
-  "ajp-nio-8009-Acceptor-0" #41 daemon prio=5 os_prio=0 tid=0x00007f4f00582000 nid=0x7e8 runnable [0x00007f4ea90e6000]
-     java.lang.Thread.State: RUNNABLE
-  	at sun.nio.ch.ServerSocketChannelImpl.accept0(Native Method)
+    "ajp-nio-8009-Acceptor-0" #41 daemon prio=5 os_prio=0 tid=0x00007f4f00582000 nid=0x7e8 runnable [0x00007f4ea90e6000]
+       java.lang.Thread.State: RUNNABLE
+    	at sun.nio.ch.ServerSocketChannelImpl.accept0(Native Method)
 
+
+* 查看Java应用程序的线程堆栈
 ### jcmd
 * JDK1.7新增的多功能工具,支持导出堆信息,查看Java进程,导出线程信息,执行GC
 ---
