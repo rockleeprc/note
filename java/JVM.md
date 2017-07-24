@@ -17,7 +17,7 @@
 * OutOfMemoryError：无法满足内存分配时
 
 ### Java堆
- 
+
 * 线程共享
 * 对象保存在堆中
 * GC的主要工作区域，堆也是分代的
@@ -46,7 +46,7 @@ JVM使用native方式时需要调用本地方法栈
 
 2. 先进后出的数据结构，只支持出栈、入栈两种操作
 
-3. 栈中保存的主要内容为栈帧，每一次函数调用，都会有一个对应的栈帧被入栈，每一个函数调用结束，都对有一个栈帧被弹出栈
+3. 栈中保存的主要内容为栈帧，每一次函数调用，都会有一个对应的栈帧被入栈，每一个函数调用结束，都对应一个栈帧被弹出栈
 
 
 ### 栈帧
@@ -98,7 +98,7 @@ JVM使用native方式时需要调用本地方法栈
 
 * 在相同-Xss的配置下局部变量表的大小直接影响函数调用的深度
 
----	
+---
 	public void localvarGc1() {
 		byte[] a = new byte[6 * 1024 * 1024];
 		System.gc();
@@ -172,7 +172,7 @@ JVM使用native方式时需要调用本地方法栈
 * JVM中的一项优化技术，对于线程私有对象，可以将它们打散，分配在栈上，而不是分配在堆上，好处是在函数调用结束后可以自行销毁，不需要gc介入
 
 
-	
+
 ---
 	//u可以被任何线程所访问，u是个逃逸对象
 	private static User u;
@@ -181,7 +181,7 @@ JVM使用native方式时需要调用本地方法栈
 		u.id = 5;
 		u.name = "geym";
 	}
- 
+
 	// u以局部变量的形式存在，并且没有被alloc()返回，或存在任何形式的公开，未发生逃逸
 	public static void alloc(){
         User u=new User();
@@ -221,7 +221,7 @@ JVM使用native方式时需要调用本地方法栈
 
 * 在JDK1.6、1.7中方法区可以理解为永久区（Perm），默认大小64MB
 
-* 如果系统中存在大量动态代理生成的对象，默认的永久区大小可能会导致内存溢出 
+* 如果系统中存在大量动态代理生成的对象，默认的永久区大小可能会导致内存溢出
 
 ---
 
@@ -240,7 +240,7 @@ JVM使用native方式时需要调用本地方法栈
 	JDK1.6 1.7 -XX:+PrintGCDetails -XX:PermSize=5M -XX:MaxPermSize=5m
 
 	total create count:94
-	[GCException in thread "main"  [PSYoungGen: 1182K->64K(46080K)] 
+	[GCException in thread "main"  [PSYoungGen: 1182K->64K(46080K)]
 	Heap
 	 PSYoungGen      total 52736K, used 0K [0x00000000e0000000, 0x00000000e3500000, 0x0000000100000000)
 	  eden space 52224K, 0% used [0x00000000e0000000,0x00000000e0000000,0x00000000e3300000)
@@ -250,7 +250,7 @@ JVM使用native方式时需要调用本地方法栈
 	  object space 844288K, 0% used [0x00000000a0000000,0x00000000a00ac218,0x00000000d3880000)
 	 PSPermGen       total 4096K, used 4096K [0x000000009fc00000, 0x00000000a0000000, 0x00000000a0000000)
 	  object space 4096K, 100% used [0x000000009fc00000,0x00000000a0000000,0x00000000a0000000)
-	
+
 	Exception: java.lang.OutOfMemoryError thrown from the UncaughtExceptionHandler in thread "main"
 
 * 在产生94个代理对象后，Perm区内存溢出
@@ -266,9 +266,9 @@ JVM使用native方式时需要调用本地方法栈
 
 
 ### -XX:+PrintGCDetails
-	
-	[GC [PSYoungGen: 7634K->568K(28672K)] 7634K->568K(94208K), 0.0014397 secs] [Times: user=0.00 sys=0.00, real=0.00 secs] 
-	[Full GC [PSYoungGen: 568K->0K(28672K)] [ParOldGen: 0K->465K(65536K)] 568K->465K(94208K) [PSPermGen: 2541K->2540K(21504K)], 0.0113967 secs] [Times: user=0.01 sys=0.00, real=0.01 secs] 
+
+	[GC [PSYoungGen: 7634K->568K(28672K)] 7634K->568K(94208K), 0.0014397 secs] [Times: user=0.00 sys=0.00, real=0.00 secs]
+	[Full GC [PSYoungGen: 568K->0K(28672K)] [ParOldGen: 0K->465K(65536K)] 568K->465K(94208K) [PSPermGen: 2541K->2540K(21504K)], 0.0113967 secs] [Times: user=0.01 sys=0.00, real=0.01 secs]
 	Heap
 	 PSYoungGen      total 28672K, used 737K [0x00000000e0000000, 0x00000000e2000000, 0x0000000100000000)
 	  eden space 24576K, 3% used [0x00000000e0000000,0x00000000e00b85e8,0x00000000e1800000)
@@ -281,12 +281,12 @@ JVM使用native方式时需要调用本地方法栈
 
 * 打印的日志比-XX:+PrintGC更详细
 
-* 在JVM推出前会打印堆的详细信息
+* 在JVM退出前会打印堆的详细信息
 
 * Full GC 同时回收新生代、老年代、永久代内存
 
 ### -XX:+PrintHeapAtGC(-XX:+PrintGC )
-	
+
 	{Heap before GC invocations=1 (full 0):
 	 PSYoungGen      total 28672K, used 7143K [0x00000000e0000000, 0x00000000e2000000, 0x0000000100000000)
 	  eden space 24576K, 29% used [0x00000000e0000000,0x00000000e06f9c98,0x00000000e1800000)
@@ -315,7 +315,7 @@ JVM使用native方式时需要调用本地方法栈
 	0.092: [GC 7634K->608K(94208K), 0.0131102 secs]
 	0.105: [Full GC 608K->465K(94208K), 0.0116195 secs]
 
-* 每次gc时打印发生时间，时间为虚拟机启动后的时间偏移量 
+* 每次gc时打印发生时间，时间为虚拟机启动后的时间偏移量
 
 ### -Xloggc:E:\gc.log (-XX:+PrintGC)
 
@@ -351,7 +351,7 @@ JVM使用native方式时需要调用本地方法栈
 
 ###  -XX:+PrintCommandLineFlags
 
-	-XX:InitialHeapSize=100631424 -XX:MaxHeapSize=1610102784 -XX:+PrintCommandLineFlags -XX:+TraceClassLoading -XX:+TraceClassUnloading -XX:+UseCompressedOops -XX:-UseLargePagesIndividualAllocation -XX:+UseParallelGC 
+	-XX:InitialHeapSize=100631424 -XX:MaxHeapSize=1610102784 -XX:+PrintCommandLineFlags -XX:+TraceClassLoading -XX:+TraceClassUnloading -XX:+UseCompressedOops -XX:-UseLargePagesIndividualAllocation -XX:+UseParallelGC
 
 * 打印JVM显示和隐含的参数
 
@@ -361,8 +361,8 @@ JVM使用native方式时需要调用本地方法栈
 
 	# 初始堆内存大小
 	-Xms5m
-	# 最大堆内存大小 
-	-Xmx20m 
+	# 最大堆内存大小
+	-Xmx20m
 
 * JVM会尽可能维持在Xms空间范围内运行，初始堆空间耗尽，JVM对堆空间进行扩展，上限是Xmx
 
@@ -414,12 +414,12 @@ JVM使用native方式时需要调用本地方法栈
 * 对象进入老年代，增加GC发生的几率
 
 ---
-	
+
 	-Xmx20m -Xms20m -Xmn7m   -XX:SurvivorRatio=2 -XX:+PrintGCDetails
-	
-	[GC [PSYoungGen: 3785K->1512K(5632K)] 3785K->1528K(18944K), 0.0012047 secs] [Times: user=0.00 sys=0.00, real=0.00 secs] 
-	[GC [PSYoungGen: 4673K->1528K(5632K)] 4689K->1552K(18944K), 0.0016908 secs] [Times: user=0.00 sys=0.00, real=0.00 secs] 
-	[GC [PSYoungGen: 4631K->1528K(5632K)] 4655K->1560K(18944K), 0.0007706 secs] [Times: user=0.00 sys=0.00, real=0.00 secs] 
+
+	[GC [PSYoungGen: 3785K->1512K(5632K)] 3785K->1528K(18944K), 0.0012047 secs] [Times: user=0.00 sys=0.00, real=0.00 secs]
+	[GC [PSYoungGen: 4673K->1528K(5632K)] 4689K->1552K(18944K), 0.0016908 secs] [Times: user=0.00 sys=0.00, real=0.00 secs]
+	[GC [PSYoungGen: 4631K->1528K(5632K)] 4655K->1560K(18944K), 0.0007706 secs] [Times: user=0.00 sys=0.00, real=0.00 secs]
 	Heap
 	 PSYoungGen      total 5632K, used 2634K [0x00000000ff900000, 0x0000000100000000, 0x0000000100000000)
 	  eden space 4096K, 27% used [0x00000000ff900000,0x00000000ffa14820,0x00000000ffd00000)
@@ -439,7 +439,7 @@ JVM使用native方式时需要调用本地方法栈
 ---
 
 	-Xmx20m -Xms20m -Xmn15m   -XX:SurvivorRatio=8 -XX:+PrintGCDetails
-	
+
 	Heap
 	 PSYoungGen      total 13824K, used 11525K [0x00000000ff100000, 0x0000000100000000, 0x0000000100000000)
 	  eden space 12288K, 93% used [0x00000000ff100000,0x00000000ffc41738,0x00000000ffd00000)
@@ -453,10 +453,10 @@ JVM使用native方式时需要调用本地方法栈
 * 新生代total 13824K，满足程序10MB的数组分配，所有分配都在eden区完成，没有触发GC，from/to使用率为0
 
 ---
-	
+
 	-Xmx20m -Xms20m  -XX:NewRatio=2 -XX:+PrintGCDetails
-	
-	[GC [PSYoungGen: 5954K->488K(6656K)] 5954K->1536K(20480K), 0.0014987 secs] [Times: user=0.00 sys=0.00, real=0.00 secs] 
+
+	[GC [PSYoungGen: 5954K->488K(6656K)] 5954K->1536K(20480K), 0.0014987 secs] [Times: user=0.00 sys=0.00, real=0.00 secs]
 	Heap
 	 PSYoungGen      total 6656K, used 5800K [0x00000000ff900000, 0x0000000100000000, 0x0000000100000000)
 	  eden space 6144K, 86% used [0x00000000ff900000,0x00000000ffe300c8,0x00000000fff00000)
@@ -492,7 +492,7 @@ JVM使用native方式时需要调用本地方法栈
 
 * 直接内存默认的大小等于堆内存空间
 
-* 申请直接需要花费比申请堆内存更多地时间
+* 申请直接内存需要花费比申请堆内存更多地时间
 
 * 适用于申请次数少，访问较频繁的场合，如果内存空间本身需要频繁申请，并不适合直接内存。
 
@@ -501,7 +501,7 @@ JVM使用native方式时需要调用本地方法栈
 
 * Client，启动快，优化少
 
-* Server，在启动时尝试收集更多的系统性能西西你，使用复杂的优化算法对程序进行优化，启动时需要更长时间
+* Server，在启动时尝试收集更多的系统资源配置，使用复杂的优化算法对程序进行优化，启动时需要更长时间
 
 ## 参数配置总结
 
@@ -510,6 +510,7 @@ JVM使用native方式时需要调用本地方法栈
 	-Xss128K		线程栈最大空间
 	-Xmx10m		最大堆内存
 	-Xms10m 		最小堆内存
+  -Xmn15m     栈空间大小
 	-XX:PermSize=5M		最小永久区
 	-XX:MaxPermSize=5m	最大永久区
 	-XX:MaxMetaspaceSize=5M		JDK1.8使用
@@ -518,7 +519,7 @@ JVM使用native方式时需要调用本地方法栈
 
 	-XX:+DoEscapeAnalysis	启用逃逸分析
 	-XX:+EliminateAllocations	开启标量替换（默认）
-  
+
 	-XX:+PrintReferenceGC	跟踪软引用、若引用、虚引用、Finallize队列
 
 
@@ -615,9 +616,6 @@ JVM使用native方式时需要调用本地方法栈
 
 ### jmap
 
-* 生成Java程序的堆Dump文件,查看堆内存对象实例的统计信息
-
-
     # 生成1938进程的Java程序对象统计信息
     $ jmap -histo 1938
     $ jmap -histo 1938 >/xx/xx/log.txt
@@ -626,6 +624,59 @@ JVM使用native方式时需要调用本地方法栈
     $ jmap -dump:format=b,file=/home/mint/heap.hprof 1938
     Dumping heap to /home/mint/heap.hprof ...
     Heap dump file created
+
+* 生成Java程序的堆Dump文件,查看堆内存对象实例的统计信息
+---
+    $ jmap -heap 29106
+    Attaching to process ID 29106, please wait...
+    Debugger attached successfully.
+    Server compiler detected.
+    JVM version is 17.0-b16
+
+    using thread-local object allocation.
+    Parallel GC with 8 thread(s)
+
+    Heap Configuration:
+       MinHeapFreeRatio = 40
+       MaxHeapFreeRatio = 70
+       MaxHeapSize      = 2147483648 (2048.0MB)
+       NewSize          = 1073741824 (1024.0MB)
+       MaxNewSize       = 1073741824 (1024.0MB)
+       OldSize          = 4194304 (4.0MB)
+       NewRatio         = 2
+       SurvivorRatio    = 8
+       PermSize         = 134217728 (128.0MB)
+       MaxPermSize      = 268435456 (256.0MB)
+
+    Heap Usage:
+    PS Young Generation
+    Eden Space:
+       capacity = 698875904 (666.5MB)
+       used     = 698875904 (666.5MB)
+       free     = 0 (0.0MB)
+       100.0% used
+    From Space:
+       capacity = 179044352 (170.75MB)
+       used     = 0 (0.0MB)
+       free     = 179044352 (170.75MB)
+       0.0% used
+    To Space:
+       capacity = 179044352 (170.75MB)
+       used     = 0 (0.0MB)
+       free     = 179044352 (170.75MB)
+       0.0% used
+    PS Old Generation
+       capacity = 1073741824 (1024.0MB)
+       used     = 1073741816 (1023.9999923706055MB)
+       free     = 8 (7.62939453125E-6MB)
+       99.99999925494194% used
+    PS Perm Generation
+       capacity = 134217728 (128.0MB)
+       used     = 88518192 (84.41752624511719MB)
+       free     = 45699536 (43.58247375488281MB)
+       65.9511923789978% used
+
+* 查看JVM堆的使用情况
 
 ### jhat
 * 分析Java应用程序堆快照内容
@@ -648,6 +699,7 @@ JVM使用native方式时需要调用本地方法栈
 
 ### jstack
 * 查看Java应用程序的线程堆栈
+
 ---
 
   # 查看线程堆栈信息
@@ -743,4 +795,3 @@ JVM使用native方式时需要调用本地方法栈
     java.property.java.class.path="/opt/apache-tomcat-8.0.45/bin/bootstrap.jar:/opt/apache-tomcat-8.0.45/bin/tomcat-juli.jar:/opt/jdk/jdk1.8.0_131/lib/tools.jar"
     java.property.java.endorsed.dirs="/opt/apache-tomcat-8.0.45/endorsed"
     java.property.java.ext.dirs="/opt/jdk/jdk1.8.0_131/jre/lib/ext:/usr/java/packages/lib/ext"
-
