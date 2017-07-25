@@ -220,6 +220,7 @@ git：分布式版本控制系统，版本库存放在本地
 	$ git push origin master
 	# 提交本地到分支到远程分支
 	$ git push origin local_branch:remote_branch
+	$ git push origin featurn/slowquery
 
 ## 创建分支
 
@@ -263,6 +264,19 @@ git：分布式版本控制系统，版本库存放在本地
 		remotes/origin/feature/cms_red_package_youhua
 		remotes/origin/feature/cms_test
 
+	$ git br -al
+	develop
+	feature/cms_mail
+* feature/console_log
+	feature/edit_name
+	feature/feature/bookbar_select_optimize
+	featurn/slowquery
+	master
+	remotes/origin/HEAD -> origin/master
+	remotes/origin/develop
+	remotes/origin/feature/add_advert_channel
+	remotes/origin/feature/add_ip_sync_file
+
 
 ## 分支合并
 
@@ -279,9 +293,22 @@ git：分布式版本控制系统，版本库存放在本地
 	 gitcommd.txt | 1 +
 	 1 file changed, 1 insertion(+)
 
+	 # 别人提交到自己建的featurn/slowquery，进行拉取
+	 $ git pull origin featurn/slowquery featurn/slowquery
+
+
 	# 分支合并图			 
 	$ git log --graph
 
+	# 合并feature/feature/bookbar_select_optimize分支到feature/console_log
+	# 1.checkout一份要合并的远程分支
+	$ git checkout feature/feature/bookbar_select_optimize
+	# 2.切换到原分支
+	# $ git checkout feature/console_log
+	# 3.在feature/console_log分支上，把feature/feature/bookbar_select_optimize合并过来
+	$ git merge feature/feature/bookbar_select_optimize
+	# 4.push到仓库
+	$ git push origin feature/console_log
 
 ## 删除分支
 
