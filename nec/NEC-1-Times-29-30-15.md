@@ -35,7 +35,7 @@
 	scan 浏览
 
 	tongue twister 绕口两
-	have a dirty tongue 爱说脏话f
+	have a dirty tongue 爱说脏话
 	have a bitter tongue 尖酸刻薄
 
 	for + 时间 表示一段时间
