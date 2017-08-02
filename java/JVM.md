@@ -510,7 +510,7 @@ JVM使用native方式时需要调用本地方法栈
 	-Xss128K		线程栈最大空间
 	-Xmx10m		最大堆内存
 	-Xms10m 		最小堆内存
-  -Xmn15m     栈空间大小
+  -Xmn15m     新生代空间
 	-XX:PermSize=5M		最小永久区
 	-XX:MaxPermSize=5m	最大永久区
 	-XX:MaxMetaspaceSize=5M		JDK1.8使用
