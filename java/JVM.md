@@ -370,9 +370,9 @@ JVM使用native方式时需要调用本地方法栈
 
 ### 新生代
 
-* -XX:SurvivorRatio，设置eden与survivor的比例
+* -XX:SurvivorRatio，设置eden与survivor的比例，默认比例是8
 
-* -XX:NewRatio，设置老年代与新生代的比例
+* -XX:NewRatio，设置老年代与新生代的比例，默认值是2
 
 * 新生代设置的较大，会减小老年代的空间，老年代空间减小后对gc行为影响很大
 
@@ -615,11 +615,11 @@ JVM使用native方式时需要调用本地方法栈
 * 查看正在运行Java应用程序的扩展参数
 
 ### jmap
-	
+
 	# 生成1938进程的Java程序对象统计信息
 	$ jmap -histo 1938
 	$ jmap -histo 1938 >/xx/xx/log.txt
-	
+
 	# dump当前Java程序的堆快照
 	$ jmap -dump:format=b,file=/home/mint/heap.hprof 1938
 	Dumping heap to /home/mint/heap.hprof ...
