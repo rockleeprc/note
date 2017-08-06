@@ -1,4 +1,40 @@
 
+## 第二章 创建和销毁对象
+
+### Item1:考虑用静态工厂方法代替构造器
+
+* 类可以提供一个公有的静态工厂方法,只是一个返回类的实例静态方法
+
+		public static final Boolean TRUE = new Boolean(true);
+	  public static final Boolean FALSE = new Boolean(false);
+		public static Boolean valueOf(boolean b) {
+				 return (b ? TRUE : FALSE);
+		}
+
+* 使用静态工厂方法而不是构造器的优势
+	1. 有名称:构造器与类同名,通过参数列表进行区分,静态工厂方法可以定义不同的方法签名,易于阅读,并慎重的选择名称以便突出它们之间的区别
+	2. 不用每次调用时都创建一个新的对象:预先创建好对象,或是通过缓存机制避免创建不必要的对象,Boolean.valueOf()从不创建对象
+	3. 返回方法返回类型的子类型对象,返回类型可以是私有类型,目的是隐藏实现的具体细节,这种方式适用于基于接口的框架
+	4. 创建泛型实例时,代码更加简洁,JDK1.8中已经不存在这种问题了
+
+
+		Map<String, List<String>> map = new HashMap<String, List<String>>();
+		public class MapUtils {
+
+			public static <K,V> HashMap<K,V> newInstance(){
+				return new HashMap<K,V>();
+			}
+		}
+
+* 静态工厂方法的缺点
+	1. 如果类不含公有的或受保护的构造器,就不能给子类化,无法使用继承的同时,鼓励使用组合的方式来代替继承
+	2. 构造对象的静态工厂方法于其它静态方法实际上没有任何区别,只能通过惯用名称进行区分
+		1. valueOf,返回的实例于参数具有相同值,意义上是一种类型转换
+		2. of,valueOf的简洁替代
+		3. getInstance,返回唯一的实例
+		4. newInstance,返回的实例每次都时新创建的
+		5. getType
+
 ## 第四章 类和接口
 
 ### Iitem13：使类和成员的可访问性最小化
