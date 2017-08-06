@@ -37,7 +37,7 @@
 
 * 面向对象程序设计中，类应该包含私有字段，公共有访问方法（getter），对于可变的字段，应该包含私有字段和射值方法（setter）
 
-* 如果类可以在它所在的包的外部进行访问，就应该提供访问方法 
+* 如果类可以在它所在的包的外部进行访问，就应该提供访问方法
 
 ### Item15：使可变性最小化
 
@@ -79,7 +79,7 @@
 * 不使用继承，而使用组合，在新类中包含一个私有字段，引用现有类的一个实例，新类中的每个方法都可以调用私有字段实例的方法，并返回结果
 
 * 继承一个类时，思考父类API有没有缺陷，缺陷会传播到子类的API中，组合可以隐藏API的缺陷
- 
+
 * 只有当子类真正是超类的子类型时，才适合用继承，A和B确定两者是“is-a”关系时，B才应该扩展A（B is a A）
 
 ### Item17：要么为继承而设计，并提供文档说明，要么就禁止继承
@@ -101,7 +101,7 @@
 		class A{}
 		calss B extends A{}
 		class C extends B{}
-		
+
 		interface A{}
 		interface B{}
 		interface C extends A,B{}
@@ -122,3 +122,60 @@
 
 ### Item20：类层次优于标签类
 
+
+### Item21:用函数表示策略
+
+* 面向对象中实现策略模式,先声明一个策略接口,并为没中具体策略声明一个实现类
+
+* 具体的策略实现往往使用匿名内部类,,匿名内部类将会在每次执行调用的时候创建新的实例
+
+		String[] array = { "1234", "1", "123", "12", "12345" };
+		Arrays.sort(array, new Comparator<String>() {
+
+			@Override
+			public int compare(String o1, String o2) {
+				// 升序 return o1.length() - o2.length();
+				// 降序
+				return o2.length() - o1.length();
+			}
+		});
+
+* 具体策略需要被重用时,使用私有静态内部类,对外提供一个static final实例,这种方法在具体策略上可以实现多个接口
+
+		public class ComparatorHost {
+
+			public static final Comparator<String> STRING_LENGTH_COMPARATOR = new StrLen();
+
+			private static class StrLen implements Comparator<String>,Serializable {
+				@Override
+				public int compare(String o1, String o2) {
+					return o1.length() - o2.length();
+				}
+			}
+		}
+
+### Item22:优先考虑静态成员类
+
+* 嵌套内部类存在的目的应该只是为他的外围类提供服务
+
+* 静态内部类
+	* 静态内部类常见用法时作为外部类的辅助类,仅当于外部类一起使用时才有意义
+	* 如果内部类不要求方法外部类实例,就要始终使用静态内部类,是内部类成为外部类的静态成员
+	* private static内部类的常见用法是代表外部类对象的组件,例如,Map.Entry就是静态内部类,Entry里的getKey(),getValue()都不需要访问Map
+
+* 非静态内部类
+	* 非静态内部类的每个实例都隐含着于外部咧一个实例相关联,必须先创建外部类,才能获取到非静态内部类
+	* 非静态内部类的常见用法时Adapter,例如Map,Set,List接口通常使用非静态内部类实现Iterator
+
+* 匿名内部类
+	* 没有名字,不是外部类的成员
+	* 不能执行instanceof测试
+	* 不能实现接口,扩展父类
+	* 不能调用任何类成员
+	* 过长的匿名内部类影响程序可读性
+	* 常见用法
+		1. 创建函数对象,如new Comparator<String>()
+		2. 创建过程对象,如new Runnable()
+		3. 静态工厂方法内部,实例化对象作为返回
+
+* 局部内部类
