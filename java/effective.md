@@ -6,7 +6,7 @@
 * 类可以提供一个公有的静态工厂方法,只是一个返回类的实例静态方法
 
 		public static final Boolean TRUE = new Boolean(true);
-	  public static final Boolean FALSE = new Boolean(false);
+	 	public static final Boolean FALSE = new Boolean(false);
 		public static Boolean valueOf(boolean b) {
 				 return (b ? TRUE : FALSE);
 		}
@@ -17,27 +17,97 @@
 	3. 返回方法返回类型的子类型对象,返回类型可以是私有类型,目的是隐藏实现的具体细节,这种方式适用于基于接口的框架
 	4. 创建泛型实例时,代码更加简洁,JDK1.8中已经不存在这种问题了
 
+			Map<String, List<String>> map = new HashMap<String, List<String>>();
+			public class MapUtils {
+	
+				public static <K,V> HashMap<K,V> newInstance(){
+					return new HashMap<K,V>();
+				}
+			}
 
-		Map<String, List<String>> map = new HashMap<String, List<String>>();
-		public class MapUtils {
+* 静态工厂方法的缺点
+	1. 如果类不含公有的或受保护的构造器,就不能子类化,无法使用继承的同时,鼓励使用组合的方式来代替继承
+	2. 构造对象的静态工厂方法与其它静态方法实际上没有任何区别,只能通过惯用名称进行区分
+		* valueOf,返回的实例于参数具有相同值,意义上是一种类型转换
+		* of,valueOf的简洁替代
+		* getInstance,返回唯一的实例
+		* newInstance,返回的实例每次都时新创建的
+		* getType
 
-			public static <K,V> HashMap<K,V> newInstance(){
-				return new HashMap<K,V>();
+### Item2：遇到多个构造器参数时要考虑用构建器
+
+* 静态工厂方法和构造器有共同的距现象，不能很好的扩展到大量的可选参数
+
+* 构造器重载，将使构造器变得庞大，参数可阅读性低
+
+* JavaBean模式的setter()在构造过程中可能导致对象状态不一致，状态不一致就有可能导致线程安全问题
+
+* Builder模式，不直接生成想要的对象，让客户端利用所有必要的参数调用构造器或静态工厂方法，得到一个Builder对象
+
+		public class Person {
+			//require
+			private String name;
+			private int age;
+			//optional
+			private double height;
+			private double weight;
+
+			//setter/getter略
+		
+			// 私有化
+			private Person(Builder builder) {
+				//在Person内进行数据验证，而不是在Builder内
+				this.name = builder.name;
+				this.age = builder.age;
+				this.height = builder.height;
+				this.weight = builder.weight;
+			}
+		
+			// 不直接生成对象，客户端使用Builder实例化
+			public static class Builder {
+				private String name;
+				private int age;
+				private double height;
+				private double weight;
+		
+				public Builder(String name, int age) {
+					super();
+					this.name = name;
+					this.age = age;
+				}
+		
+				public Person build() {
+					return new Person(this);
+				}
+
+				//setter/getter略		
+			}
+		
+			@Override
+			public String toString() {
+				return "Person [name=" + name + ", age=" + age + ", height=" + height + ", weight=" + weight + "]";
+			}
+		
+			public static void main(String[] args) {
+				Person p1 = new Person.Builder("Lee", 18).setHeight(183).setWeight(70).build();
+				System.out.println(p1);
+				Person p2 = new Person.Builder("Lee", 18).setHeight(183).build();
+				System.out.println(p2);
+				
 			}
 		}
 
-* 静态工厂方法的缺点
-	1. 如果类不含公有的或受保护的构造器,就不能给子类化,无法使用继承的同时,鼓励使用组合的方式来代替继承
-	2. 构造对象的静态工厂方法于其它静态方法实际上没有任何区别,只能通过惯用名称进行区分
-		1. valueOf,返回的实例于参数具有相同值,意义上是一种类型转换
-		2. of,valueOf的简洁替代
-		3. getInstance,返回唯一的实例
-		4. newInstance,返回的实例每次都时新创建的
-		5. getType
+* 当需要用Builder创建多个对象时，可以使Builder实现一个公共有的接口，客户端把Builder对象传递给Person
+
+* Class.newInstance()总是企图调用类的无参构造器，这个构造器可能根本不存在
+
+* Builder模式比构造器重载更加冗长，，只有在有很多参数时才使用
+
+* 类的构造器或者静态工厂中具有多个参数，当大多数参数都是可选的时候，有限考虑使用Builder模式构建对象
 
 ## 第四章 类和接口
 
-### Iitem13：使类和成员的可访问性最小化
+### Item13：使类和成员的可访问性最小化
 
 * 设计良好的模块可以对外部其它模块隐藏内部数据和实现细节，把API与实现清晰隔离开，这也是面向对象封装性的体现
 
@@ -161,7 +231,7 @@
 
 ### Item21:用函数表示策略
 
-* 面向对象中实现策略模式,先声明一个策略接口,并为没中具体策略声明一个实现类
+* 面向对象中实现策略模式,先声明一个策略接口,并为每种具体策略声明一个实现类
 
 * 具体的策略实现往往使用匿名内部类,,匿名内部类将会在每次执行调用的时候创建新的实例
 
@@ -176,7 +246,7 @@
 			}
 		});
 
-* 具体策略需要被重用时,使用私有静态内部类,对外提供一个static final实例,这种方法在具体策略上可以实现多个接口
+* 具体策略需要被重用时,使用私有静态内部类,对外提供一个static final实例,这种方法在具体策略上可以实现多个接口，比如同时实现Comparator、Serializable
 
 		public class ComparatorHost {
 
@@ -192,16 +262,16 @@
 
 ### Item22:优先考虑静态成员类
 
-* 嵌套内部类存在的目的应该只是为他的外围类提供服务
+* 嵌套内部类存在的目的应该只是为它的外围类提供服务
 
 * 静态内部类
-	* 静态内部类常见用法时作为外部类的辅助类,仅当于外部类一起使用时才有意义
-	* 如果内部类不要求方法外部类实例,就要始终使用静态内部类,是内部类成为外部类的静态成员
+	* 静态内部类常见用法是作为外部类的辅助类,仅当于外部类一起使用时才有意义
+	* 如果内部类不要求访问外部类实例,就要始终使用静态内部类,使内部类成为外部类的静态成员
 	* private static内部类的常见用法是代表外部类对象的组件,例如,Map.Entry就是静态内部类,Entry里的getKey(),getValue()都不需要访问Map
 
 * 非静态内部类
-	* 非静态内部类的每个实例都隐含着于外部咧一个实例相关联,必须先创建外部类,才能获取到非静态内部类
-	* 非静态内部类的常见用法时Adapter,例如Map,Set,List接口通常使用非静态内部类实现Iterator
+	* 非静态内部类的每个实例都隐含着与于外部类一个实例相关联,必须先创建外部类,才能获取到非静态内部类
+	* 非静态内部类的常见用法是Adapter,例如Map,Set,List接口通常使用非静态内部类实现Iterator
 
 * 匿名内部类
 	* 没有名字,不是外部类的成员
