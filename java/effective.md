@@ -105,6 +105,37 @@
 
 * 类的构造器或者静态工厂中具有多个参数，当大多数参数都是可选的时候，有限考虑使用Builder模式构建对象
 
+### Item3：用私有构造器或者枚举类型强化Singleton属性
+
+* 构造器私有，提供public static final的字段
+		
+		public class Singleton1 {
+			public static final Singleton1 INSTACE = new Singleton1();
+		
+			private Singleton1() {
+			}	
+		}
+
+* 构造器私有，提供private static final的字段，使用静态工厂方法获得实例
+		
+		public class Singleton2 {
+			private static final Singleton2 INSTACE = new Singleton2();
+		
+			private Singleton2() {
+			}
+		
+			public static Singleton2 getInstance() {
+				return INSTACE;
+			}
+		}
+
+* 使用枚举类，无常提供序列化机制，防止多次实例化，阻止反射攻击
+		
+		public enum Singleton3 {
+			INSTANCE;
+		}
+
+
 ## 第四章 类和接口
 
 ### Item13：使类和成员的可访问性最小化
