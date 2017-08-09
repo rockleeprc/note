@@ -17,13 +17,14 @@
 	3. 返回方法返回类型的子类型对象,返回类型可以是私有类型,目的是隐藏实现的具体细节,这种方式适用于基于接口的框架
 	4. 创建泛型实例时,代码更加简洁,JDK1.8中已经不存在这种问题了
 
-		Map<String, List<String>> map = new HashMap<String, List<String>>();
-		public class MapUtils {
-
-			public static <K,V> HashMap<K,V> newInstance(){
-				return new HashMap<K,V>();
+		
+			Map<String, List<String>> map = new HashMap<String, List<String>>();
+			public class MapUtils {
+	
+				public static <K,V> HashMap<K,V> newInstance(){
+					return new HashMap<K,V>();
+				}
 			}
-		}
 
 * 静态工厂方法的缺点
 	1. 如果类不含公有的或受保护的构造器,就不能子类化,无法使用继承的同时,鼓励使用组合的方式来代替继承
@@ -38,7 +39,7 @@
 
 * 静态工厂方法和构造器有共同的距现象，不能很好的扩展到大量的可选参数
 
-* 构造器重载，将使构造器变得庞大，参数可阅读性低
+* 构造器重载，将使构造器变得庞大，参数阅读性低
 
 * JavaBean模式的setter()在构造过程中可能导致对象状态不一致，状态不一致就有可能导致线程安全问题
 
@@ -101,9 +102,9 @@
 
 * Class.newInstance()总是企图调用类的无参构造器，这个构造器可能根本不存在
 
-* Builder模式比构造器重载更加冗长，，只有在有很多参数时才使用
+* Builder模式比构造器重载更加冗长，只有在有很多参数时才使用
 
-* 类的构造器或者静态工厂中具有多个参数，当大多数参数都是可选的时候，有限考虑使用Builder模式构建对象
+* 类的构造器或者静态工厂中具有多个参数，当大多数参数都是可选的时候，优先考虑使用Builder模式构建对象
 
 ### Item3：用私有构造器或者枚举类型强化Singleton属性
 
