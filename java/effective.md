@@ -153,16 +153,49 @@
 
 * 区别于保护性拷贝
 	* Item5：重用现有对象时，请不要创建新对象
-	* Item39：应该重用新对象时，请不要重用现有对象
+	* Item39：应该创建新对象时，请不要重用现有对象
 
+### Item6：消除过期的对象引用
 
-* 
-* 
-* 
-* 
-* 
-* 
-*  
+* 过期引用指也不会被解除的引用
+
+		public Object pop() {
+			if (size == 0)
+				throw new EmptyStackException();
+			// 只改动size的位置，elements[]中被pop的对象不会被gc，引用还存在
+			return elements[--size];
+		}
+	
+		public Object pop2() {
+			if (size == 0)
+				throw new EmptyStackException();
+			Object result = elements[--size];
+			//数组元素被释放掉后，该元素的引用就应该被手动清空
+			elements[size] = null;
+			return result;
+		}
+
+* 如果一个对象的引用被无意识的保留起来，垃圾回收机制不会回收这个对象，也不会回收这个对象所引用的其它对象
+ 
+* 清空对象引用应该是一种例外，而不是一种规范的行为 
+
+* 只要类自己管理内存，程序员就应该警惕内存泄漏问题 
+
+* 内存泄漏另一个常见来源是缓存 
+
+* 监听器和回调引起的内存的泄漏，一个服务端API，客户端在API中注册回调，却没有显示的取消注册，这个注册将永远存在与服务端 
+
+### Item7：避免使用finalize()
+
+* finalize()是不可预测的，JVM延迟执行finalize()，该方法会导致行为的不稳定，降低性能，一般情况下不是必要，应该避免使用
+
+* Java语言规范不会保证finalize()被及时的执行，而是根本不保证会它会被执行，不应该依赖于finalize()更新重要的持久状态
+
+* 显示的终结方法必须在一个私有域中记录该对象已经不再有效，如果对象在被终结后调用终结方法，将抛出异常（InputStream、OutputStream、java.sql.Connection）,显示终结方法常与try{}finally{}一起使用
+
+* 除非作为安全网或为了终止非关键的本地资源，不要使用finalize()
+
+ 
 
 
 ## 第四章 类和接口
