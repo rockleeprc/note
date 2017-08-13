@@ -17,10 +17,10 @@
 	3. 返回方法返回类型的子类型对象,返回类型可以是私有类型,目的是隐藏实现的具体细节,这种方式适用于基于接口的框架
 	4. 创建泛型实例时,代码更加简洁,JDK1.8中已经不存在这种问题了
 
-		
+
 			Map<String, List<String>> map = new HashMap<String, List<String>>();
 			public class MapUtils {
-	
+
 				public static <K,V> HashMap<K,V> newInstance(){
 					return new HashMap<K,V>();
 				}
@@ -54,7 +54,7 @@
 			private double weight;
 
 			//setter/getter略
-		
+
 			// 私有化
 			private Person(Builder builder) {
 				//在Person内进行数据验证，而不是在Builder内
@@ -63,38 +63,38 @@
 				this.height = builder.height;
 				this.weight = builder.weight;
 			}
-		
+
 			// 不直接生成对象，客户端使用Builder实例化
 			public static class Builder {
 				private String name;
 				private int age;
 				private double height;
 				private double weight;
-		
+
 				public Builder(String name, int age) {
 					super();
 					this.name = name;
 					this.age = age;
 				}
-		
+
 				public Person build() {
 					return new Person(this);
 				}
 
 				//setter/getter略		
 			}
-		
+
 			@Override
 			public String toString() {
 				return "Person [name=" + name + ", age=" + age + ", height=" + height + ", weight=" + weight + "]";
 			}
-		
+
 			public static void main(String[] args) {
 				Person p1 = new Person.Builder("Lee", 18).setHeight(183).setWeight(70).build();
 				System.out.println(p1);
 				Person p2 = new Person.Builder("Lee", 18).setHeight(183).build();
 				System.out.println(p2);
-				
+
 			}
 		}
 
@@ -109,29 +109,29 @@
 ### Item3：用私有构造器或者枚举类型强化Singleton属性
 
 * 构造器私有，提供public static final的字段
-		
+
 		public class Singleton1 {
 			public static final Singleton1 INSTACE = new Singleton1();
-		
+
 			private Singleton1() {
-			}	
+			}
 		}
 
 * 构造器私有，提供private static final的字段，使用静态工厂方法获得实例
-		
+
 		public class Singleton2 {
 			private static final Singleton2 INSTACE = new Singleton2();
-		
+
 			private Singleton2() {
 			}
-		
+
 			public static Singleton2 getInstance() {
 				return INSTACE;
 			}
 		}
 
 * 使用枚举类，无常提供序列化机制，防止多次实例化，阻止反射攻击
-		
+
 		public enum Singleton3 {
 			INSTANCE;
 		}
@@ -146,7 +146,7 @@
 
 * 对于同时提供静态工厂方法和构造器的类，优先使用静态工厂方法（Boolean.valueOf()、new Boolean()）
 
-* 优先考虑使用基本类型而不是包装类，当心无意识的自动装箱，包装类每次使用都会自动创建新的对象 
+* 优先考虑使用基本类型而不是包装类，当心无意识的自动装箱，包装类每次使用都会自动创建新的对象
 
 * 本Item不是暗示创建对象的代价非常昂贵，而是应该尽可能避免创建对象，小对象的创建和回收动作是非常廉价的
 
@@ -166,7 +166,7 @@
 			// 只改动size的位置，elements[]中被pop的对象不会被gc，引用还存在
 			return elements[--size];
 		}
-	
+
 		public Object pop2() {
 			if (size == 0)
 				throw new EmptyStackException();
@@ -177,14 +177,14 @@
 		}
 
 * 如果一个对象的引用被无意识的保留起来，垃圾回收机制不会回收这个对象，也不会回收这个对象所引用的其它对象
- 
-* 清空对象引用应该是一种例外，而不是一种规范的行为 
 
-* 只要类自己管理内存，程序员就应该警惕内存泄漏问题 
+* 清空对象引用应该是一种例外，而不是一种规范的行为
 
-* 内存泄漏另一个常见来源是缓存 
+* 只要类自己管理内存，程序员就应该警惕内存泄漏问题
 
-* 监听器和回调引起的内存的泄漏，一个服务端API，客户端在API中注册回调，却没有显示的取消注册，这个注册将永远存在与服务端 
+* 内存泄漏另一个常见来源是缓存
+
+* 监听器和回调引起的内存的泄漏，一个服务端API，客户端在API中注册回调，却没有显示的取消注册，这个注册将永远存在与服务端
 
 ### Item7：避免使用finalize()
 
@@ -205,7 +205,7 @@
 	* 不关心类是否提供“逻辑相等”的测试功能（java.util.Random）
 	* 超类已经覆盖了equals()，从超类继承过来的行为对于子类也是合适的（继承AbstractSet、AbstractList的类）
 	* 类是私有的或是包级私有的，可以确定它的equasl()永远不会被调用
-	
+
 			@Override
 			public boolean equals(Object obj) {
 				throw new AssertionError();
@@ -226,157 +226,162 @@
 
 * equals(Objct o)做参数检查时不需要if(o==null){return false;}，一般都会对o进行类型检查，如果instanceof的第一个操作数为null，不管第二个操作数是什么类型，instanceof都会返回false
 
+* 基本类型使用==,float/double使用Float/Double.compare()
+
+* 为了提高性能,应该最先比较最有可能不一致的字段,或者开销大的字段
+
 * 高质量equals()
 	* 使用==检查参数是否为这个对象的引用
 	* 使用instanceof检查参数是否为正确的类型
 	* 把参数转换成正确的类型
 	* 对于类中的每个关键字段，检查参数中的字段是否与该对象中对应的字段相匹配
+	* 覆盖equals()时总要覆盖hashCode()
 
 ### Item8：
 
-* 
+*
 
-* 
+*
 
-* 
+*
 
-* 
+*
 
-* 
+*
 
-* 
+*
 
-
-
-### Item8：
-
-* 
-
-* 
-
-* 
-
-* 
-
-* 
-
-* 
-
-* 
-
-### Item8：
-
-* 
-
-* 
-
-* 
-
-* 
-
-* 
-
-* 
-
-* 
-
-### Item8：
-
-* 
-
-* 
-
-* 
-
-* 
-
-* 
-
-* 
-
-* 
-
-### Item8：
-
-* 
-
-* 
-
-* 
-
-* 
-
-* 
-
-* 
-
-* 
 
 
 ### Item8：
 
-* 
+*
 
-* 
+*
 
-* 
+*
 
-* 
+*
 
-* 
+*
 
-* 
+*
 
-* 
-
-### Item8：
-
-* 
-
-* 
-
-* 
-
-* 
-
-* 
-
-* 
-
-* 
+*
 
 ### Item8：
 
-* 
+*
 
-* 
+*
 
-* 
+*
 
-* 
+*
 
-* 
+*
 
-* 
+*
 
-* 
+*
+
+### Item8：
+
+*
+
+*
+
+*
+
+*
+
+*
+
+*
+
+*
+
+### Item8：
+
+*
+
+*
+
+*
+
+*
+
+*
+
+*
+
+*
 
 
 ### Item8：
 
-* 
+*
 
-* 
+*
 
-* 
+*
 
-* 
+*
 
-* 
+*
 
-* 
+*
 
-* 
+*
+
+### Item8：
+
+*
+
+*
+
+*
+
+*
+
+*
+
+*
+
+*
+
+### Item8：
+
+*
+
+*
+
+*
+
+*
+
+*
+
+*
+
+*
+
+
+### Item8：
+
+*
+
+*
+
+*
+
+*
+
+*
+
+*
+
+*
 
 
 
@@ -574,4 +579,3 @@
 		3. 静态工厂方法内部,实例化对象作为返回
 
 * 局部内部类
-
