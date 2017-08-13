@@ -22,7 +22,7 @@
 	afford 人做主语 1,支付 2,腾出时间
 	take 花时间...
 		It takes sb. some time to do sth. 固定结构
-	pay 人做主语,为什么二付钱
+	pay 人做主语,为什么而付钱
 
 	in the country
 
@@ -75,4 +75,7 @@
 			3. 辅音 + y,去y为i + ed
 			4. 短元音 + 辅音字母,双写辅音字母 + ed
 
-		否定疑问句表示双重肯定
+		# 否定疑问句表示双重肯定
+		I can swim.
+		I can't swim.
+		Can't you swim.
