@@ -239,23 +239,43 @@
 
 ### Item9：覆盖equals()时总要覆盖hashCode()
 
-*
+* JavaSE6 Object规范
+	* 程序执行期间，对象的equals()所比较的字段没有被修改，多次调用对象的hashCode()应始终如一的返回同一个整数
+	* 如果两个对象的equals()相等，那么这两个对象的hashCode()也必须相等
 
-*
+* hashCode()写法，31是一个奇素数
 
-*
+		@Override
+		public int hashCode() {
+			int result = 17;
+			result=31*result+areaCode;
+			result=31*result+prefix;
+			result=31*result+lineNumber;
+			return result;
+		}
 
-*
+* 如果一个类是不可变的，并且计算hashCode开销很大，考虑把散列码缓存起来 
+* 
+		private volatile int hashCode;
+		@Override
+		public int hashCode() {
+			int result = hashCode;
+			if (result == 0) {
+				result = 31 * result + areaCode;
+				result = 31 * result + prefix;
+				result = 31 * result + lineNumber;
+				hashCode = result;
+			}
+			return result;
+		}
 
-*
-
-*
+* 不要试图从散列码中排除掉一个对象的关键部分来提高性能
 
 
 
-### Item8：
+### Item10：始终要覆盖toString
 
-*
+* 任何类包括其子类都要覆盖toString()
 
 *
 
