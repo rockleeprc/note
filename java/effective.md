@@ -293,116 +293,50 @@
 
 ### Item12：考虑实现Comparable接口
 
-*
+* Java平台类库中所有值类都实现了Comparable接口，当一个值类具有非常明显的内在排序关系，应该坚决实现该接口
 
-*
+* 当前对象与指定对象进行比较，当前对象小于指定对象（负整数）、等于（0）、大于（正整数）
 
-*
+* 从关键的字段开始比较，逐步进行到所有字段，如果关键字段的值相等，则进一步其它字段，如果所有字段都相等，那么对象就相等
 
-*
+		public int compareTo(PhoneNumber pn) {
+			// Compare area codes
+			if (areaCode < pn.areaCode)
+				return -1;
+			if (areaCode > pn.areaCode)
+				return 1;
+	
+			// Area codes are equal, compare prefixes
+			if (prefix < pn.prefix)
+				return -1;
+			if (prefix > pn.prefix)
+				return 1;
+	
+			// Area codes and prefixes are equal, compare line numbers
+			if (lineNumber < pn.lineNumber)
+				return -1;
+			if (lineNumber > pn.lineNumber)
+				return 1;
+	
+			return 0; // All fields are equal
+		}
 
-*
-
-*
-
-*
-
-### Item8：
-
-*
-
-*
-
-*
-
-*
-
-*
-
-*
-
-*
-
-
-### Item8：
-
-*
-
-*
-
-*
-
-*
-
-*
-
-*
-
-*
-
-### Item8：
-
-*
-
-*
-
-*
-
-*
-
-*
-
-*
-
-*
-
-### Item8：
-
-*
-
-*
-
-*
-
-*
-
-*
-
-*
-
-*
-
-
-### Item8：
-
-*
-
-*
-
-*
-
-*
-
-*
-
-*
-
-*
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+* compareTo()并没有约定返回值的大小，只是指定了返回值的符号，带么可以简化，前提是最小值和最大值之间的差小于或等于Integer.MAX_VALUE
+  
+		  public int compareTo(PhoneNumber pn) {
+		        // Compare area codes
+		        int areaCodeDiff = areaCode - pn.areaCode;
+		        if (areaCodeDiff != 0)
+		            return areaCodeDiff;
+		
+		        // Area codes are equal, compare prefixes
+		        int prefixDiff = prefix - pn.prefix;
+		        if (prefixDiff != 0)
+		            return prefixDiff;
+		
+		        // Area codes and prefixes are equal, compare line numbers
+		        return lineNumber - pn.lineNumber;
+		   }
 
 
 ## 第四章 类和接口
@@ -585,3 +519,90 @@
 		3. 静态工厂方法内部,实例化对象作为返回
 
 * 局部内部类
+
+
+### Item8：
+
+*
+
+*
+
+*
+
+*
+
+*
+
+*
+
+*
+
+
+### Item8：
+
+*
+
+*
+
+*
+
+*
+
+*
+
+*
+
+*
+
+### Item8：
+
+*
+
+*
+
+*
+
+*
+
+*
+
+*
+
+*
+
+### Item8：
+
+*
+
+*
+
+*
+
+*
+
+*
+
+*
+
+*
+
+
+### Item8：
+
+*
+
+*
+
+*
+
+*
+
+*
+
+*
+
+*
+
+
+
+
