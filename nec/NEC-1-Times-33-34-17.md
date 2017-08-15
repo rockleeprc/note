@@ -36,6 +36,17 @@
 		yourself
 		herself
 		himself
+		itself
+		themselves
+		ourselves
+
+		selfish 自私的
+		selfishness 自私
+		slef-centered 自我为中心的
+
+		come home 回家
+		be home 在家
+		get home 到家(口语)
 
 ## 重点语法
 
