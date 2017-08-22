@@ -220,6 +220,7 @@ git：分布式版本控制系统，版本库存放在本地
 	$ git push origin master
 	# 提交本地到分支到远程分支
 	$ git push origin local_branch:remote_branch
+	$ git push origin feature/original_publishing:feature/original_publishing
 	$ git push origin featurn/slowquery
 
 ## 创建分支
