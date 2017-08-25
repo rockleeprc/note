@@ -138,3 +138,37 @@
 * Collections.synchronizedXXX()通过静态工厂方法，使用装饰器模式将非线程安全的容器封装在一个同步的包装器内，包装器将接口中的每个方法都实现为同步方法，并将调用请求转发到底层容器的对象上
 
 ## 线程安全性的委托
+
+## 在现有的线程安全类中添加功能
+* 重用能降低开发工作量、开发风险以及维护成本
+
+# 第五章 基础构建模块
+* 委托是创建线程安全类的一个最有效策略，让现有的线程安全类管理所有的状态即可
+
+## 同步容器类
+* 包括Vector、Hashtable等，这些同步的容器由Collections.synchronizedXXX等工厂方法创建，将它们的状态封装起来，并对每个公有方法进行同步，每次只有有一个线程访问容器
+* 同步容器将所有对容器的状态的访问串行化 
+
+### 同步容器类的问题
+* 同步容器类都是线程安全的，但在某些情况下可能需要额外的客户端加锁来保证符合操作的安全性
+
+		//线程不完全
+		for(int i=0;i<vector.size();i++){
+			doSomething(vector.get(i));
+		}
+		//线程安全
+		synchronized(vector){
+			for(int i=0;i<vector.size();i++){
+				doSomething(vector.get(i));
+			}	
+		}
+
+### 迭代器与ConcurrentModificationException
+* 当容器在迭代过程中被修改，就会抛出ConcurrentModificationException，多个线程并发的修改容器，即使是使用迭代器也无法别勉在迭代期间对容器进行加锁
+* 将计数器的变化与容器关联起来，如果迭代期间计数器被修改，那么hasNext或next将抛出ConcurrentModificationException，这种检查是在没有同步的情况下进行的
+
+### 隐藏迭代器
+* 对容器的toString、equals、hashCode可能会间接的执行迭代操作，可能会抛出ConcurrentModificationException
+ 
+## 并发容器
+* Java5.0提供并发容器来改进同步容器的性能，并发容器针对多个线程并发访问设计，并发容器可以提高伸缩性并降低风险
