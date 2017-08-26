@@ -172,3 +172,31 @@
  
 ## 并发容器
 * Java5.0提供并发容器来改进同步容器的性能，并发容器针对多个线程并发访问设计，并发容器可以提高伸缩性并降低风险
+### ConcurrentHashMap
+* ConcurrentHashMap并不是将每个方法都在同一个锁上同步并使得每次只有一个线程访问容器，而是采用分段锁机制，一种粒度更细的加锁机制实现更大程度的共享，在并发环境下将实现更高的吞吐量，而在单线程环境中只损耗非常小的性能
+* ConcurrentHashMapf返回的迭代器具有弱一致性，并非“及时失败”，以容忍并发的修改 
+* ConcurrentHashMap中的size、isEmpty的准确性被略微弱化，返回的结果在可能已经过期，它实际上只是一个估值
+* 只有当应用程序需要加锁的Map以进行独占访问时，才应该弃用ConcurrentHashMap
+
+### 额外的原子操作
+* Remove-If-Equal、Replace-If-Equal、Put-If-Absent这些原子性操作在ConcurrentHashMap中都有对应的接口实现了原子性操作
+
+### CopyOnWriteArrayList
+* 每次修改时都会创建并重新发布一个新的容器副本，从而实现可变性
+* 每当修改容器时都会复制底层数组，这需要一定的开销，仅当迭代操作远远多余修改操作时，才应该使用“写入时复制”容器
+
+## 阻塞队列和生产者-消费者模式
+* 如果队列已经满，put方法将阻塞知道有空间可用，如果队列为空，take方法将阻塞直到有元素可用
+* BlockingQueue
+	* LinkedBlockingQueue
+	* ArrayBlockingQueue
+	* PriorityBlockingQueue
+	* SynchronousQueue
+
+## 阻塞方法与中断
+* 当某个方法抛出InterruptedException时，表示该方法是一个阻塞方法，如果这个方法被中断，那么它将努力提前结束阻塞状态
+* InterruptedException处理方式
+	* 传递InterruptedException抛给调用者处理
+	* InterruptedException会清空中断标记，在catch中重新设置中断标记
+
+## 同步工具类
