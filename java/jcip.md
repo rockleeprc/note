@@ -216,7 +216,7 @@
 * 二值信号量,Semaphore初始值为1,可以用作互斥锁,并且不可重入,谁拥有了唯一的许可,谁就拥有了互斥锁
 
 ### 栅栏
-* 阻塞一组线程直到某个事件发生,与闭闭锁的区别在于,所有线程必须同时到达栅栏位置,才能继续执行
+* 阻塞一组线程直到某个事件发生,与闭锁的区别在于,所有线程必须同时到达栅栏位置,才能继续执行
 * 闭锁用于等待事件,栅栏用于等待其它线程
 * 当线程到达栅栏位置时将调用await()阻塞线程当前线程,直到所有线程都到达栅栏位置,所有线程都到达栅栏位置时,栅栏讲打开,所有线程被释放,而栅栏讲被重置以便下次使用
 
@@ -248,13 +248,35 @@
 ### Executor的生命周期
 * ExecutorService扩展了Executor接口，添加了一些用于生命周期管理的方法
 * ExecutorService生命周期
-	* 运行，出事创建时
+	* 运行，初始创建时
 	* 关闭，shutdown方法，将平缓的关闭（不再接受新的任务，同时等待已经提交的任务执行完成）
 	* 终止，shutdownNow方法，尝试取消所有运行中的任务，并且不会再启动队列中尚未开始执行的任务
 
 ### 延迟任务与周期任务
 * Timer支持基于绝对时间而不是相对时间的调度机制，因此任务执行时对系统时钟变化敏感，newScheduledThreadPool只支持基于相对时间的调度
 * 线程泄漏，Timer线程不捕获异常，当TimerTask抛出未检查的异常时将终止定时线程，Timer也不会恢复线程的执行，而是错误的认为整个Timer都被取消，已经被调度但尚未执行的TimerTask将不会再执行，新任务也不能被调度
+
+## 找出可利用的并行性
+### Callable与Future
+* Callable相对Runnable是一种更好的抽象，它以call()为入口，将返回一个值，并可能抛出一个异常
+* Future表示一个任务的声明周期，并提供了相应的方法来判断是否已经完成、取消、获取任务的结果等
+
+### CompletionService
+* CompletionService将Executor和BlockingQueue功能融合在一起
+
+		private static final ExecutorService threadPool = Executors.newFixedThreadPool(10);
+		CompletionService<String> cs = new ExecutorCompletionService<String>(threadPool);
+		for (int i = 0; i < 100; i++) {
+			cs.submit(new Index(String.valueOf(i)));
+		}
+		for (int i = 0; i < 100; i++) {
+			Future<String> future = cs.take();
+			String result = future.get();
+			System.out.println("i="+result);
+		}
+
+
+# 第七章 取消与关闭
 
 
 
