@@ -277,6 +277,41 @@
 
 
 # 第七章 取消与关闭
+* Java没有提供任何机制来安全地终止线程，但它提供了中断这种协作机制，能够使一个线程终止另一个线程的当前工作
+* 行为良好的软件能很完善地处理失败、关闭、取消等过程
 
+## 任务取消
+* Java中没有一个中安全的抢占方法来停止线程，因此就没有安全的抢占方式来停止任务（每个线程都是抽象的任务）
 
+### 中断 
+* 线程中断是一种协作机制，线程可以通过这个机制通知另一个线程，告诉它在合适的情况下停止当前工作，并转而执行其它工作，如果在取消之外的其它操作中使用中断，都是不合适的
+* 如果任务代码能够响应中断状态，可以使用中断作为取消机制，中断是实现取消最合理的方式
+* 阻塞方法Thread.sleep、Object.wait等都会检查线程何时中断，并在发现中断前提前返回
+* 响应中断操作包括
+	1. 清除中断标记
+	2. 抛出InterruptedException（表示阻塞操作由于中断而提前结束）
+* JVM不保证阻塞方法检测中断的速度，但实际情况速度还是非常快的
+* 调用interrupt并不意味着立即停止目标线程正在进行的工作，而只是传递了请求中断消息，由线程在一个合适的时刻中断自己
+	
+		@Override
+		public void run() {
+			BigInteger p = BigInteger.ONE;
+			Thread.currentThread();
+			while (!Thread.currentThread().isInterrupted()) {
+				p = p.nextProbablePrime();
+				System.out.println("task is running。。。"+p);
+				try {
+					queue.put(p);
+					TimeUnit.SECONDS.sleep(1);
+				} catch (InterruptedException e) {
+					//TODO 线程退出逻辑
+					System.out.println(Thread.currentThread().getName() + " 中断");
+				}
+			}
+		}
 
+### 中断策略
+* 中断策略，尽快退出，在必要时进行清理，通知某个所有者线程已经退出
+* 每个线程都拥有各自的中断策略，除非你知道中断对该线程的含义，否则就不应该中断这个线程
+
+### 响应中断
