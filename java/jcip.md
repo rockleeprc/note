@@ -315,3 +315,22 @@
 * 每个线程都拥有各自的中断策略，除非你知道中断对该线程的含义，否则就不应该中断这个线程
 
 ### 响应中断
+* 当ThreadPoolExecutor拥有的工作者线程检测到中断时，它会检查线程池是否正常关闭，故如果是，它会在结束前执行一些线程池清理工作，否则它可能创建一个新的线程将线程池恢复到合理的规模
+
+### 通过Future来实现取消
+    public static void timedRun(Runnable r,long timeout, TimeUnit unit)throws InterruptedException {
+        Future<?> task = taskExec.submit(r);
+        try {
+            task.get(timeout, unit);
+        } catch (TimeoutException e) {
+            // task will be cancelled below
+        } catch (ExecutionException e) {
+            // exception thrown in task; rethrow
+            throw launderThrowable(e.getCause());
+        } finally {
+            // Harmless if task already completed
+            task.cancel(true); // interrupt if running
+        }
+    }
+
+### 处理不可中断的阻塞
