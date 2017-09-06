@@ -24,6 +24,11 @@
 		have...on 穿着(状态)
 		in + 颜色 穿...颜色的衣服
 
+		appointment 普通的约会
+			I have an appointment with my doctor.
+		date 男女情人之间的约会
+
+
 ## 重点语法
 
 	从句类型:表语从句,主语从句,宾语从句
