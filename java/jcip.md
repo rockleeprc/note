@@ -339,6 +339,54 @@
 * 线程封装的原则，除非拥有某个线程，否则不能对该线程进行操控
 * 应用程序可以拥有服务，服务可以用拥有工作者线程，但应用程序不能拥有工作这线程
 
-# 线程池的使用
+# 第八章 线程池的使用
 
 ## 在任务与执行策略之间的隐形耦合
+
+### 线程饥饿死锁
+* 单线程的Executor中，如果一个任务将另一个任务提交到同一个Executor，并且等待这个被提交的任务结果，通常会发生死锁，第二个任务停留在工作队列中，并等待第一个任务完成，而第一个任务又无法完成，在等待第二个任务完成
+* 饥饿死锁：只要线程池中的任务需要无限期的等待一些必须由池中其它任务才能提供的资源或条件，例如某个任务等待另一个任务的返回值或执行结果
+* 每当体提交一个有依赖的Executor任务时，要清楚的知道可能会出现的线程“饥饿”死锁
+
+### 运行时间较长的任务
+* 执行时间较长的任务不仅会造成线程池阻塞，还会增加执行时间较短任务的服务时间
+* 限定任务等待资源的时间，如果等待超时，可以把任务标识为失败，然后中止任务或者将任务重新放回队列以便随后执行
+* 如果在线程池中总是充满了被阻塞的任务，那么也可能表明线程池的规模过小
+
+## 设置线程池大小
+* 线程池过大，大量的线程将在相对很少的CPU和内存资源上发生竞争，会导致更高的内存使用量，还可能耗尽资源
+* 线程池过小，将导致许多空闲的处理器无法执行工作，从而降低吞吐量
+* 密集型的任务cpu个数+1时，通常能实现最优的利用率，I/O操作或阻塞操作的任务，由于线程并不会一定执行，因此线程池规模应该更大
+
+## 配置ThreadPoolExecutor
+
+    public ThreadPoolExecutor(int corePoolSize,
+                              int maximumPoolSize,
+                              long keepAliveTime,
+                              TimeUnit unit,
+                              BlockingQueue<Runnable> workQueue,
+                              ThreadFactory threadFactory,
+                              RejectedExecutionHandler handler) {
+
+### 线程的创建与销毁
+* corePoolSize：线程池目标大小，在没有任务执行时线程池的大小，并且只有在工作队列满的情况下才会创建超出这个数量的线程
+* maximumPoolSize：线程池同时活动的线程数量上限
+* keepAliveTime：某个线程的空闲时间超过了存活时间，那么将被标记为可回收的，并且当线程池的当前大小超过corePoolSize时，这个线程将被终止
+
+	    public static ExecutorService newCachedThreadPool() {
+	        return new ThreadPoolExecutor(0, Integer.MAX_VALUE,
+	                                      60L, TimeUnit.SECONDS,
+	                                      new SynchronousQueue<Runnable>());
+	    }
+
+	    public static ExecutorService newFixedThreadPool(int nThreads) {
+	        return new ThreadPoolExecutor(nThreads, nThreads,
+	                                      0L, TimeUnit.MILLISECONDS,
+	                                      new LinkedBlockingQueue<Runnable>());
+	    }
+
+### 管理队列任务
+* 如果请求的到达速率超过了线程池的处理速率，请求会在一个有Executor管理的Runnable队列中等待，不会去竞争CPU资源
+
+
+
