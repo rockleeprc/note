@@ -387,6 +387,7 @@
 
 ### 管理队列任务
 * 如果请求的到达速率超过了线程池的处理速率，请求会在一个有Executor管理的Runnable队列中等待，不会去竞争CPU资源
+* newFixedThreadPool、newSingleThreadPool，在默认情况下将使用一个无界的LinkedBlockingQueue，如果工作者线程都处于忙碌状态，任务将在队列中等候，如果任务持续的到达，并且超过了线程池处理它们的速度，队列将无限制的增加
 
 
 
