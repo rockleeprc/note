@@ -128,6 +128,19 @@ git：分布式版本控制系统，版本库存放在本地
 	Date:   Sat Jun 3 11:41:22 2017 +0800
 
 	    wrote a readme file
+
+	# 查看该文件相关的commit记录
+	$ git log jcip.md
+
+	# 显示该文件每次提交的diff
+	$ git log -p jcip.md
+
+	# 查看某次提交中的某个文件变化
+	$ git show dd8f347c6689dc24a6e9ebae24655a794a07f3bb jcip.md
+
+	# 根据commit-id查看某个提交
+	$ git show dd8f347c6689dc24a6e9ebae24655a794a07f3bb
+
 	# 每次commit日志信息在一行输出
 	$ git log --pretty=oneline
 	0b858d00cc1935b46ccad7fba76a058af8a19aa8 update readme.txt
