@@ -386,5 +386,13 @@
 	    }
 
 ### 管理队列任务
-* 如果请求的到达速率超过了线程池的处理速率，请求会在一个有Executor管理的Runnable队列中等待，不会去竞争CPU资源
+* 通过采用固定大小的线程池来解决无限制的创建线程问题,但如果请求的到达速率超过了线程池的处理速率，请求会在一个有Executor管理的Runnable队列中等待，不会去竞争CPU资源
 * newFixedThreadPool、newSingleThreadPool，在默认情况下将使用一个无界的LinkedBlockingQueue，如果工作者线程都处于忙碌状态，任务将在队列中等候，如果任务持续的到达，并且超过了线程池处理它们的速度，队列将无限制的增加
+* newCachedThreadPool使用SynchronousQueue,SynchronousQueue避免任务排队,直接讲任务从生产者移交给消费者,SynchronousQueue不是一个真正的队列,而是一种在线程之间进行移交的机制,如果没有消费者线程正在等待,并且线程池大小小于maximumPoolSize,那么ThreadPoolExecutor将创建一个新的线程,否则根据饱和策略拒绝这个任务
+
+### 饱和策略
+* JDK提供RejectedExecutionHandler实现
+	* AbortPolicy:某人策略,抛出未检查的RejectedExecutionException
+	* DiscardPolicy:抛弃任务
+	* DiscardOldestPolicy:抛弃下一个讲被执行的任务,并尝试重新提交新的任务,如果和优先级队列一起使用,将抛弃优先级最后的任务
+	* CallerRunsPolicy:不抛异常,不抛弃任务,讲任务回退给调用者,在调用execute的线程中执行该任务
