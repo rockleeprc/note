@@ -2,46 +2,52 @@
 # 第二章 有意义的命名
 
 ## 名副其实
-* 如果名称需要注释来补充,那就不算时名副其实
+* 如果名称需要注释来补充,那就不算是名副其实
 
 ## 避免误导
-* 别用accountList来指定一组账号,除非他真的时List类型,用accountGroup,bunchOfAccounts替代,accounts也会好一些,即便容器真的时List最好也别在名称中写出容器类型
+* 别用accountList来指定一组账号,除非他真的是List类型,用accountGroup,bunchOfAccounts替代,accounts也会好一些,即便容器真的时List最好也别在名称中写出容器类型
 * XYZControllerHandinglingOfStrings,XYZControllerEfficientOfStrings这样的名称太相似了
 
 ## 做有意义的区分
 * 不用使用a1,a2,a3这种没有区分意义的变量名称
-* 废话都是冗余的,Variable一词永远不要出现在变量中,Table一词永远不要出现在表中,NameString会不Name更好吗
-* getActiveAccount(),getActiveAccounts(),getActiveAccountInfo(),程序员不看注释或代码能直到该调用那个函数
-* moneyAmount于money没区别,customerInfo与customer没区别,accountData与account没区别,要区分名称,就应该以读者能鉴别不同之处的方式来区分
+* 废话都是冗余的
+  * Variable一词永远不要出现在变量中
+  * Table一词永远不要出现在表中
+  * NameString会比Name更好吗
+* getActiveAccount(),getActiveAccounts(),getActiveAccountInfo(),程序员不看注释或代码能知道该调用哪个函数
+* 要区分名称,就应该以读者能鉴别不同之处的方式来区分
+  * moneyAmount与money没区别
+  * customerInfo与customer没区别
+  * accountData与account没区别
 
 ## 使用读得出来的名称
-* 当一个名称能够读出来,这个名称会更善于记忆
+* 当一个名称能够读出来,这个名称会更善于记忆和理解
 
 ## 使用可以搜索的名称
-* 若变量或常量可能在代码中多出使用,则赋一个便于搜到的名称
+* 若变量或常量可能在代码中多处使用,则赋一个便于搜到的名称
 * STUENT可能在系统中的多个地方出现,但使用MAX_CLASSES_PER_STUDENT就很容易在系统中搜索到
-* 名称长多应与其作用域相对应
+* 名称长度应与其作用域相对应
 
 ## 避免使用编码
 * 类中的成员变量不必用m_前缀标明,应该把类和函数做的足够小,消除对成员前缀的需要
-* IXxxService不需要用I来修饰接口(不想让用知道给他们返回的时接口,这点觉得于面向接口编程有些违背)
+* IXxxService不需要用I来修饰接口(不想让调用方知道返回的是接口)
 
 ## 类名称
-* 类名和对象名应该时名词或名词短语,如Customer,WikiPage,Account,避免使用Manager,Processor,Data,类名不应当是动词
+* 类名和对象名应该是名词或名词短语,如Customer,WikiPage,Account,避免使用Manager,Processor,Data类名不应当是动词
 
 ## 方法名
-* 方法名应当时动词或动词短语,如postPayment,deletePage
+* 方法名应当是动词或动词短语,如postPayment,deletePage
 * 重载构造器时使用静态工厂方法(参考Effective Java)
 
-## 每个概念对应一个次
+## 每个概念对应一个词
 * 在一堆代码中有controller,manager,driver,它们之间到底有什么分别,会让人困惑
 
 ## 避免双关语
-* 避免讲同一个次用于不同的目的,同一术语用于不同的概念就是双关语
+* 避免将同一个词用于不同的目的,同一术语用于不同的概念就是双关语
 * 代码的作者应该尽力写出易于理解的代码
 
 ## 使用解决方案领域的名称
-* 只有程序员才会读你的代码,尽管用那些计算机科学术语,算法名,模式名,数学术语吧
+* 只有程序员才会读你的代码,尽量用那些计算机科学术语,算法名,模式名,数学术语吧
 * 如果不能用程序员熟悉的术语来命名,就采用所涉及问题领域而来的名称,至少读代码的人还可以去请教领域专家
 
 ## 添加有意义的环境语
@@ -50,10 +56,10 @@
 ## 不要添加没用的语境
 * 只要名称足够清楚,语境足够清晰,就不要添加语境
 
-    class Address{
-      String addrFirstName;
-      String addrLastName;
-    }
+      class Address{
+        String addrFirstName;
+        String addrLastName;
+      }
 
 ## 小结
 * 取好名字最难的地方在于需要良好的描述技巧和共有的文化背景
