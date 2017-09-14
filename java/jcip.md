@@ -392,7 +392,7 @@
 
 ### 饱和策略
 * JDK提供RejectedExecutionHandler实现
-	* AbortPolicy:某人策略,抛出未检查的RejectedExecutionException
+	* AbortPolicy:默认策略,抛出未检查的RejectedExecutionException
 	* DiscardPolicy:抛弃任务
 	* DiscardOldestPolicy:抛弃下一个讲被执行的任务,并尝试重新提交新的任务,如果和优先级队列一起使用,将抛弃优先级最后的任务
 	* CallerRunsPolicy:不抛异常,不抛弃任务,讲任务回退给调用者,在调用execute的线程中执行该任务
@@ -405,7 +405,6 @@
 		}
 
 ## 扩展ThreadPoolExecutor
-* Executors->ThreadPoolExecutor->Executors.defaultThreadFactory()
 * ThreadPoolExecutor声明周期方法
 	* protected void beforeExecute(Thread t, Runnable r)，在线程运行前执行，如果beforeExecute抛出RuntimeException，那么任务将不被执行，并且afterExecute()也不会被执行
 	* protected void afterExecute(Runnable r, Throwable t)，在线程运行之后执行，无论run()正常返回，还是抛出异常返回，afterExecute()都会被调用，如果线程完成后带有一个Error，那么afterExecute()将不会被调用
