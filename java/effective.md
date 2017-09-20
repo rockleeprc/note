@@ -254,7 +254,7 @@
 			return result;
 		}
 
-* 如果一个类是不可变的，并且计算hashCode开销很大，考虑把散列码缓存起来 
+* 如果一个类是不可变的，并且计算hashCode开销很大，考虑把散列码缓存起来
 
 		private volatile int hashCode;
 		@Override
@@ -305,35 +305,35 @@
 				return -1;
 			if (areaCode > pn.areaCode)
 				return 1;
-	
+
 			// Area codes are equal, compare prefixes
 			if (prefix < pn.prefix)
 				return -1;
 			if (prefix > pn.prefix)
 				return 1;
-	
+
 			// Area codes and prefixes are equal, compare line numbers
 			if (lineNumber < pn.lineNumber)
 				return -1;
 			if (lineNumber > pn.lineNumber)
 				return 1;
-	
+
 			return 0; // All fields are equal
 		}
 
 * compareTo()并没有约定返回值的大小，只是指定了返回值的符号，带么可以简化，前提是最小值和最大值之间的差小于或等于Integer.MAX_VALUE
-  
+
 		  public int compareTo(PhoneNumber pn) {
 		        // Compare area codes
 		        int areaCodeDiff = areaCode - pn.areaCode;
 		        if (areaCodeDiff != 0)
 		            return areaCodeDiff;
-		
+
 		        // Area codes are equal, compare prefixes
 		        int prefixDiff = prefix - pn.prefix;
 		        if (prefixDiff != 0)
 		            return prefixDiff;
-		
+
 		        // Area codes and prefixes are equal, compare line numbers
 		        return lineNumber - pn.lineNumber;
 		   }
@@ -602,7 +602,3 @@
 *
 
 *
-
-
-
-
