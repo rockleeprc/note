@@ -298,7 +298,6 @@
 		@Override
 		public void run() {
 			BigInteger p = BigInteger.ONE;
-			Thread.currentThread();
 			while (!Thread.currentThread().isInterrupted()) {
 				p = p.nextProbablePrime();
 				System.out.println("task is running。。。"+p);
@@ -314,7 +313,7 @@
 
 ### 中断策略
 * 中断策略，尽快退出执行流程，在必要时进行清理，并把中断信息传递给调用者，从而使调用栈中的上层代码可以采取进一步的操作
-* 无论任务把中断视为取消，还是其它某个中断响应操作，都应该小心保存执行线程的中断中断状态，如果除了讲InterruptedException传递给调用者外还需要其它操作，应该在捕获InterruptedException之后恢复中断状态
+* 无论任务把中断视为取消，还是其它某个中断响应操作，都应该小心保存执行线程的中断中断状态，如果除了将InterruptedException传递给调用者外还需要其它操作，应该在捕获InterruptedException之后恢复中断状态
 * 每个线程都拥有各自的中断策略，除非你知道中断对该线程的含义，否则就不应该中断这个线程
 
 ### 响应中断
@@ -338,7 +337,7 @@
 
 ## 停止基于线程的服务
 * 线程封装的原则，除非拥有某个线程，否则不能对该线程进行操控
-* 应用程序可以拥有服务，服务可以用拥有工作者线程，但应用程序不能拥有工作这线程
+* 应用程序可以拥有服务，服务可以用拥有工作者线程，但应用程序不能拥有工作者线程
 
 # 第八章 线程池的使用
 
@@ -361,41 +360,34 @@
 
 ## 配置ThreadPoolExecutor
 
-    public ThreadPoolExecutor(int corePoolSize，
-                              int maximumPoolSize，
-                              long keepAliveTime，
-                              TimeUnit unit，
-                              BlockingQueue<Runnable> workQueue，
-                              ThreadFactory threadFactory，
-                              RejectedExecutionHandler handler) {
+    public ThreadPoolExecutor(int corePoolSize,int maximumPoolSize,long keepAliveTime,TimeUnit uni,
+															BlockingQueue<Runnable> workQueue,
+                              ThreadFactory threadFactory,
+                              RejectedExecutionHandler handler)
 
 ### 线程的创建与销毁
 * corePoolSize：线程池目标大小，在没有任务执行时线程池的大小，并且只有在工作队列满的情况下才会创建超出这个数量的线程
 * maximumPoolSize：线程池同时活动的线程数量上限
-* keepAliveTime：某个线程的空闲时间超过了存活时间，那么将被标记为可回收的，并且当线程池的当前大小超过corePoolSize时，这个线程将被终止
+* keepAliveTime：某个线程的空闲时间超过了keepAliveTime，那么将被标记为可回收的，并且当线程池的当前大小超过corePoolSize时，这个线程将被终止
 
 	    public static ExecutorService newCachedThreadPool() {
-	        return new ThreadPoolExecutor(0， Integer.MAX_VALUE，
-	                                      60L， TimeUnit.SECONDS，
-	                                      new SynchronousQueue<Runnable>());
+	        return new ThreadPoolExecutor(0， Integer.MAX_VALUE，60L， TimeUnit.SECONDS，new SynchronousQueue<Runnable>());
 	    }
 
 	    public static ExecutorService newFixedThreadPool(int nThreads) {
-	        return new ThreadPoolExecutor(nThreads， nThreads，
-	                                      0L， TimeUnit.MILLISECONDS，
-	                                      new LinkedBlockingQueue<Runnable>());
+	        return new ThreadPoolExecutor(nThreads， nThreads，0L， TimeUnit.MILLISECONDS，new LinkedBlockingQueue<Runnable>());
 	    }
 
 ### 管理队列任务
 * 通过采用固定大小的线程池来解决无限制的创建线程问题，但如果请求的到达速率超过了线程池的处理速率，请求会在一个有Executor管理的Runnable队列中等待，不会去竞争CPU资源
 * newFixedThreadPool、newSingleThreadPool，在默认情况下将使用一个无界的LinkedBlockingQueue，如果工作者线程都处于忙碌状态，任务将在队列中等候，如果任务持续的到达，并且超过了线程池处理它们的速度，队列将无限制的增加
-* newCachedThreadPool使用SynchronousQueue，SynchronousQueue避免任务排队，直接讲任务从生产者移交给消费者，SynchronousQueue不是一个真正的队列，而是一种在线程之间进行移交的机制，如果没有消费者线程正在等待，并且线程池大小小于maximumPoolSize，那么ThreadPoolExecutor将创建一个新的线程，否则根据饱和策略拒绝这个任务
+* newCachedThreadPool使用SynchronousQueue，SynchronousQueue避免任务排队，直接将任务从生产者移交给消费者，SynchronousQueue不是一个真正的队列，而是一种在线程之间进行移交的机制，如果没有消费者线程正在等待，并且线程池大小小于maximumPoolSize，那么ThreadPoolExecutor将创建一个新的线程，否则根据饱和策略拒绝这个任务
 
 ### 饱和策略
 * JDK提供RejectedExecutionHandler实现
 	* AbortPolicy:默认策略，抛出未检查的RejectedExecutionException
 	* DiscardPolicy:抛弃任务
-	* DiscardOldestPolicy:抛弃下一个讲被执行的任务，并尝试重新提交新的任务，如果和优先级队列一起使用，将抛弃优先级最后的任务
+	* DiscardOldestPolicy:抛弃下一个将被执行的任务，并尝试重新提交新的任务，如果和优先级队列一起使用，将抛弃优先级最后的任务
 	* CallerRunsPolicy:不抛异常，不抛弃任务，讲任务回退给调用者，在调用execute的线程中执行该任务
 
 ### 线程工厂方法
@@ -406,7 +398,7 @@
 		}
 
 ## 扩展ThreadPoolExecutor
-* ThreadPoolExecutor声明周期方法
+* ThreadPoolExecutor生命周期方法
 	* protected void beforeExecute(Thread t， Runnable r)，在线程运行前执行，如果beforeExecute抛出RuntimeException，那么任务将不被执行，并且afterExecute()也不会被执行
 	* protected void afterExecute(Runnable r， Throwable t)，在线程运行之后执行，无论run()正常返回，还是抛出异常返回，afterExecute()都会被调用，如果线程完成后带有一个Error，那么afterExecute()将不会被调用
-	* protected void terminated()，在线程池完成关闭操作时调用
+	* protected void terminated(),在线程池完成关闭操作时调用
