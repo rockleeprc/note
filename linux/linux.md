@@ -44,21 +44,24 @@
 
 ## gcc 安装
 
-gcc --version
+	gcc --version
 
-apt-get install gcc
-apt-get install g++
-apt-get install make
-apt-get install cmake
+	apt-get install gcc
+	apt-get install g++
+	apt-get install make
+	apt-get install cmake
 
-gcc *.c -c *.out
-./*.out
+	gcc *.c -c *.out
+	./*.out
 
 ## mysql
-sudo apt-get install mysql-server
+	sudo apt-get install mysql-server
 
 ## virtualbox
-apt-get install virtualbox
-apt-get install virtualbox-dkms
-apt-get install virtualbox-source
-apt-get install virtualbox-qt
+	apt-get install virtualbox
+	apt-get install virtualbox-dkms
+	apt-get install virtualbox-source
+	apt-get install virtualbox-qt
+
+	apt-get install apt-get install virtualbox
+	apt-get install virtualbox-dkms virtualbox-source virtualbox-qt
