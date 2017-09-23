@@ -63,5 +63,5 @@
 	apt-get install virtualbox-source
 	apt-get install virtualbox-qt
 
-	apt-get install apt-get install virtualbox
+	apt-get install virtualbox
 	apt-get install virtualbox-dkms virtualbox-source virtualbox-qt
