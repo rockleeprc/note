@@ -4,9 +4,8 @@
 
 * 字符串可以存储3种类型
 	* 字符串，byte string
-	* 整数，取值范围和系统的长整数的取之范围相同（32位系统，32位有符号整数）
+	* 整数，取值范围和系统的长整数的取之范围相同（32位系统，32位有符号整数，64位系统...）
 	* 浮点数，IEEE745标准的双精度浮点数
-
 
 ### set/get/setex/mset/mget
 
@@ -33,11 +32,6 @@
 
 ### incr/incrby/decr/decrby
 
-	# 对值+1
-	127.0.0.1:6379> set key 1
-	OK
-	127.0.0.1:6379> get key
-	"4"
 	# 一个不存在key或空串，将键值当作0处理
 	127.0.0.1:6379> incr k2
 	(integer) 1
@@ -48,18 +42,16 @@
 	OK
 	127.0.0.1:6379> incr k1
 	(error) ERR value is not an integer or out of range
-	# 
+	# 设置每次加/减的值
 	127.0.0.1:6379> incrby k4 10
 	127.0.0.1:6379> decrby k4 7
 
-
 ## list
 
-* 对链表数据结构的支持，可以有序的存储多个字符串
-* 列表的主要优点在于可以包含多个字符串值
+* 对链表数据结构的支持，可以有序的存储多个字符串值
 
 ### rpush/lpush/rpop/lpop/lindex/lrange/ltrim
-	
+
 	# 右插入
 	127.0.0.1:6379> rpush k 1 2 3
 	(integer) 3
