@@ -5,11 +5,23 @@
 
 ## 单词短语
 
-pack one's suitcase 打包手提箱
+	pack one's suitcase 打包手提箱
 
+	all the time 一直,始终
 
+	go to the cinema 去电影院
 
-all the time 一直,始终
+	film 艺术影片
+	movie 好莱坞商业片
+
+	beauty n. 美人,美景,美好的东西
+	beautify v. 美化
+	beautiful adj. 漂亮的(风景,女性,儿童)
+	pretty adj. 漂亮的,迷人的
+	handsome adj. 英俊
+	charming adj. 迷人的,有魅力的
+
+	ever adv. 曾经,在任何时候
 
 ## 重点语法
 
