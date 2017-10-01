@@ -84,10 +84,99 @@
 	127.0.0.1:6379> lindex k 3
 	"0"
 
+## set
+* list、set都可存储字符串，list可以存储相同的字符串，set保证存储的每个字符串唯一
+* redis以无序的方式来存储多个各不相同的元素
 
+### sadd/smembers/sismember/srem
+	# 增加元素
+	127.0.0.1:6379> sadd setkey i1 i2 i3 i1 i2
+	(integer) 3
+	# 获取元素
+	127.0.0.1:6379> smembers setkey
+	1) "i3"
+	2) "i1"
+	3) "i2"
+	# 判断i1是否在key=setkey中
+	127.0.0.1:6379> sismember setkey i1
+	(integer) 1
+	# 删除setkey中i1、i2元素
+	127.0.0.1:6379> srem setkey i1 i2
+	(integer) 2
 
 ## hash
+* 可以将多个key-value对存储在一个redis key里面，值可以是字符串和数值，并可以对数值执行增/自减
 
-## set
+### hset/hget/hgetall/hdel
+	# 增加，成功返回1
+	127.0.0.1:6379> hset hash k1 v1
+	(integer) 1
+	# 失败返回0
+	127.0.0.1:6379> hset hash k1 v1
+	(integer) 0
+	# 通过key获取元素
+	127.0.0.1:6379> hget hash k1
+	"v1"
+	# 获取素有key-value
+	127.0.0.1:6379> hgetall hash
+	1) "k1"
+	2) "v1"
+	3) "k2"
+	4) "v2"
 
-## sortset
+### hmset/hmget/hlen
+	# 批量增加key-value
+	127.0.0.1:6379> hmset hash k3 v3 k4 v4
+	OK
+	# 批量获取
+	127.0.0.1:6379> hmget hash k1 k2 k4
+	1) "v1"
+	2) "v2"
+	3) "v4"
+	# 获取key-value数量
+	127.0.0.1:6379> hlen hash
+	(integer) 4
+
+### hexists/hkeys/hvals
+	# key是否存在，存在返回1，不存在返回0
+	127.0.0.1:6379> hexists hash k1
+	(integer) 1
+	# 返回所有的key
+	127.0.0.1:6379> hkeys hash
+	# 返回所有的value
+	127.0.0.1:6379> hvals hash
+
+
+
+## sort set
+* 有序的集合，key成为member，value称为score，唯一一个可以根据memeber和score访问元素，score只能按照排序顺序访问
+
+### zadd/zrem/zrange/zrangebyscore
+	# 添加 score member
+	127.0.0.1:6379> zadd zset 1 m1 2 m2 3 m3
+	(integer) 3
+	# 获取
+	127.0.0.1:6379> zrange zset 0 -1
+	1) "m1"
+	2) "m2"
+	3) "m3"
+	# 通过member获取
+	127.0.0.1:6379> zrangebyscore zset 1 2
+	1) "m1"
+	2) "m2"
+	# 删除
+	127.0.0.1:6379> zrem zset m1 m2
+	(integer) 2
+
+	127.0.0.1:6379> zadd sort 10 a 30 b 20 c 
+	(integer) 3
+	# 按照score排名，b，c，a
+	127.0.0.1:6379> zrevrank sort a
+	(integer) 2
+	127.0.0.1:6379> zrevrank sort b
+	(integer) 0
+	# 排名0-2
+	127.0.0.1:6379> zrevrange sort 0 2
+	1) "b"
+	2) "c"
+	3) "a"
