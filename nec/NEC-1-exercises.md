@@ -88,3 +88,21 @@
 	We usually watch television at night.
 	What are you doing tonight?
 	We are listening to the stereo.
+
+## L84
+
+	1. Has he had any beans or peas?
+	He hasn't any beans.
+	He has just had some peas.
+
+	2. Have they had any tea or coffee?
+	They haven't any tea.
+	They have just had some coffee.
+
+	3. Have you had any apples or peaches?
+	I haven't any apples.
+	I have just some peaches.
+
+	4. Have you had any cabbage or lettuce?
+	I haven't any cabbage.
+	I have just some lettuce.
