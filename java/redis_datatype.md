@@ -1,13 +1,50 @@
 
 
+## 全局命令
+
+### keys/dbsize/exists/ttl/type/object encoding
+	# 查看所有key，遍历利所有key
+	127.0.0.1:6379> keys *
+	1) "sort"
+	# 查看键总数，不会遍历所有key
+	127.0.0.1:6379> dbsize
+	(integer) 2
+	# key是否存在
+	127.0.0.1:6379> exists list
+	(integer) 1
+	# 不存在返回0
+	127.0.0.1:6379> exists not_exist_key
+	(integer) 0
+	# 设置过期时间
+	127.0.0.1:6379> expire hello 10
+	(integer) 1
+	# 剩余过期时间
+	127.0.0.1:6379> ttl hello
+	(integer) 7
+	# key的数据类型
+	127.0.0.1:6379> type list
+	list
+	# 查看内部编码
+	127.0.0.1:6379> object encoding hello
+	"embstr"
+	127.0.0.1:6379> object encoding count
+	"int"
+
+
 ## string
+
+* 字符串内部编码
+	* int：8字节长整型
+	* embstr：小于等于39字节的字符串
+	* raw：大于39个字节的字符串
 
 * 字符串可以存储3种类型
 	* 字符串，byte string
 	* 整数，取值范围和系统的长整数的取之范围相同（32位系统，32位有符号整数，64位系统...）
 	* 浮点数，IEEE745标准的双精度浮点数
+* 不能超过512MB
 
-### set/get/setex/mset/mget
+### set/get/mset/mget
 
 	# 插入
 	127.0.0.1:6379> set s1 "zhangsan"
@@ -15,9 +52,6 @@
 	# 读取
 	127.0.0.1:6379> get s1
 	"zhangsan"
-	# 指定存活时间为10s
-	127.0.0.1:6379> setex s2 10 "lisi"
-	OK
 	# 插入多条数据
 	127.0.0.1:6379> mset s2 "lisi" s3 "wangwu"
 	OK
@@ -29,6 +63,22 @@
 	# 删除操作
 	127.0.0.1:6379> del s2 s1
 	(integer) 2
+
+### setex/setnx/setxx
+	# 指定存活时间为10s
+	127.0.0.1:6379> setex s2 10 "lisi"
+	OK
+	# 不存在设置成功，用于添加
+	127.0.0.1:6379> setnx hello world
+	(integer) 1
+	127.0.0.1:6379> setnx hello world
+	(integer) 0
+	# 存在设置成功，用于更新
+	127.0.0.1:6379> set hello world xx
+	OK
+	127.0.0.1:6379> set hello1 world xx
+	(nil)
+
 
 ### incr/incrby/decr/decrby
 
