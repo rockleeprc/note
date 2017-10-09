@@ -2,6 +2,7 @@
 ## ssh
 
 ssh 172.16.1.11 -l root
+ssh -l root 192.168.2.216 pwd
 
 
 ## 更新命令
