@@ -23,11 +23,13 @@
 
 	go to the garage 去车库
 
+	drive into 撞到...
+
 	mend 不需要太专业的技能修理
 	fix(美国) = repair(英国) 需要一定的专业技能
 	do up 指修的小东西
 	renovate 翻新
-	patch 打补丁moushi
+	patch 打补丁
 
 	have a try 尝试
 	a good try 很多好的尝试
@@ -39,6 +41,8 @@
 	believe v.相信认可
 		believe sb. 信任某人的话
 		believe in sb. = trust 信任某人
+		I believe you. 对表述的内容相信
+		I believe in you. 对能力的信任
 	believable adj. 可信的
 	unbelievable adj. 不可信的
 	belief n. 信仰
