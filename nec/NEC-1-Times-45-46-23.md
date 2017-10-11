@@ -47,16 +47,4 @@
 	unbelievable adj. 不可信的
 	belief n. 信仰
 
-	for sale 待售
-	on sale 打折
-
-	because + 句子
-	because of + 短语
-
-	cast 物体做主语
-
-	be worth doing 值得做...
-
-	since + 时间点
-	for + 时间段
 ## 重点语法
