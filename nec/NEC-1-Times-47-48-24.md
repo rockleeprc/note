@@ -48,3 +48,12 @@
 
 
 ## 重点语法
+
+	一般将来时:将来要发生(做)的事情
+	S + will + V
+	S + won't + V
+	Will + S + V
+	shall not = shan't
+
+	be going to 倾向口语化
+	will 书面化
