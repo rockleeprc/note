@@ -46,6 +46,7 @@
 	ten people 没有复数
 	the pepoles of China and the USA 只两国人民时用+s
 
+	fly to ... 飞到...
 
 ## 重点语法
 
