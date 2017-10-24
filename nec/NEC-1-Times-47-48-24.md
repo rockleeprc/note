@@ -47,6 +47,7 @@
 	the pepoles of China and the USA 只两国人民时用+s
 
 	fly to ... 飞到...
+	return to ... 返回...
 
 ## 重点语法
 
