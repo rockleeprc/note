@@ -46,6 +46,60 @@
 
 * MappedStatement：MappedStatement维护了一条<select|update|delete|insert>节点的封装；
 
+## 配置
+
+### <properties
+
+1. 配置子元素
+	
+		<properties>
+			<property name="driver" value="com.mysql.jdbc.Driver" />
+			<property name="url"
+				value="jdbc:mysql://127.0.0.1:3306/test?characterEncoding=UTF-8" />
+			<property name="username" value="root" />
+			<property name="password" value="root" />
+		</properties>
+
+2. 引入properties文件
+
+		<properties resource="properties/jdbc.properties"></properties>
+ 
+
+* MyBatis读取顺序（同名的name会被覆盖）：
+	* properties内指定的<property>属性
+	* properties 中的resource文件
+
+### <settings
+
+MyBatis详细配置
+
+### <typeAliases
+1. 系统默认定义的别名在TypeAliasRegistry.class中，数组只要在别名后加[]
+2. 自定义别名
+
+		<typeAlias alias="User" type="exam.mybatis.model.User" />
+3. 包扫描，使用@Alias("xxx")，如果不使用注解，会把类的第一个字母小写，别名不区分大小写
+
+		<package name="exam.mybatis.model"/>
+
+
+### <typeHandlers
+1. 作用是将javaType转化为jdbcType或者把jdbcType转化为javaType
+2. 系统注册的在TypeHandlerRegistry.class
+3. 自定义的方式
+
+		//定义java类型
+		@MappedTypes({ String.class })
+		//定义jdbc类型
+		@MappedJdbcTypes(JdbcType.VARCHAR)
+		public class MyStringTypeHandler implements TypeHandler<String> {}
+4. 自定义TypeHandler
+	
+		<typeHandler jdbcType="VARCHAR" javaType="string"andler="exam.mybatis.typehandler.MyStringTypeHandler" />
+5. 包扫描
+
+		<package name="exam.mybatis.typehandler"/>
+
 ## SqlSession源码
 
 sqlSession.selectList("com.xxx.xxx.xxx.selectById",params);
