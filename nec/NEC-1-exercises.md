@@ -106,3 +106,44 @@
 	4. Have you had any cabbage or lettuce?
 	I haven't any cabbage.
 	I have just some lettuce.
+
+## 92
+	1. It snowed yesterday.
+	yes,and it will snow tomorrow,too.
+
+	2. He got up late yesterday.
+	yes,and he will get up late tomorraow,too.
+
+	3. He arrived late yesterday.
+	yes,and he will arrive late tomorrow,too.
+
+	4. He finished work late yesterday.
+	yes,and he will finish work late tomorrow,too.
+
+	5. She drove to London yesterday.
+	yes,and she will drive to Londen tomorrow,too.
+
+	6. She telephoned him yesterday.
+	yes,and she will telephon him tomorrow,too.
+
+	7. He had a shave yesterday.
+	yes,and he will have a shave tomorow,too.
+
+	8. She swept the floor yesterday.
+	yes,and she will sweep the floor tomorrow,too.
+
+## 93
+	1. Will helen return to Geneva next year?
+	No,She won't return to Geneva next year.She'll return to Mumbai.
+
+	2. Will you fly to London tomorrow?
+	No,I won't fly to London tomorrow.I'll fly to Geneva.
+
+	3. Will you and Tom go to Madrid next year?
+	No,We won't go to Madrid next year.We'll go to London.
+
+	4. Will Tom arrive from Moscow next month?
+	No,He won't arrive from Moscow next month.He'll arrive from Madrid.
+
+	5. Will Carol and Helen stay in New York next month?
+	No,They won't stay in New York next month.They'll stay in Moscow.
