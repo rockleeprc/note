@@ -51,7 +51,7 @@
 ### <properties
 
 1. 配置子元素
-	
+
 		<properties>
 			<property name="driver" value="com.mysql.jdbc.Driver" />
 			<property name="url"
@@ -63,7 +63,7 @@
 2. 引入properties文件
 
 		<properties resource="properties/jdbc.properties"></properties>
- 
+
 
 * MyBatis读取顺序（同名的name会被覆盖）：
 	* properties内指定的<property>属性
@@ -74,7 +74,7 @@
 MyBatis详细配置
 
 ### <typeAliases
-1. 系统默认定义的别名在TypeAliasRegistry.class中，数组只要在别名后加[]
+1. 系统默认定义的别名在org.apache.ibatis.type.TypeAliasRegistry中，数组只要在别名后加[]
 2. 自定义别名
 
 		<typeAlias alias="User" type="exam.mybatis.model.User" />
@@ -94,7 +94,7 @@ MyBatis详细配置
 		@MappedJdbcTypes(JdbcType.VARCHAR)
 		public class MyStringTypeHandler implements TypeHandler<String> {}
 4. 自定义TypeHandler
-	
+
 		<typeHandler jdbcType="VARCHAR" javaType="string"andler="exam.mybatis.typehandler.MyStringTypeHandler" />
 5. 包扫描
 
