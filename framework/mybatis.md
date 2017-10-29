@@ -17,34 +17,6 @@
 
 一个interface没有实现类，MyBatis根据这个接口生成代理对象，代理对象根据接口全路径+方法名去匹配xml文件中的sql，生命周期在一个SqlSession事物内
 
-## 参数传递
-* Map:影响可读性
-
-* @Param:参数<5时最佳选择
-
-* JavaBean:多参数时最佳选择
-
-## MyBatis核心组件
-
-* SqlSession：作为MyBatis工作的主要顶层API，表示和数据库交互的会话，完成必要数据库增删改查功能；
-
-* Executor：MyBatis执行器，是MyBatis 调度的核心，负责SQL语句的生成和查询缓存的维护；
-
-* StatementHandler：封装了JDBC Statement操作，负责对JDBC statement 的操作，如设置参数、将Statement结果集转换成List集合。
-
-* ParameterHandler：负责对用户传递的参数转换成JDBC Statement 所需要的参数；
-
-* ResultSetHandler：负责将JDBC返回的ResultSet结果集对象转换成List类型的集合；
-
-* TypeHandler：负责java数据类型和jdbc数据类型之间的映射和转换；
-
-* SqlSource：负责根据用户传递的parameterObject，动态地生成SQL语句，将信息封装到BoundSql对象中，并返回；
-
-* BoundSql：表示动态生成的SQL语句以及相应的参数信息；
-
-* Configuration：MyBatis所有的配置信息都维持在Configuration对象之中；
-
-* MappedStatement：MappedStatement维护了一条<select|update|delete|insert>节点的封装；
 
 ## 配置
 
@@ -83,6 +55,19 @@ MyBatis详细配置
 		<package name="exam.mybatis.model"/>
 
 
+### <plugins
+1. 支持Executor,ParameterHandler,ResultSetHandler,StatementHandler
+2. 实现Interceptor
+3. 配置
+
+		<plugins>
+			<plugin interceptor="exam.mybatis.plugin.QueryLimitPlugin">
+				<property name="dbType" value="mysql" />
+				<property name="limit" value="2" />
+			</plugin>
+		</plugins>
+
+
 ### <typeHandlers
 1. 作用是将javaType转化为jdbcType或者把jdbcType转化为javaType
 2. 系统注册的在TypeHandlerRegistry.class
@@ -99,6 +84,64 @@ MyBatis详细配置
 5. 包扫描
 
 		<package name="exam.mybatis.typehandler"/>
+		
+### <objectFactory
+MyBatis在构建一个结果返回时,会使用ObjectFactory构建POJO,默认由org.apache.ibatis.reflection.factory.DefaultObjectFactory创建POJO
+
+	<objectFactory type="exam.mybatis.objectfactory.MyObjectFactory">
+		<property name="name" value="MyObjectFactory" />
+	</objectFactory>
+
+### <environments
+用于配置系统数据源,数据源可以配置多个
+
+### <databaseIdProvider 
+在多数据库情况下,用于配置数数据库标示
+
+### <mappers
+
+	<mappers>
+		<!-- 引入文件 -->
+		<mapper resource="exam/mybatis/mapper/UserMapper.xml" />
+		<!-- 类注册 -->
+		<mapper class="exam.mybatis.mapper.UserMapper" />
+		<!-- 文件系统 -->
+		<mapper url="file:///" />
+		<!-- 包引入 -->
+		<package name="exam/mybatis/mapper" />
+	</mappers>
+
+
+
+## 参数传递
+* Map:影响可读性
+
+* @Param:参数<5时最佳选择
+
+* JavaBean:多参数时最佳选择
+
+## MyBatis核心组件
+
+* SqlSession：作为MyBatis工作的主要顶层API，表示和数据库交互的会话，完成必要数据库增删改查功能；
+
+* Executor：MyBatis执行器，是MyBatis 调度的核心，负责SQL语句的生成和查询缓存的维护；
+
+* StatementHandler：封装了JDBC Statement操作，负责对JDBC statement 的操作，如设置参数、将Statement结果集转换成List集合。
+
+* ParameterHandler：负责对用户传递的参数转换成JDBC Statement 所需要的参数；
+
+* ResultSetHandler：负责将JDBC返回的ResultSet结果集对象转换成List类型的集合；
+
+* TypeHandler：负责java数据类型和jdbc数据类型之间的映射和转换；
+
+* SqlSource：负责根据用户传递的parameterObject，动态地生成SQL语句，将信息封装到BoundSql对象中，并返回；
+
+* BoundSql：表示动态生成的SQL语句以及相应的参数信息；
+
+* Configuration：MyBatis所有的配置信息都维持在Configuration对象之中；
+
+* MappedStatement：MappedStatement维护了一条<select|update|delete|insert>节点的封装；
+
 
 ## SqlSession源码
 
