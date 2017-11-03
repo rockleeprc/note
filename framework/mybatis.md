@@ -1,4 +1,28 @@
 
+MapperProxy.invoke
+	MapperMethod.execute
+		DefaultSqlSession.selectOne.selectList
+			CachingExecutor.query
+				SimpleExecutor(extends BaseExecutor).query
+														.queryFromDatabase
+														.doQuery								
+					RoutingStatementHandler.query
+							PreparedStatementHandler.query
+								DefaultResultSetHandler.handleResultSets
+
+
+
+
+MapperMethod.execute(SqlSession, Object[]) line: 84
+MapperProxy<T>.invoke(Object, Method, Object[]) line: 59
+$Proxy2.selectByID(int) line: not available
+MapperProxyFactory<T>.newInstance(MapperProxy<T>) line: 47
+MapperProxyFactory<T>.newInstance(SqlSession) line: 52
+MapperRegistry.getMapper(Class<T>, SqlSession) line: 50
+Configuration.getMapper(Class<T>, SqlSession) line: 732
+DefaultSqlSession.getMapper(Class<T>) line: 292
+UserCRUCTest.selectById() line: 39	
+
 ## 核心组件生命周期
 
 ### SqlSessionFactoryBuilder
@@ -84,7 +108,7 @@ MyBatis详细配置
 5. 包扫描
 
 		<package name="exam.mybatis.typehandler"/>
-		
+
 ### <objectFactory
 MyBatis在构建一个结果返回时,会使用ObjectFactory构建POJO,默认由org.apache.ibatis.reflection.factory.DefaultObjectFactory创建POJO
 
@@ -95,7 +119,7 @@ MyBatis在构建一个结果返回时,会使用ObjectFactory构建POJO,默认由
 ### <environments
 用于配置系统数据源,数据源可以配置多个
 
-### <databaseIdProvider 
+### <databaseIdProvider
 在多数据库情况下,用于配置数数据库标示
 
 ### <mappers
