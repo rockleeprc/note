@@ -170,7 +170,7 @@ git：分布式版本控制系统，版本库存放在本地
 	HEAD 现在位于 b90457c wrote callback
 
 ## 撤销修改
-XCXX
+
 	# readme.txt自修改后还没有被放到暂存区，现在，撤销修改就回到和版本库一模一样的状态
 	# readme.txt已经添加到暂存区后，又作了修改，现在，撤销修改就回到添加到暂存区后的状态
 	$ git checkout -- readme.txt
