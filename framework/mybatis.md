@@ -1,4 +1,28 @@
 
+MapperProxy.invoke
+	MapperMethod.execute
+		DefaultSqlSession.selectOne.selectList
+			CachingExecutor.query
+				SimpleExecutor(extends BaseExecutor).query
+														.queryFromDatabase
+														.doQuery								
+					RoutingStatementHandler.query
+							PreparedStatementHandler.query
+								DefaultResultSetHandler.handleResultSets
+
+
+
+
+MapperMethod.execute(SqlSession, Object[]) line: 84
+MapperProxy<T>.invoke(Object, Method, Object[]) line: 59
+$Proxy2.selectByID(int) line: not available
+MapperProxyFactory<T>.newInstance(MapperProxy<T>) line: 47
+MapperProxyFactory<T>.newInstance(SqlSession) line: 52
+MapperRegistry.getMapper(Class<T>, SqlSession) line: 50
+Configuration.getMapper(Class<T>, SqlSession) line: 732
+DefaultSqlSession.getMapper(Class<T>) line: 292
+UserCRUCTest.selectById() line: 39
+
 ## 核心组件生命周期
 
 ### SqlSessionFactoryBuilder
@@ -26,8 +50,7 @@
 
 		<properties>
 			<property name="driver" value="com.mysql.jdbc.Driver" />
-			<property name="url"
-				value="jdbc:mysql://127.0.0.1:3306/test?characterEncoding=UTF-8" />
+			<property name="url" value="jdbc:mysql://127.0.0.1:3306/test?characterEncoding=UTF-8" />
 			<property name="username" value="root" />
 			<property name="password" value="root" />
 		</properties>
@@ -50,7 +73,7 @@ MyBatis详细配置
 2. 自定义别名
 
 		<typeAlias alias="User" type="exam.mybatis.model.User" />
-3. 包扫描，使用@Alias("xxx")，如果不使用注解，会把类的第一个字母小写，别名不区分大小写
+3. 包扫描时使用@Alias("xxx")，如果不使用注解，会把类的第一个字母小写，别名不区分大小写
 
 		<package name="exam.mybatis.model"/>
 
@@ -84,7 +107,7 @@ MyBatis详细配置
 5. 包扫描
 
 		<package name="exam.mybatis.typehandler"/>
-		
+
 ### <objectFactory
 MyBatis在构建一个结果返回时,会使用ObjectFactory构建POJO,默认由org.apache.ibatis.reflection.factory.DefaultObjectFactory创建POJO
 
@@ -95,8 +118,8 @@ MyBatis在构建一个结果返回时,会使用ObjectFactory构建POJO,默认由
 ### <environments
 用于配置系统数据源,数据源可以配置多个
 
-### <databaseIdProvider 
-在多数据库情况下,用于配置数数据库标示
+### <databaseIdProvider
+在多数据库情况下,用于配置数数据库标识
 
 ### <mappers
 
@@ -110,8 +133,6 @@ MyBatis在构建一个结果返回时,会使用ObjectFactory构建POJO,默认由
 		<!-- 包引入 -->
 		<package name="exam/mybatis/mapper" />
 	</mappers>
-
-
 
 ## 参数传递
 * Map:影响可读性

@@ -91,18 +91,28 @@
 
 ## 多模块
 
-	# 父项目packaging:pom，在其中引入子项目 ，以后只对父项目维护
+父项目packaging:pom，在其中引入子项目 ，以后只对父项目维护
+  	
+	<packaging>pom</packaging>
+
 	<modules>
-		<module>../usermanager</module>
 		<module>../ordermanager</module>
+		<module>../usermanager</module>
 	</modules>
 
 ## 继承
 
-	在子项目中配置父项目，子项目中的<groupId>、<artifacctId>可以删除
+在子项目中配置父项目，子项目中的<groupId>、<artifacctId>可以删除
+	
+	<modelVersion>4.0.0</modelVersion>
+	<artifactId>usermanager</artifactId>
+	<packaging>war</packaging>
+	<name>usermanager Maven Webapp</name>
+	<url>http://maven.apache.org</url>
+
 	<parent>
-		<groupId>cn.itcast.maven.modules</groupId>
-		<artifactId>myparent</artifactId>
+		<groupId>tadu</groupId>
+		<artifactId>parent</artifactId>
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
 
