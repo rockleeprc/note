@@ -16,4 +16,5 @@
 
 ### logback
 * log4j创始人设计的又一个开源日志组件
-* logback当前分成三个模块：logback-core,logback- classic和logback-access，logback-classic是log4j的一个 改良版本
+* logback当前分成三个模块：logback-core,logback- classic和logback-access，logback-classic是log4j的一个 改良版本，logback-classic完整实现SLF4J API，可以很方便地更换成其它日志系统如log4
+* 
