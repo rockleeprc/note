@@ -281,7 +281,7 @@ git：分布式版本控制系统，版本库存放在本地
 	$ git br -al
 	develop
 	feature/cms_mail
-* feature/console_log
+	* feature/console_log
 	feature/edit_name
 	feature/feature/bookbar_select_optimize
 	featurn/slowquery

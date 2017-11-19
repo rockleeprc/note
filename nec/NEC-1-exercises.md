@@ -107,7 +107,7 @@
 	I haven't any cabbage.
 	I have just some lettuce.
 
-## 92
+## L92
 	1. It snowed yesterday.
 	yes,and it will snow tomorrow,too.
 
@@ -132,7 +132,7 @@
 	8. She swept the floor yesterday.
 	yes,and she will sweep the floor tomorrow,too.
 
-## 93
+## L93
 	1. Will helen return to Geneva next year?
 	No,She won't return to Geneva next year.She'll return to Mumbai.
 
@@ -147,3 +147,17 @@
 
 	5. Will Carol and Helen stay in New York next month?
 	No,They won't stay in New York next month.They'll stay in Moscow.
+
+## L96
+
+	1. I went to Sydney a month age.What about you?
+	I will go to Sydney in a month's time.
+
+	2. A train left for Geneva an hour ago.What about the next train one?
+	The next train will leave for Geneva in an hour's time.
+
+	3. Carol flew to BJ two days age.What about you?
+	I'll fly to BJ in two day's time.
+
+	4. Tom and Mary went to London an hour age.What about you and Jean?
+	We'll go to London an hour's time.
