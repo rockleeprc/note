@@ -1,4 +1,7 @@
 
+## 集群中的角色
+
+
 ## 安装
 
 ### 修改配文件
@@ -21,7 +24,14 @@
 	server.2=hadoop2:2888:3888
 	server.3=hadoop3:2888:3888
 
-在dataDir目录中创建名称为myid的文件，在内配置主机id
+* server.id = host:port1:port2
+	* id： 1~255
+	* host：主机ip地址
+	* port1：zookeeper的端口
+	* port2：zookeeper的选举端口
+
+
+在dataDir目录中创建名称为myid的文件，在内配置主机id，与zoo.cfg中的server.id一致
 
 	[root@hdp02 zkData]# cat myid
 	2
@@ -67,6 +77,13 @@ zookeeper的日志文件
 	 ssh $host "source /etc/profile;/usr/local/zookeeper/bin/zkServer.sh start"
 	done
 
+### 配置observer
+
+在zoo.cfg中配置
+	peerType=observer
+	server.4=hadoop4:2888:3888:observer
+
+
 ### 配置文件参数详解
 
 	1.tickTime：CS通信心跳时间
@@ -84,6 +101,8 @@ zookeeper的日志文件
 	4.dataDir：数据文件目录
 	Zookeeper保存数据的目录，默认情况下，Zookeeper将写数据的日志文件也保存在这个目录里。
 	dataDir=/home/michael/opt/zookeeper/data 
+	zookeeper事务日志的存储路径，默认指定在dataDir目录下
+	dataLogDir==/home/michael/opt/zookeeper/data/ 
 
 	5.clientPort：客户端连接端口
 	客户端连接 Zookeeper 服务器的端口，Zookeeper 会监听这个端口，接受客户端的访问请求。
@@ -95,11 +114,48 @@ zookeeper的日志文件
 
 ## ZK shell
 
-	bin/zkCli.sh 
+	# 启动zk shell
+	bin/zkCli.sh
+
+### help 查看cli所支持的所有命令
+
+### create [-s] [-e] path data acl
+
+	-s 表示节点是否有序
+	-e 表示是否为临时节点
+	默认情况下，是持久化节点
+	# 创建test节点，值为hello
 	create /test hello
-	get /test 
+
+### get path [watch]
+	# 获取test节点保存的数据
+	get /test
+
+### get命令详解
+	[zk: localhost:2181(CONNECTED) 14] get /eclipse
+	helloZK					# 当前节点数据
+	cZxid = 0x600000008		# 子节点被创建时的事务ID
+	ctime = Sat Oct 29 19:59:40 CST 2016	# 创建时间
+	mZxid = 0x600000008		# 当前节点最后一次被更新时的事务ID
+	mtime = Sat Oct 29 19:59:40 CST 2016	# 修改时间
+	pZxid = 0x600000013		# 当前节点下的子节点最后一次被修改的事务ID
+	cversion = 6			# 子节点版本号
+	dataVersion = 0			# 当前节点数据版本好
+	aclVersion = 0			# acl的版本好
+	ephemeralOwner = 0x0	# 持久化节点=0x0，临时节点=当前会话的sessionID
+	dataLength = 7			# 当前节点数据长度
+	numChildren = 2			# 当前节点的子节点数
+
+### set path data [version]
+	version 类似数据库中的乐观锁，通过版本号控制
+	# 修改test节点的值
 	set /test word
+### delete path [version]
+	# 删除test节点
 	delete /test
+
+###
+###
 
 
 ## Zookeeper Java API
