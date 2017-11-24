@@ -1,6 +1,31 @@
 
-## 集群中的角色
+## zookeeper集群简介
 
+### 集群中的角色
+* leader：
+	* 负责投票的发起和决议
+	* 更新系统状态
+* follower：
+	* 用于接收client请求
+	* 在选举过程中参与投票
+* observer：
+	* 接收client的请求
+	* 将写请求转发给leader
+	* 不参与投票，只同步leader的状态
+	* 为了扩展系统，提高读取速度
+*　client：
+	*　请求发起方
+
+### 集群中节点状态
+looking：当前节点不知道leader是谁，正在搜寻
+leading：当前节点被选举为leader
+following：leader已经被选出，当前节点与leader同步
+
+### znode类型
+* PERSISTENT：客户端与zk断开连接后，节点依旧存在
+* PERSISTENT_SEQUENTIAL：客户端与zk断开连接后，节点依旧存在，zk给该节点进行顺序编号
+* EPHEMERAL：客户端与zk断开连接后，节点被删除
+* EPHEMERAL_SEQUENTIAL：客户端与zk断开连接后，节点被删除，zk给该节点进行顺序编号
 
 ## 安装
 
@@ -23,6 +48,10 @@
 	server.1=hadoop1:2888:3888
 	server.2=hadoop2:2888:3888
 	server.3=hadoop3:2888:3888
+
+	# 配置observer
+	peerType=observer
+	server.4=hadoop4:2888:3888:observer
 
 * server.id = host:port1:port2
 	* id： 1~255
@@ -77,13 +106,6 @@ zookeeper的日志文件
 	 ssh $host "source /etc/profile;/usr/local/zookeeper/bin/zkServer.sh start"
 	done
 
-### 配置observer
-
-在zoo.cfg中配置
-	peerType=observer
-	server.4=hadoop4:2888:3888:observer
-
-
 ### 配置文件参数详解
 
 	1.tickTime：CS通信心跳时间
@@ -116,6 +138,7 @@ zookeeper的日志文件
 
 	# 启动zk shell
 	bin/zkCli.sh
+	bin/zkCli.sh hadoop01:2181,hadoop02:2181,hadoop:03:2181  
 
 ### help 查看cli所支持的所有命令
 
@@ -146,6 +169,9 @@ zookeeper的日志文件
 	dataLength = 7			# 当前节点数据长度
 	numChildren = 2			# 当前节点的子节点数
 
+	# 对hello节点设置watch，该异步通知只触发一次
+	[zk: localhost:2181(CONNECTED) 14] get /mysecondnode 1 hello 
+
 ### set path data [version]
 	version 类似数据库中的乐观锁，通过版本号控制
 	# 修改test节点的值
@@ -153,10 +179,6 @@ zookeeper的日志文件
 ### delete path [version]
 	# 删除test节点
 	delete /test
-
-###
-###
-
 
 ## Zookeeper Java API
 
