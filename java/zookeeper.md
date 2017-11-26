@@ -138,7 +138,7 @@ zookeeper的日志文件
 
 	# 启动zk shell
 	bin/zkCli.sh
-	bin/zkCli.sh hadoop01:2181,hadoop02:2181,hadoop:03:2181  
+	bin/zkCli.sh -server hdp01:2181,hdp02:2181,hdp03:2181  
 
 ### help 查看cli所支持的所有命令
 
