@@ -182,7 +182,20 @@ zookeeper的日志文件
 
 ## Zookeeper Java API
 
+### 事件类型
+* EventType.NodeCreated：节点创建
+* EventType.NodeDataChanged：节点数据变更
+* EventType.NodeChildrenChanged：子节点变更
+* EventType.NodeDeleted：节点删除
+
+### 状态类型
+* KeeperState.Disconnected：未连接
+* KeeperState.SyncConnected：已连接
+* KeeperState.AuthFailed：认证失败
+* KeeperState.Expired：会话失效
+
 ### Client端连接zookeeper
+
 	private static final String HOSTS = "hdp01:2181,hdp02:2181,hdp03:2181";
 	private static final int TIMEOUT = 10000;
 	private static final CountDownLatch LATCH = new CountDownLatch(1);
