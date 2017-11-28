@@ -194,15 +194,76 @@ zookeeper的日志文件
 * KeeperState.AuthFailed：认证失败
 * KeeperState.Expired：会话失效
 
-### Client端连接zookeeper
-
+### zookeeper原生api
 	private static final String HOSTS = "hdp01:2181,hdp02:2181,hdp03:2181";
-	private static final int TIMEOUT = 10000;
+	private static final int TIMEOUT = 10 * 1000;
 	private static final CountDownLatch LATCH = new CountDownLatch(1);
 	private static ZooKeeper zkClient = null;
 
+	@Test
+	public void testExist() throws KeeperException, InterruptedException {
+		Stat stat = zkClient.exists("/none", true);
+		// 节点不存在Stat对象为null
+		System.out.println(stat);
+	}
+
+	@Test
+	public void testDelete() throws InterruptedException, KeeperException {
+		// -1 删除任何节点的版本数据
+		zkClient.delete("/eclipse/ide2", -1);
+	}
+
+	@Test
+	public void testSetData() throws KeeperException, InterruptedException, IOException {
+		// -1 任何节点的版本数据
+		zkClient.setData("/eclipse/ide1", "i'm a ide".getBytes(), -1);
+		// System.in.read();
+	}
+
+	@Test
+	public void testGetData() throws KeeperException, InterruptedException, UnsupportedEncodingException {
+		// watch==true为使用new ZooKeeper()构造方法中的Watcher
+		byte[] bytes = zkClient.getData("/eclipse", true, null);
+		System.out.println(new String(bytes, "UTF-8"));
+	}
+
+	@Test
+	public void testGetChildren() throws KeeperException, InterruptedException, IOException {
+		List<String> children = zkClient.getChildren("/eclipse", true);
+		for (String string : children) {
+			System.out.println(string);
+		}
+	}
+	
+	@Test
+	public void testCreateSequential() throws KeeperException, InterruptedException, IOException {
+		zkClient.getChildren("/eclipse", true);// 注册Watcher
+		//只有创建SEQUENTIAL节点时才能用“xxx/”，自动创建带序号的节点
+		zkClient.create("/eclipse/", "ide1".getBytes(), Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT_SEQUENTIAL);
+		zkClient.create("/eclipse/", "ide2".getBytes(), Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT_SEQUENTIAL);
+		System.in.read();
+	}
+
+	@Test
+	public void testCreateChildren() throws KeeperException, InterruptedException, IOException {
+		zkClient.getChildren("/eclipse", true);// 注册Watcher
+		zkClient.create("/eclipse/ide1", "ide1".getBytes(), Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
+		zkClient.create("/eclipse/ide2", "ide2".getBytes(), Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
+		System.in.read();
+	}
+
+	@Test
+	public void testCreate() throws KeeperException, InterruptedException {
+		// 参数1：要创建的节点的路径
+		// 参数2：节点的数据
+		// 参数3：节点的权限
+		// 参数4：节点的类型
+		String result = zkClient.create("/eclipse", "helloZK".getBytes(), Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
+		System.out.println(result);
+	}
+
 	@Before
-	public static void init() throws IOException, InterruptedException {
+	public void init() throws IOException, InterruptedException {
 		zkClient = new ZooKeeper(HOSTS, TIMEOUT, new Watcher() {
 			// 事件监听回调方法
 			public void process(WatchedEvent event) {
@@ -211,9 +272,9 @@ zookeeper的日志文件
 				System.out.println("getState:" + event.getState());
 				if (LATCH.getCount() > 0 && event.getState() == KeeperState.SyncConnected) {
 					System.out.println("KeeperState is SyncConnected");
+					System.out.println("--------------");
 					LATCH.countDown();
 				}
-				// zkClient.getData("", true, null);//持续监听
 			}
 		});
 		// latch.await()方法执行时，方法所在的线程会等待，当latch的count减为0时，才会唤醒等待的线程
@@ -226,56 +287,133 @@ zookeeper的日志文件
 		System.out.println("zkClient is closed");
 	}
 
-	@Test
-	public void testCreate() throws KeeperException, InterruptedException {
-		// 参数1：要创建的节点的路径
-		// 参数2：节点的数据
-		// 参数3：节点的权限
-		// 参数4：节点的类型
-		String create = zkClient.create("/eclipse", "helloZK".getBytes(), Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
-		System.out.println(create);
-	}
+### zookeeper curator api
+
+	private static CuratorFramework curator;
+	private static final String HOSTS = "hdp01:2181,hdp02:2181,hdp03:2181";
+	private static final int TIMEOUT = 10 * 1000;
+	private static final int MAX_RETRIES = 3;
 
 	@Test
-	public void testCreateChildren() throws KeeperException, InterruptedException {
-		// 注册Watcher
-		zkClient.getChildren("/eclipse", true);
-		zkClient.create("/eclipse/ide1", "ide1".getBytes(), Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
-		zkClient.create("/eclipse/ide2", "ide2".getBytes(), Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
-	}
-
-	@Test
-	public void testGetChildren() throws KeeperException, InterruptedException {
-		List<String> children = zkClient.getChildren("/eclipse", true);
-		for (String string : children) {
-			System.out.println(string);
+	public void testTransaction() throws Exception {
+		Collection<CuratorTransactionResult> collection = curator.inTransaction().create()
+				.forPath("/transaction", "commit".getBytes()).and().setData().forPath("/eclipse", "commit".getBytes())
+				.and().commit();
+		for (CuratorTransactionResult txResult : collection) {
+			System.out.println(txResult.getForPath());
+			System.out.println(txResult.getResultStat());
+			System.out.println(txResult.getType());
+			System.out.println("------");
 		}
 	}
 
+	/**
+	 * 删除节点数据
+	 * 
+	 * @throws Exception
+	 */
 	@Test
-	public void testGetData() throws KeeperException, InterruptedException, UnsupportedEncodingException {
-		// watch==true为使用new ZooKeeper()构造方法中的Watcher
-		byte[] bytes = zkClient.getData("/eclipse", true, null);
-		System.out.println(new String(bytes, "UTF-8"));
+	public void testDelete() throws Exception {
+		curator.delete().deletingChildrenIfNeeded().forPath("/consumers");
 	}
 
+	/**
+	 * 更新节点数据
+	 * 
+	 * @throws Exception
+	 */
 	@Test
-	public void testDelete() throws InterruptedException, KeeperException {
-		// -1 删除任何节点的版本数据
-		zkClient.delete("/eclipse/ide", -1);
-	}
-
-	@Test
-	public void testSetData() throws KeeperException, InterruptedException {
-		// -1 任何节点的版本数据
-		zkClient.setData("/eclipse/ide1", "i'm a ide".getBytes(), -1);
-	}
-
-	@Test
-	public void testExist() throws KeeperException, InterruptedException {
-		Stat stat = zkClient.exists("/none", true);
-		// 节点不存在Stat对象为null
+	public void testSetData() throws Exception {
+		Stat stat = curator.setData().forPath("/eclipse", "helloZookeeper".getBytes());
 		System.out.println(stat);
+	}
+
+	/**
+	 * 获取子节点
+	 * 
+	 * @throws Exception
+	 */
+	@Test
+	public void testGetChildren() throws Exception {
+		List<String> list = curator.getChildren().forPath("/");
+		for (String str : list) {
+			System.out.println(str);
+		}
+	}
+
+	/**
+	 * 获取节点详细信息
+	 * 
+	 * @throws Exception
+	 */
+	@Test
+	public void testGetStat() throws Exception {
+		Stat stat = new Stat();
+		byte[] bytes = curator.getData().storingStatIn(stat).forPath("/eclipse");
+		System.out.println(new String(bytes));
+		System.out.println(stat);
+	}
+
+	/**
+	 * 获取节点内容
+	 * 
+	 * @throws Exception
+	 */
+	@Test
+	public void testGetData() throws Exception {
+		byte[] bytes = curator.getData().forPath("/eclipse");
+		System.out.println(bytes.length);
+		System.out.println(new String(bytes));
+		System.in.read();
+	}
+
+	/**
+	 * 异步操作
+	 * 
+	 * @throws Exception
+	 */
+	@Test
+	public void testCreateAsync() throws Exception {
+		int cores = Runtime.getRuntime().availableProcessors() + 1;
+		ExecutorService executor = Executors.newFixedThreadPool(cores);
+		curator.create().creatingParentsIfNeeded().inBackground(new BackgroundCallback() {
+
+			@Override
+			public void processResult(CuratorFramework client, CuratorEvent event) throws Exception {
+				System.out.println(event.getType());
+				System.out.println(event.getStat());
+				System.out.println(event.getResultCode());
+			}
+		}, executor).forPath("/async", "threadpool".getBytes());
+
+		System.in.read();
+	}
+
+	/**
+	 * 创建子父节点
+	 * 
+	 * @throws Exception
+	 */
+	@Test
+	public void testCreate() throws Exception {
+		String result = curator.create().creatingParentContainersIfNeeded().withMode(CreateMode.PERSISTENT)
+				.forPath("/curator/c1/c2", "test".getBytes());
+		System.out.println(result);
+		System.in.read();
+	}
+
+	@Before
+	public void init() {
+		/**
+		 * 重试策略：<br/>
+		 * ExponentialBackoffRetry() 衰减重试 <br/>
+		 * RetryNTimes 指定最大重试次数<br/>
+		 * RetryOneTime 仅重试一次 <br/>
+		 * RetryUnitilElapsed 一直重试知道规定的时间<br/>
+		 */
+		curator = CuratorFrameworkFactory.newClient(HOSTS, TIMEOUT, TIMEOUT,
+				new ExponentialBackoffRetry(TIMEOUT, MAX_RETRIES));
+		curator.start();
 	}
 
 ### 分布式共享锁
