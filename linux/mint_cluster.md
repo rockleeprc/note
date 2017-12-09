@@ -19,7 +19,9 @@
   /etc/sysconfig/network-scripts/ifcfg-eth0
   HWADDR=08:00:27:77:89:20
 
-
+  # 重启网卡服务
+  service network restart
+  /etc/init.d/network restart
 ## ssh
 
 ssh 172.16.1.11 -l root
