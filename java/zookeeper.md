@@ -54,7 +54,7 @@ following：leader已经被选出，当前节点与leader同步
 	server.4=hadoop4:2888:3888:observer
 
 * server.id = host:port1:port2
-	* id： 1~255
+	* id： 1~255(myid文件中的值，即群众服务器唯一标识)
 	* host：主机ip地址
 	* port1：zookeeper的端口
 	* port2：zookeeper的选举端口
@@ -179,6 +179,17 @@ zookeeper的日志文件
 ### delete path [version]
 	# 删除test节点
 	delete /test
+
+## admin控制台的安装
+* 下载dubbo的源码
+* dubbo-admin项目
+* 修改webapp/WEB-INF/dubbo.properties
+	* dubbo.registry.address=zookeeper的集群地址
+
+## simple监控中心
+* dubbo-monitor-simple-2.5.3-assembly.tar.gz
+* 修改/conf/dubbo.properties
+	* dubbo.registry.address=zookeeper://192.168.11.129:2181?backup=192.168.11.137:2181,192.168.11.138:2181,192.168.11.139:2181
 
 ## Zookeeper Java API
 
