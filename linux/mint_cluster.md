@@ -1,8 +1,15 @@
 
-## 环境
+## cluster
 
-  centos1 172.16.1.11
-  centos2 172.16.1.12
+### mint cluster
+	centos1 172.16.1.11
+	centos2 172.16.1.12
+
+### hadoop cluster
+	hdp01	192.168.33.11	zookeeper	redis
+	hdp02	192.168.33.12	zookeeper
+	hdp03	192.168.33.13	zookeeper
+ 
 
 ## 网络配置
 
