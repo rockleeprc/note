@@ -285,6 +285,8 @@ synchronized、ReentrantLock一次都只能允许一个线程访问一个资源�
 	}
 
 ### ScheduledExecutorService
+调度程序不保证任务会无限期的持续调度，如果任务遇到异常，那么后续的所有任务讲都会停止执行
+
 
 	public interface ScheduledExecutorService extends ExecutorService {
 		/*在给定的时间对任务调度一次*/
@@ -297,7 +299,7 @@ synchronized、ReentrantLock一次都只能允许一个线程访问一个资源�
 		public ScheduledFuture<?> scheduleWithFixedDelay(Runnable command,long initialDelay,long delay,TimeUnit unit);
 	}
 
-调度程序不保证任务会无限期的持续调度，如果任务遇到异常，那么后续的所有任务讲都会停止执行
+### ThreadPoolExecutor
 
 	public ThreadPoolExecutor(int corePoolSize,/*线程池中的线程数量*/
 				int maximumPoolSize,/*线程池中最大线程数*/
@@ -307,6 +309,21 @@ synchronized、ReentrantLock一次都只能允许一个线程访问一个资源�
 				ThreadFactory threadFactory,/*线程工厂，用于创建线程*/
 				RejectedExecutionHandler handler/*当任务太多来不及处理时的拒绝策略*/
 				)
+
+* 任务提交
+	* 小于corePoolSize，分配线程执行
+	* 大于corePoolSize，提交到等待队列
+		* 成功，等待执行
+		* 失败，提交线程池
+			* 大于maximumPoolSize，拒绝策略
+			* 小于maximumPoolSize，分配线程执行
+
+### 拒绝策略
+
+* AbortPolicy，直接抛出异常，组织任务正常工作
+* CallerRunsPolicy，只要线程池为关闭，直接在调用者线程中运行任务
+* DiscardPolicy，默默丢弃无法处理的任务，不予任何处理
+* DiscardOldestPolicy，丢弃最老的一个请求，再次尝试提交当前任务
 
 ## 并发容器
 
