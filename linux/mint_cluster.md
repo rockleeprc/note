@@ -17,9 +17,9 @@
 * nat网段: 10.0.2.0/24
 
 ## 主机克隆
-	# 删除克隆主机的网卡信息
+	# 删除克隆主机原有的网卡信息（一般为eth0、eth1），保留新生成的网卡信息
 	/etc/udev/rules.d/70-persistent-net.rules
-	# 修改NAME名称为网卡名称
+	# 修改NAME名称为源网卡名称（一般为eth0、eth1）
 	SUBSYSTEM=="net", ACTION=="add", DRIVERS=="?*", ATTR{address}=="08:00:27:77:89:20", ATTR{type}=="1", KERNEL=="eth*", NAME="eth0"
 	
 	# 修改网卡的mac地址为/etc/udev/rules.d/70-persistent-net.rules中所对应的ATTR{address}
@@ -27,6 +27,7 @@
 	HWADDR=08:00:27:77:89:20
 	
 	# 重启网卡服务
+	source 修改的配置文件
 	service network restart
 	/etc/init.d/network restart
 ## ssh
