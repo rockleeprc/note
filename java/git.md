@@ -22,7 +22,7 @@ git：分布式版本控制系统，版本库存放在本地
 	$ git config --global user.name "yan.li"
 	# 设置邮箱
 	$ git config --global user.email "yan.li@tadu.com"
-	# 生成rsa
+	# windowns 生成rsa
 	$ ssh-keygen.exe -C "yan.li@tadu.com" -t rsa
 	Generating public/private rsa key pair.
 	Enter file in which to save the key (/c/Users/Administrator/.ssh/id_rsa):
