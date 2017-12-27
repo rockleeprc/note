@@ -149,6 +149,11 @@ git：分布式版本控制系统，版本库存放在本地
 	1576f693898a8719d8460bd4064e787f9644dda5 wrote 2 files
 	38cfbae1444108849ae1e7f9eebfa9136a645c99 wrote a readme file
 
+	# 查看文件文件历史记录及修改
+	$ git log --pretty=oneline tadu-ios-server2.iml
+	$ git show af8b96e6b9723009701286d4e29f7568ff0b300a tadu-ios-server2.iml
+
+
 ## 版本回退
 
 	# 当前版本是HEAD 上一个版本是HEAD^
