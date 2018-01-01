@@ -61,7 +61,7 @@ redis.conf 默认配置
 	# 保存的路径，默认当前路径
 	dir ./
 
-### aop
+### aof
 
 	# 默认关闭
 	appendonly no
