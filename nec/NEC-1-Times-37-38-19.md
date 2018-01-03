@@ -33,13 +33,18 @@
 		1. 放在名词前面起修饰限定作用
 		2. 放在be动词后起叙述的作用
 
+	副词的作用：
+		1. 修饰形容词：The room is small but very quiet. 　这房间虽小，可是很安静。
+		2. 修饰副词：He played this old man very well. 　　他演这位老人演得很好。
+		3. 修饰动词：She appeared at the party but left quickly. 　　她在聚会上露面，但很快就离开了。
+		4. 修饰整个句子：Fortunately, you have the power to change all that. 幸运的是，你还有能力去改变所有这一切。
 	副词的用法
 		1. 时间副词:yesterday,today,tomorrow,the day after tomorrow
 			时间副词前不能加介词
 		2. 地点副词:here,there,upstairs,downstairs,home,donwtown
 			地点副词前不能加介词
 		3. 程度副词:very,so,quite
-			常用语形容词或副词的前面,加强程度
+			常用于形容词或副词的前面,加强程度
 		4. 频率副词:often,usually,always,sometimes,never
 		5. 方式副词:
 			修饰动词
