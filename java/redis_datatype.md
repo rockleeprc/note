@@ -210,7 +210,7 @@
 	127.0.0.1:6379> zrem zset m1 m2
 	(integer) 2
 
-	127.0.0.1:6379> zadd sort 10 a 30 b 20 c 
+	127.0.0.1:6379> zadd sort 10 a 30 b 20 c
 	(integer) 3
 	# 按照score排名，b，c，a
 	127.0.0.1:6379> zrevrank sort a
@@ -222,3 +222,26 @@
 	1) "b"
 	2) "c"
 	3) "a"
+### zrange/zrevrange/zrevrangebyscore
+	# 正需排列，withscores显示分数
+	127.0.0.1:6379> zrange zset 0 -1 withscores
+	1) "m2"
+	2) "2"
+	3) "m1"
+	4) "10"
+	5) "m3"
+	6) "30"
+	# 倒序排列
+	127.0.0.1:6379> zrevrange zset 0 -1 withscores
+	1) "m3"
+	2) "30"
+	3) "m1"
+	4) "10"
+	5) "m2"
+	6) "2"
+	# 倒叙排列，分数在20-0
+	127.0.0.1:6379> zrevrangebyscore zset 20 0 withscores
+	1) "m1"
+	2) "10"
+	3) "m2"
+	4) "2"
