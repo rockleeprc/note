@@ -4,6 +4,12 @@
 
 
 ## 单词短语
+	hostel 简易的招待所
+	hotel 设施较好的旅店,宾馆
+	motel 汽车旅馆
+	inn 小客栈
+
+
 	help n./v. 帮助
 		# 求救
 		ask for help
@@ -59,5 +65,28 @@
 	I didn't save that boy from the river.
 	I failed to save the boy from the river.
 
-
+	write to sb. 给sb.写信
+	I will write to you soon.
 ## 重点语法
+	直接引语变间接引语
+	She says,"My son is a student."
+	She says her son is a student.
+
+	He says,"I have just arrived in Scotland."
+	He says he has just arrived in Scotland.
+
+	They say,"We are staying at a Youth Hostel"
+	They say they are staying at a Youth Hostel.
+
+	反义疑问句:询问某种情况是否真实或别人是否同意自己
+	结构:
+		前肯,后否?
+		前否,后肯?
+		前后主语一致
+		前后时态一致
+		前后助动词一致
+	例句:
+		She can swim,can't she?
+		She can't swim,can she?
+		You are a student,aren't you?
+		She isn't your sister,is she?
