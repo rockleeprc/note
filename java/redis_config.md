@@ -78,3 +78,14 @@ redis.conf 默认配置
 ### 数据恢复
 
 数据恢复时只要把*.rdb/*.aof文件copy到dir配置的位置，启动redis就可以
+
+
+## redis-benchmark 基准测试
+	# -c：客户端并发数 -n：客户端请求总量
+	[root@hdp01 bin]# ./redis-benchmark -c 100 -n 20000
+	# -q：只显示requests per second信息
+	[root@hdp01 bin]# ./redis-benchmark -c 100 -n 20000 -q
+	# -r 10000：只对后4位做随机数处理
+	[root@hdp01 bin]# ./redis-benchmark -c 100 -n 20000 -r 10000
+	# -t：对特定命令进行基准测试
+	[root@hdp01 bin]# ./redis-benchmark -t get,set -q
