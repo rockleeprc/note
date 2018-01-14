@@ -65,7 +65,7 @@ git：分布式版本控制系统，版本库存放在本地
 	# 工作区文件提交到Stage
 	$ git add readme.txt
 
-	# Stage文件提交到master分支 -m表示提交说明
+	# Stage文件提交到版本库 -m表示提交说明
 	$ git commit -m "wrote a readme file"
 	[master （根提交） 38cfbae] wrote a readme file
 	1 file changed, 1 insertion(+)
@@ -96,7 +96,7 @@ git：分布式版本控制系统，版本库存放在本地
 
 	修改尚未加入提交（使用 "git add" 和/或 "git commit -a"）
 
-	# 查看版本库修改内容 +代表新增的内容
+	# 查看workspace和stage的差异 +代表新增的内容
 	$ git diff
 	diff --git a/readme.txt b/readme.txt
 	index b2a57ff..a47104d 100644
@@ -108,6 +108,9 @@ git：分布式版本控制系统，版本库存放在本地
 	+
 	+update
 	+create
+	
+	# 查看stage和版本库的差异（分支）
+	$ git diff head 
 
 ## 日志查看
 
@@ -178,8 +181,8 @@ git：分布式版本控制系统，版本库存放在本地
 
 ## 撤销修改
 
-	# readme.txt自修改后还没有被放到暂存区，现在，撤销修改就回到和版本库一模一样的状态
-	# readme.txt已经添加到暂存区后，又作了修改，现在，撤销修改就回到添加到暂存区后的状态
+	# readme.txt自修改后还没有add到stage，现在，撤销修改就回到和版本库一模一样的状态
+	# readme.txt已经添加到stage后，又作了修改，现在，撤销修改就回到添加到stage后的状态
 	$ git checkout -- readme.txt
 
 	# 撤销Stage中的修改 把Stage的修改重新放回工作区 然后使用git checkout --彻底还原
@@ -199,11 +202,11 @@ git：分布式版本控制系统，版本库存放在本地
 	+delete
 
 * 撤销工作区修改：
-	git checkout -- file
+	* git checkout -- file
 
 * 撤销Stage修改:
-	git reset HEAD file
-	git checkout -- file
+	* git reset HEAD file
+	* git checkout -- file
 
 ## 删除
 
@@ -238,7 +241,7 @@ git：分布式版本控制系统，版本库存放在本地
 	$ git push -u origin master
 	# 推送最新的修改
 	$ git push origin master
-	# 提交本地到分支到远程分支
+	# 提交本地分支到远程仓库
 	$ git push origin local_branch:remote_branch
 	$ git push origin feature/original_publishing:feature/original_publishing
 	$ git push origin featurn/slowquery
