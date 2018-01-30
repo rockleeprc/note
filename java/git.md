@@ -279,6 +279,9 @@ git：分布式版本控制系统，版本库存放在本地
 	  feature/cms_mail 026eb8d [origin/feature/cms_mail] 邮箱密码过期，修改邮箱密码
 	  master           203eee8 [origin/master] init
 
+	git log --graph --all --decorate
+	git reflog --date=local | grep <branchname>
+
 	# 查看远程分支
 	$ git branch -a
 	* develop
