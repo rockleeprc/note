@@ -47,7 +47,7 @@
 	* 缺点，效率相对rdb方式低很多
 
 ### rdb
-redis.conf 默认配置
+redis.conf 默认配置（不配置save时，默认关闭rdb）
 
 	# Save the DB on disk:
 	# 每900秒内至少有1个key发生变化，就持久化
@@ -60,6 +60,12 @@ redis.conf 默认配置
 	dbfilename dump.rdb
 	# 保存的路径，默认当前路径
 	dir ./
+	# 倒入rdb文件时，检查rdb数据完整性
+	rdbchecksum yes
+	# 导出的rdb文件是否压缩
+	rdbcompression yes
+	# bgsave出错时，主进程是否停止写入
+	stop-writes-on-bgsave-error yes
 
 ### aof
 
@@ -68,12 +74,27 @@ redis.conf 默认配置
 	# 记录日志的文件
 	appendfilename "appendonly.aof"
 
+	# aop文件同步策略：
 	# 只要发生修改立即同步，安全性高
-	# appendfsync always
-	# 每秒同步一次
+	appendfsync always
+	# 一秒同步一次
 	appendfsync everysec
-	# 不同步
-	# appendfsync no
+	# 写入工作交给操作系统，由操作系统判断缓冲区大小，统一写入到aof文件 同步频率低，速度快
+	appendfsync no
+
+	# aof文件大小比上次重写时的大小增长率超过100%时，重写
+	auto-aof-rewrite-percentage 100
+	# aof文件至少超过64M时,重写
+	auto-aof-rewrite-min-size 64mb
+
+	# aof重写期间是否停止做fsync操作，默认no（开启后可以提高磁盘IO性能）
+	no-appendfsync-on-rewrite no
+
+	
+	127.0.0.1:6379> info persistence
+	# 重写aof文件
+	127.0.0.1:6379> bgrewriteaof
+
 
 ### 数据恢复
 
@@ -89,3 +110,14 @@ redis.conf 默认配置
 	[root@hdp01 bin]# ./redis-benchmark -c 100 -n 20000 -r 10000
 	# -t：对特定命令进行基准测试
 	[root@hdp01 bin]# ./redis-benchmark -t get,set -q
+
+## 复制（master/slave）
+	
+	# 在slave上配置master的ip和端口号
+	slaveof 192.168.33.11 6379
+
+
+	# 复制相关状态
+	127.0.0.1:6379> info replication
+	# 查看当前节点的运行信息
+	127.0.0.1:6379> info server

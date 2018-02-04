@@ -11,9 +11,9 @@
 	centos6 172.16.1.16		jdk1.8 	
 
 ### hadoop cluster
-	hdp01	192.168.33.11	zookeeper	redis
-	hdp02	192.168.33.12	zookeeper
-	hdp03	192.168.33.13	zookeeper
+	hdp01	192.168.33.11	zookeeper	redis(master)
+	hdp02	192.168.33.12	zookeeper	redis(slave)
+	hdp03	192.168.33.13	zookeeper	
 
 ## 网络配置
 * 主机所在网段: 172.16.1.0/24
