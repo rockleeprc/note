@@ -266,6 +266,10 @@ git：分布式版本控制系统，版本库存放在本地
 	# 以上命令可以合并为一条命令 -b创建dev分支后切换到dev上
 	$ git checkout -b dev
 	切换到一个新分支 'dev'
+	
+	# 切换到远程的一个分支
+	$ git checkout -b feature/ios2.40_mitao origin/feature/ios2.40_mitao
+
 
 ## 分支查看
 
