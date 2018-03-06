@@ -163,6 +163,8 @@ git：分布式版本控制系统，版本库存放在本地
 
 	# 根据id回退
 	$ git reset --hard 38cfbae1444108849ae1e7f9eebfa9136a645c99
+	# 强行push
+	$ git push --force
 
 	# 查看每一次命令记录
 	$ git reflog
@@ -176,6 +178,10 @@ git：分布式版本控制系统，版本库存放在本地
 	# 回退到指定版本
 	git reset --hard b90457c
 	HEAD 现在位于 b90457c wrote callback
+	
+	# 回退代码
+	git reset --hard the_commit_id //把the_branch本地回滚到the_commit_id
+	git push -f origin develop 强制本地代码覆盖线上代码
 
 ## 撤销修改
 
