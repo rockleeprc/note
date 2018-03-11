@@ -1,4 +1,42 @@
 
+## 简介
+* Apache推出的开源消息中间件
+* 对JMS Provider实现的消息中间件（Message Oriented Middleware）
+* MOM作用
+	* 异步消息
+	* 业务解耦
+	* 流量削峰
+
+
+## JMS
+* Java Message Service，Java消息服务
+* JSM定义规范，MOM接口，没有实现，ActiveMQ实现了JMS接口
+* JMS Message
+	* 消息头：
+	* 消息属性：
+		* 通过Message.setXXProperty设置属性，Message附属信息
+		* JMS定义属性
+		* JMS提供商定义的特定属性
+	* 消息体(session.createXXX)：
+		* TextMessage
+		* MapMessage
+		* BytesMessage
+		* StreamMessage
+		* ObjectMessage
+* conusmer消费方式：
+	* 同步：consumer调用receive()显示的拉取消息，如果没有消息将阻塞
+	* 异步：consumer注册一个消息监听器到mq，mq收到消息后通知consumer，没有阻塞
+* 消息传递方式：
+	* P2P：
+		* 每个消息只能有一个消费者
+		* C/P之间没有时间上的相关性
+		* C/P之间的通道成为Queue
+	* 发布/订阅：
+		* 每个消息可以有多个消费者
+		* C/P之间有时间上的相关性（只有订阅后，才能收到消息，订阅前的消息无法收到，持久订阅弱化时间性，可以收到订阅时间点以前的消息）
+		* C/P之间的通道成为Topic
+
+
 ## 安装
 
 ### 目录结构
@@ -12,13 +50,16 @@
 ### 启动
 	# 解压
 	tar -zxvf apache-activemq-5.14.4-bin.tar.gz 
-	# 启动
+	# 启动，默认实用activemq.xml
 	bin/activemq start
 	bin/activemq stop
 
 
-### web控制台
-	# 验证
+### 验证
+	# 查看端口是否打开
+	netstat -an | grep 61616
+
+	# web控制台 
 	http://192.168.33.11:8161/
 	u:admin
 	p:admin
@@ -28,7 +69,7 @@
 * Number Of Consumers：表示在该队列上还有多少消费者在等待接受消息
 * Number Of Pending Messages：表示还有多少条消息没有被消费，实际上是表示消息的积压程度，就是P-C
 
-## P2P模型
+## P2P API
 ### 创建连接工厂
 	// activemq.xml中配置指定的用户、密码才能访问ActiveMQ
 	ConnectionFactory connectionFactory = new ActiveMQConnectionFactory(ActiveMQConnectionFactory.DEFAULT_USER,
@@ -62,6 +103,8 @@
 	messageProducer.send(message);
 
 ### 签收模式
+在transaction=true时，session.commit()后，conusmer确认签收自动发生，只有在transaction=false时签收模式才生效
+
 * AUTO_ACKNOWLEDGE：表示在消费者receive消息的时候自动的签收
 * CLIENT_ACKNOWLEDGE：表示消费者receive消息后必须手动的调用acknowledge()方法进行签收
 * DUPS_OK_ACKNOWLEDGE：签不签收无所谓了，只要消费者能够容忍重复的消息接受，当然这样会降低Session的开销
