@@ -1,4 +1,5 @@
-*　DefaultListableBeanFactory：ListableBeanFactory extends BeanFactory 
+
+* DefaultListableBeanFactory：ListableBeanFactory extends BeanFactory
 * BeanDefinitionRegistry：bean注册管理
 * BeanDefinition：bean的实例
 
@@ -16,7 +17,7 @@
 		* 生命周期回调
 		* 注册回调接口
 
-* BeanFactoryPostProcessor:
+* BeanFactoryPostProcessor：
 	* 允许我们在容器实例化相应对象之前，对注册到容器的BeanDefinition所保存的信息做相应的修改，在容器启动阶段最后加入一道工序
 	* BeanFactoryPostProcessor实现：
 		* PropertyPlaceholderConfigurer：XML配置文件中使用占位符
@@ -43,7 +44,7 @@
 				</property>
 			</bean>
 	
-* bean声明周期（AbstractBeanFactory.getBean()、AbstractAutowireCapableBeanFactory.createBean()）
+* bean生命周期（AbstractBeanFactory.getBean()、AbstractAutowireCapableBeanFactory.createBean()）
 	* 实例化bean对象
 		* BeanWrapper
 			* 使用策略模式决定如何初始化bean
@@ -68,6 +69,16 @@
 		* Spring的AOP则更多地使用BeanPostProcessor来为对象生成相应的代理对象
 		* BeanPostProcessor是容器提供的对象实例化阶段的强有力的扩展点
 			
+				public Object postProcessBeforeInitialization(Object object, String beanName)				throws BeansException {
+					if(object instanceof PasswordDecodable)
+					{
+						String encodedPassword = ((PasswordDecodable)object).getEncodedPassword();
+						String decodedPassword = decodePassword(encodedPassword);
+						((PasswordDecodable)object).setDecodedPassword(decodedPassword);
+					}
+					return object;
+				}
+
 				<bean id="passwordDecodePostProcessor" class="package.name.PasswordDecodePostProcessor">
 				<!--如果需要，注入必要的依赖-->
 				</bean>
@@ -78,8 +89,12 @@
 	* 检查是否配置有自定义的init-method
 		* 实现InitializingBean接口侵入较大，xml中配置<bean>init-method即可，或<beans>的default-init-method
 	* BeanPostProcessor后置处理
-	* 注册必要的Destruction相关回调接口
+	* 注册必要的Destruction相关回调接口(DisposableBean)
 	* 使用bean
-	* 是否实现DisposableBean接口
+	* 使用bean是否实现DisposableBean接口
+		* 容器将检查singleton类型的bean实例，看其是否实现了org.springframework.beans.factory.DisposableBean接口
+		* 对应的bean定义是否通过<bean>的destroy-method属性指定了自定义的对象销毁方法。
+		* 与InitializingBean和init-method用于对象的自定义初始化相对应， DisposableBean和destroy-method为对象提供了执行自定义销毁逻辑的机会。
 	* 是否配置有自定义的destory方法
+
 
