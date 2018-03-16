@@ -97,4 +97,12 @@
 		* 与InitializingBean和init-method用于对象的自定义初始化相对应， DisposableBean和destroy-method为对象提供了执行自定义销毁逻辑的机会。
 	* 是否配置有自定义的destory方法
 
+* ApplicationContext实现：
+	* FileSystemXmlApplicationContext
+	* ClassPathXmlApplicationContext
+	* XmlWebApplicationContext
 
+* org.springframework.core.io.Resource包下是资源加载实现
+* org.springframework.core.io.ResourceLoader接口是资源查找定位策略的统一抽象
+	* DefaultResourceLoader：默认实现
+	* ClassPathResource：classpath开头的资源
