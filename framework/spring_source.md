@@ -36,11 +36,11 @@
 	* ApplicationContext使用BeanFactoryPostProcessor：
 
 			<bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
-				<property name="locations"> 9
+				<property name="locations">
 					<list>
 						<value>conf/jdbc.properties</value>
 						<value>conf/mail.properties</value>
-					</list> 10
+					</list>
 				</property>
 			</bean>
 	
