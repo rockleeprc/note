@@ -106,3 +106,27 @@
 * org.springframework.core.io.ResourceLoader接口是资源查找定位策略的统一抽象
 	* DefaultResourceLoader：默认实现
 	* ClassPathResource：classpath开头的资源
+
+
+
+## IoC容器初始化过程
+
+
+	ApplicationContext applicationContext = new FileSystemXmlApplicationContext(
+				"src/main/resources/ioc/applicationContext-beanFactory.xml");
+	Person p = (Person) applicationContext.getBean("person");
+
+
+
+org.springframework.context.support.FileSystemXmlApplicationContext.FileSystemXmlApplicationContext(String[], boolean, ApplicationContext)
+
+org.springframework.context.support.AbstractApplicationContext.obtainFreshBeanFactory()
+
+org.springframework.context.support.AbstractRefreshableApplicationContext.refreshBeanFactory()
+
+//构建ApplicationContext
+org.springframework.context.support.AbstractRefreshableApplicationContext.createBeanFactory()
+//装载bean
+org.springframework.context.support.AbstractRefreshableApplicationContext.loadBeanDefinitions(DefaultListableBeanFactory)
+//装载bean具体实现
+org.springframework.context.support.AbstractXmlApplicationContext.loadBeanDefinitions(DefaultListableBeanFactory)
