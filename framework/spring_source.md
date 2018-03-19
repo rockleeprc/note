@@ -130,3 +130,5 @@ org.springframework.context.support.AbstractRefreshableApplicationContext.create
 org.springframework.context.support.AbstractRefreshableApplicationContext.loadBeanDefinitions(DefaultListableBeanFactory)
 //装载bean具体实现
 org.springframework.context.support.AbstractXmlApplicationContext.loadBeanDefinitions(DefaultListableBeanFactory)
+//读取xml配置文件
+org.springframework.beans.factory.xml.XmlBeanDefinitionReader.loadBeanDefinitions(EncodedResource)
