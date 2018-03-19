@@ -3,8 +3,7 @@
 * BeanDefinitionRegistry：bean注册管理
 * BeanDefinition：bean的实例
 
-* FactoryBean是Spring容器提供的一种可以扩展容器对象实例化逻辑的接口，请不要将其与容器
-名称BeanFactory相混淆，它本身与其他注册到容器的对象一样，只是一个Bean而已，只不过，这种类型的Bean本身就是生产对象的工厂（Factory）
+* FactoryBean是Spring容器提供的一种可以扩展容器对象实例化逻辑的接口，请不要将其与容器名称BeanFactory相混淆，它本身与其他注册到容器的对象一样，只是一个Bean而已，只不过，这种类型的Bean本身就是生产对象的工厂（Factory）
 
 * Spring容器启动流程：
 	* 容器启动阶段(对象管理信息的收集)
@@ -132,3 +131,4 @@ org.springframework.context.support.AbstractRefreshableApplicationContext.loadBe
 org.springframework.context.support.AbstractXmlApplicationContext.loadBeanDefinitions(DefaultListableBeanFactory)
 //读取xml配置文件
 org.springframework.beans.factory.xml.XmlBeanDefinitionReader.loadBeanDefinitions(EncodedResource)
+org.springframework.beans.factory.xml.XmlBeanDefinitionReader.doLoadBeanDefinitions(InputSource, Resource)
