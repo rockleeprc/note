@@ -15,6 +15,8 @@
 	Java home: D:\Java\jdk1.8.0_112\jre
 	Default locale: zh_CN, platform encoding: GBK
 	OS name: "windows 7", version: "6.1", arch: "amd64", family: "dos"
+	
+	 mvn help:system
 
 ## mvn命令
 
