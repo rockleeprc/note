@@ -13,8 +13,18 @@
 	* 拷贝dubbo-admin-2.5.10.war到apache-tomcat-7.0.10/webapps目录下并解压
 	* 访问 http://127.0.0.1:8080/dubbo-admin-2.5.10/
 	
-
+## 配置
 	
 * 集群容错
-
+	* Failover Cluster
+		* 默认：retries="2"
+	* Failfast Cluster
+	* Failsafe Cluster
+	* Failback Cluster
+	* Forking Cluster
+	* Broadcast Cluster
 * 负载均衡
+	* Random LoadBalance
+	* RoundRobin LoadBalance
+	* LeastActive LoadBalance
+	* ConsistentHash LoadBalance
