@@ -132,3 +132,57 @@ org.springframework.context.support.AbstractXmlApplicationContext.loadBeanDefini
 //读取xml配置文件
 org.springframework.beans.factory.xml.XmlBeanDefinitionReader.loadBeanDefinitions(EncodedResource)
 org.springframework.beans.factory.xml.XmlBeanDefinitionReader.doLoadBeanDefinitions(InputSource, Resource)
+
+
+## SpringAOP增强类型
+* org.springframework.aop.MethodBeforeAdvice
+	* org.springframework.aop.BeforeAdvice
+* org.aopalliance.intercept.MethodInterceptor
+	* org.aopalliance.intercept.Interceptor
+* org.springframework.aop.AfterReturningAdvice
+	* org.springframework.aop.AfterAdvice
+* org.springframework.aop.ThrowsAdvice
+	* org.springframework.aop.AfterAdvice
+* org.springframework.aop.IntroductionInterceptor
+	* org.aopalliance.intercept.MethodInterceptor
+	* org.springframework.aop.DynamicIntroductionAdvice
+	
+	
+* ProxyFactoryBean配置
+		<!-- 
+			target-ref：被代理的对象，也就是target对象
+			proxyInterfaces：被代理对象的接口，也就是target接口
+			interfaces：proxyInterfaces的别名
+			interceptorNames：advice、advisor实现类，具体的横切逻辑实现
+			proxyTargetClass：true=对target进行cglib代理，不使用jdk，=true时忽略proxyInterfaces配置
+			optimize：true：强制使用cglib
+			singletion：返回代理对象是否为单例，默认单例
+		 -->
+		<bean id="beforeAdviceProxy" class="org.springframework.aop.framework.ProxyFactoryBean"
+			p:proxyInterfaces="exam.aop.interfaces.IBusiness" p:interceptorNames="buinessBeforeAdvice"
+			p:target-ref="businessImpl"></bean>	
+
+## Advisor
+* org.springframework.aop.support.StaticMethodMatcherPointcutAdvisor
+	* 类过滤，方法名匹配
+* org.springframework.aop.support.RegexpMethodPointcutAdvisor
+	* 正则表达式
+	
+## AOP自动创建代理
+* org.springframework.aop.framework.autoproxy.BeanNameAutoProxyCreator
+	* 基于bean的配置名称创建代理器
+* org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator
+	* 扫描容器中所有的advisor，基于advisor创建代理器
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
