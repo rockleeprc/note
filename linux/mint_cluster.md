@@ -2,10 +2,10 @@
 ## cluster
 
 ### mint cluster
-	centos0 172.16.1.10
-	centos1 172.16.1.11		jdk1.8 	zookeeper		redis
-	centos2 172.16.1.12 	jdk1.8 	zookeeper		redis
-	centos3 172.16.1.13		jdk1.8 	zookeeper		redis
+	centos0 172.16.1.10		保留
+	centos1 172.16.1.11		jdk1.8 	zookeeper		redis(master:6379/slave:6380)
+	centos2 172.16.1.12 	jdk1.8 	zookeeper		
+	centos3 172.16.1.13		jdk1.8 	zookeeper		
 	centos4 172.16.1.14		jdk1.8 	mysql
 	centos5 172.16.1.15		jdk1.8 	
 	centos6 172.16.1.16		jdk1.8 	

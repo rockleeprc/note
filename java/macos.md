@@ -20,12 +20,9 @@
 	$ brew doctor  
 
 * 安装完成后，Homebrew 会将本地 /usr/local 初始化为 git 的工作树，并将目录所有者变更为当前所操作的用户，将来 brew 的相关操作不需要 sudo 
-
+* Homebrew安装成功后，会自动创建目录 /usr/local/Cellar来存放Homebrew安装的程序
 
 ## HomeBrew基本使用
-Homebrew Cask，它是一套建立在 Homebrew 基础之上的 OS X 软件安装命令行工具，是 Homebrew 的扩展
-
-
 
 	# 安装软件：brew install 软件名，例：
 	brew install wget
@@ -66,6 +63,7 @@ Homebrew Cask，它是一套建立在 Homebrew 基础之上的 OS X 软件安装
 	brew services start/stop/restart serverName
 
 ## 安装Homebrew Cask
+Homebrew Cask，它是一套建立在 Homebrew 基础之上的 OS X 软件安装命令行工具，是 Homebrew 的扩展
 
 	# 添加 Github 上的 caskroom/cask 库
 	$ brew tap caskroom/cask
