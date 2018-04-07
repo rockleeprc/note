@@ -3,16 +3,16 @@
 
 ### mint cluster
 	centos0 172.16.1.10		保留
-	centos1 172.16.1.11		jdk1.8 	zookeeper		redis(master:6379/slave:6380)
-	centos2 172.16.1.12 	jdk1.8 	zookeeper		
+	centos1 172.16.1.11		jdk1.8 	zookeeper		redis(master:6379/slave:6380/6381)
+	centos2 172.16.1.12 	jdk1.8 	zookeeper		redis sentinel(26379/26380/26381)
 	centos3 172.16.1.13		jdk1.8 	zookeeper		
 	centos4 172.16.1.14		jdk1.8 	mysql
 	centos5 172.16.1.15		jdk1.8 	
 	centos6 172.16.1.16		jdk1.8 	
 
 ### hadoop cluster
-	hdp01	192.168.33.11	zookeeper	redis(master)
-	hdp02	192.168.33.12	zookeeper	redis(slave)
+	hdp01	192.168.33.11	zookeeper	redis(master:6379/slave:6380/6381)
+	hdp02	192.168.33.12	zookeeper	redis sentinel(26379/26380/26381)
 	hdp03	192.168.33.13	zookeeper	
 
 ## 网络配置
