@@ -794,3 +794,68 @@ JVM使用native方式时需要调用本地方法栈
     java.property.java.class.path="/opt/apache-tomcat-8.0.45/bin/bootstrap.jar:/opt/apache-tomcat-8.0.45/bin/tomcat-juli.jar:/opt/jdk/jdk1.8.0_131/lib/tools.jar"
     java.property.java.endorsed.dirs="/opt/apache-tomcat-8.0.45/endorsed"
     java.property.java.ext.dirs="/opt/jdk/jdk1.8.0_131/jre/lib/ext:/usr/java/packages/lib/ext"
+ 
+## finalize()
+* 当对象变成(GC Roots)不可达时，GC会判断该对象是否覆盖了finalize方法
+* 若未覆盖，则直接将其回收。
+* 否则，若对象未执行过finalize方法，将其放入F-Queue队列，由一低优先级线程执行该队列中对象的finalize方法。
+* 执行finalize方法完毕后，GC会再次判断该对象是否可达，若不可达，则进行回收，否则，对象“复活”
+
+## GC分类
+
+
+
+* 1.Full GC定义是相对明确的，就是针对整个新生代、老生代、元空间（metaspace，java8以上版本取代perm gen）的全局范围的GC；
+* 2.Minor GC和Major GC是俗称，在Hotspot JVM实现的Serial GC, Parallel GC, CMS, G1 GC中大致可以对应到某个Young GC和Old GC算法组合；
+* 3.最重要是搞明白上述Hotspot JVM实现中几种GC算法组合到底包含了什么。
+	* 3.1 Serial GC算法：Serial Young GC ＋ Serial Old GC （敲黑板！敲黑板！敲黑板！实际上它是全局范围的Full GC）；
+	* 3.2 Parallel GC算法：Parallel Young GC ＋ 非并行的PS MarkSweep GC / 并行的Parallel Old GC（敲黑板！敲黑板！敲黑板！这俩实际上也是全局范围的Full GC），选PS MarkSweep GC 还是 Parallel Old GC 由参数UseParallelOldGC来控制；
+	* 3.3 CMS算法：ParNew（Young）GC + CMS（Old）GC （piggyback on ParNew的结果／老生代存活下来的object只做记录，不做compaction）＋ Full GC for CMS算法（应对核心的CMS GC某些时候的不赶趟，开销很大）；
+	* 3.4 G1 GC：Young GC + mixed GC（新生代，再加上部分老生代）＋ Full GC for G1 GC算法（应对G1 GC算法某些时候的不赶趟，开销很大）；
+
+
+* 针对HotSpot VM的实现，它里面的GC其实准确分类只有两大种
+	* Partial GC：并不收集整个GC堆的模式
+		* Young GC：只收集young gen的GC
+		* Old GC：只收集old gen的GC。只有CMS的concurrent collection是这个模式
+		* Mixed GC：收集整个young gen以及部分old gen的GC。只有G1有这个模式
+	* Full GC：收集整个堆，包括young gen、old gen、perm gen（如果存在的话）等所有部分的模式。
+
+* 最简单的分代式GC策略，按HotSpot VM的serial GC的实现来看，触发条件是：
+	* young GC：当young gen中的eden区分配满的时候触发。注意young GC中有部分存活对象会晋升到old gen，所以young GC后old gen的占用量通常会有所升高。
+	* full GC：当准备要触发一次young GC时，如果发现统计数据说之前young GC的平均晋升大小比目前old gen剩余的空间大，则不会触发young GC而是转为触发full GC（因为HotSpot VM的GC里，除了CMS的concurrent collection之外，其它能收集old gen的GC都会同时收集整个GC堆，包括young gen，所以不需要事先触发一次单独的young GC）；或者，如果有perm gen的话，要在perm gen分配空间但已经没有足够空间时，也要触发一次full GC；或者System.gc()、heap dump带GC，默认也是触发full GC。
+
+* Parallel Scavenge（-XX:+UseParallelGC）
+	* 默认是在要触发full GC前先执行一次young GC，并且两次GC之间能让应用程序稍微运行一小下，以期降低full GC的暂停时间（因为young GC会尽量清理了young gen的死对象，减少了full GC的工作量）。控制这个行为的VM参数是-XX:+ScavengeBeforeFullGC。
+
+*　CMS GC
+	*　它主要是定时去检查old gen的使用量，当使用量超过了触发比例就会启动一次CMS GC，对old gen做并发收集。
+
+## G1
+* Global concurrent marking基于SATB形式的并发标记。它具体分为下面几个阶段：
+	* 初始标记（initial marking）：暂停阶段。扫描根集合，标记所有从根集合可直接到达的对象并将它们的字段压入扫描栈（marking stack）中等到后续扫描。G1使用外部的bitmap来记录mark信息，而不使用对象头的mark word里的mark bit。在分代式G1模式中，初始标记阶段借用young GC的暂停，因而没有额外的、单独的暂停阶段。
+	* 并发标记（concurrent marking）：并发阶段。不断从扫描栈取出引用递归扫描整个堆里的对象图。每扫描到一个对象就会对其标记，并将其字段压入扫描栈。重复扫描过程直到扫描栈清空。过程中还会扫描SATB write barrier所记录下的引用。
+	* 最终标记（final marking，在实现中也叫remarking）：暂停阶段。在完成并发标记后，每个Java线程还会有一些剩下的SATB write barrier记录的引用尚未处理。这个阶段就负责把剩下的引用处理完。同时这个阶段也进行弱引用处理（reference processing）。注意这个暂停与CMS的remark有一个本质上的区别，那就是这个暂停只需要扫描SATB buffer，而CMS的remark需要重新扫描mod-union table里的dirty card外加整个根集合，而此时整个young gen（不管对象死活）都会被当作根集合的一部分，因而CMS remark有可能会非常慢。
+	* 清理（cleanup）：暂停阶段。清点和重置标记状态。这个阶段有点像mark-sweep中的sweep阶段，不过不是在堆上sweep实际对象，而是在marking bitmap里统计每个region被标记为活的对象有多少。这个阶段如果发现完全没有活对象的region就会将其整体回收到可分配region列表中。
+
+
+## CMS
+* 为啥CMS会有内存碎片，如何避免
+	* 由于在CMS的回收步骤中，没有对内存进行压缩，所以会有内存碎片出现，CMS提供了一个整理碎片的功能，通过-XX：UseCompactAtFullCollection来启动此功能，启动这个功能后，默认每次执行Full GC的时候会进行整理（也可以通过-XX：CMSFullGCsBeforeCompaction=n来制定多少次Full GC之后来执行整理），整理碎片会stop-the-world.
+* 啥时候会触发CMS GC？
+	* 旧生代或者持久代已经使用的空间达到设定的百分比时（CMSInitiatingOccupancyFraction这个设置old区，perm区也可以设置）；
+	* JVM自动触发(JVM的动态策略，也就是悲观策略)（基于之前GC的频率以及旧生代的增长趋势来评估决定什么时候开始执行），如果不希望JVM自行决定，可以通过-XX：UseCMSInitiatingOccupancyOnly=true来制定；
+	* 设置了 -XX：CMSClassUnloadingE考虑nabled 这个则考虑Perm区；
+* 啥时候会触发Full GC？
+	* 旧生代空间不足：java.lang.outOfMemoryError：java heap space；
+	* Perm空间满：java.lang.outOfMemoryError：PermGen space；
+	* CMS GC时出现promotion failed  和concurrent  mode failure（Concurrent mode failure发生的原因一般是CMS正在进行，但是由于old区内存不足，需要尽快回收old区里面的死的java对象，这个时候foreground gc需要被触发，停止所有的java线程，同时终止CMS，直接进行MSC。）；
+	* 统计得到的minor GC晋升到旧生代的平均大小大于旧生代的剩余空间；
+	* 主动触发Full GC（执行jmap -histo:live [pid]）来避免碎片问题；
+
+* <=3G的情况下完全不要考虑CMS GC
+	*  1、触发比率不好设置 在JDK 1.6的版本中CMS GC的触发比率默认为old使用到92%时，假设3G的heap size，那么意味着旧生代大概就在1.5G--2.5G左右的大小，假设是92%触发，那么意味着这个时候旧生代只剩120M--200M的大小，通常这点大小很有可能是会导致不够装下新生代晋生的对象，因此需要调整触发比率，但由于heap size比较小，这个时候到底设置为多少是挺难设置的，例如我看过heap size只有1.5G，old才800m的情况下，还使用CMS GC的，触发比率还是80%，这种情况下就悲催了，意味着旧生代只要使用到640m就触发CMS GC，只要应用里稍微把一些东西cache了就会造成频繁的CMS GC。 CMS GC是一个大部分时间不暂停应用的GC，就造成了需要给CMS GC留出一定的时间（因为大部分时间不暂停应用，这也意味着整个CMS GC过程的完成时间是会比ParallelOldGC时的一次Full GC长的），以便它在进行回收时内存别分配满了，而heap size本来就小的情况下，留多了嘛容易造成频繁的CMS GC，留少了嘛会造成CMS GC还在进行时内存就不够用了，而在不够用的情况下CMS GC会退化为采用Serial Full GC来完成回收动作，这个时候就慢的离谱了。 
+	*  2、抢占CPU CMS GC大部分时间和应用是并发的，所以会抢占应用的CPU，通常在CMS GC较频繁的情况下，可以很明显看到一个CPU会消耗的非常厉害。 
+	*  3、YGC速度变慢 由于CMS GC的实现原理，导致对象从新生代晋升到旧生代时，寻找哪里能放下的这个步骤比ParallelOld GC是慢一些的，因此就导致了YGC速度会有一定程度的下降。 
+	*  4、碎片问题带来的严重后果 CMS GC最麻烦的问题在于碎片问题，同样是由于实现原理造成的，CMS GC为了确保尽可能少的暂停应用，取消了在回收对象所占的内存空间后Compact的过程，因此就造成了在回收对象后整个old区会形成各种各样的不连续空间，自然也就产生了很多的碎片，碎片会造成什么后果呢，会造成例如明明旧生代还有4G的空余空间，而新生代就算全部是存活的1.5g对象，也还是会出现promotion failed的现象，而在出现这个现象的情况下CMS GC多数会采用Serial Full GC来解决问题。 碎片问题最麻烦的是你完全不知道它什么时候会出现，因此有可能会造成某天高峰期的时候应用突然来了个长暂停，于是就悲催了，对于很多采用了类似心跳来维持长连接或状态的分布式场景而言这都是灾难，这也是Azul的Zing JVM相比而言最大的优势（可实现不暂停的情况下完成Compact，解决碎片问题）。 目前对于这样的现象我们唯一的解决办法都是选择在低峰期主动触发Full GC（执行jmap -histo:live [pid]）来避免碎片问题，但这显然是一个很龌蹉的办法（因为同样会对心跳或维持状态的分布式场景造成影响）。 
+	*  5、CMS GC的”不稳定“性 如果关注过我在之前的blog记录的碰到的各种Java问题的文章（可在此查看），就会发现碰到过很多各种CMS GC的诡异问题，尽管里面碰到的大部分BUG目前均已在新版本的JVM修复，但谁也不知道是不是还有问题，毕竟CMS GC的实现是非常复杂的（因为要在尽可能降低应用暂停时间的情况下还保持对象引用的扫描不要出问题），而ParallelOldGC的实现相对是更简单很多的，因此稳定性相对高多了。而且另外一个不太好的消息是JVM Team的精力都已转向G1GC和其他的一些方面，CMS GC的投入已经很少了（这也正常，毕竟G1GC确实是方向）。
