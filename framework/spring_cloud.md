@@ -1,4 +1,4 @@
-## 监控与管理
+﻿## 监控与管理
 依赖
 ```
 <dependency>
@@ -34,3 +34,15 @@ endpoints.shutdown.enabled=true
 ## 服务治理
 服务治理围绕着服务注册和服务发现，对服务实施自动化管理
 Eureka服务器端是一个注册中心，Eureka客户端（注解和配置）提供服务的注册和发现，服务器端和客户端都有java编写
+
+## 保护模式
+心跳失败比例在 15 分钟之内低于 85%
+自我保护模式被激活的条件是：在 1 分钟后，Renews (last min) < Renews threshold
+Renews threshold：(int)(服务个数 * 2 * 0.85)
+Renews (last min)：服务个数*2
+# 关闭自我保护
+eureka.server.enable-self-preservation
+# 默认0.85
+eureka.server.renewal-percent-threshold
+
+
