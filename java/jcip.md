@@ -266,16 +266,27 @@
 ### CompletionService
 * CompletionService将Executor和BlockingQueue功能融合在一起
 
-		private static final ExecutorService threadPool = Executors.newFixedThreadPool(10);
-		CompletionService<String> cs = new ExecutorCompletionService<String>(threadPool);
-		for (int i = 0; i < 100; i++) {
-			cs.submit(new Index(String.valueOf(i)));
-		}
-		for (int i = 0; i < 100; i++) {
-			Future<String> future = cs.take();
-			String result = future.get();
-			System.out.println("i="+result);
-		}
+   ```java
+   private static final ExecutorService threadPool = Executors.newFixedThreadPool(10);
+   
+   	CompletionService<String> cs = new ExecutorCompletionService<String>(threadPool);
+   
+   	for (int i = 0; i < 100; i++) {
+   
+   		cs.submit(new Index(String.valueOf(i)));
+   
+   	}
+   
+   	for (int i = 0; i < 100; i++) {
+   
+   		Future<String> future = cs.take();
+   
+   		String result = future.get();
+   
+   		System.out.println("i="+result);
+   
+   	}
+   ```
 
 
 # 第七章 取消与关闭
@@ -287,29 +298,51 @@
 
 ### 中断
 * 线程中断是一种协作机制，线程可以通过这个机制通知另一个线程，告诉它在合适的情况下停止当前工作，并转而执行其它工作，如果在取消之外的其它操作中使用中断，都是不合适的
+
 * 如果任务代码能够响应中断状态，可以使用中断作为取消机制，中断是实现取消最合理的方式
+
 * 阻塞方法Thread.sleep、Object.wait等都会检查线程何时中断，并在发现中断前提前返回
+
 * 响应中断操作包括
-	1. 清除中断标记
-	2. 抛出InterruptedException（表示阻塞操作由于中断而提前结束）
+  1. 清除中断标记
+  2. 抛出InterruptedException（表示阻塞操作由于中断而提前结束）
+
 * JVM不保证阻塞方法检测中断的速度，但实际情况速度还是非常快的
+
 * 调用interrupt并不意味着立即停止目标线程正在进行的工作，而只是传递了请求中断消息，由线程在一个合适的时刻中断自己
 
-		@Override
-		public void run() {
-			BigInteger p = BigInteger.ONE;
-			while (!Thread.currentThread().isInterrupted()) {
-				p = p.nextProbablePrime();
-				System.out.println("task is running。。。"+p);
-				try {
-					queue.put(p);
-					TimeUnit.SECONDS.sleep(1);
-				} catch (InterruptedException e) {
-					//TODO 线程退出逻辑
-					System.out.println(Thread.currentThread().getName() + " 中断");
-				}
-			}
-		}
+   ```java
+   @Override
+   
+   	public void run() {
+   
+   		BigInteger p = BigInteger.ONE;
+   
+   		while (!Thread.currentThread().isInterrupted()) {
+   
+   			p = p.nextProbablePrime();
+   
+   			System.out.println("task is running。。。"+p);
+   
+   			try {
+   
+   				queue.put(p);
+   
+   				TimeUnit.SECONDS.sleep(1);
+   
+   			} catch (InterruptedException e) {
+   
+   				//TODO 线程退出逻辑
+   
+   				System.out.println(Thread.currentThread().getName() + " 中断");
+   
+   			}
+   
+   		}
+   
+   	}
+   
+   ```
 
 ### 中断策略
 * 中断策略，尽快退出执行流程，在必要时进行清理，并把中断信息传递给调用者，从而使调用栈中的上层代码可以采取进一步的操作
@@ -361,7 +394,7 @@
 ## 配置ThreadPoolExecutor
 
     public ThreadPoolExecutor(int corePoolSize,int maximumPoolSize,long keepAliveTime,TimeUnit uni,
-															BlockingQueue<Runnable> workQueue,
+    														BlockingQueue<Runnable> workQueue,
                               ThreadFactory threadFactory,
                               RejectedExecutionHandler handler)
 
@@ -373,7 +406,7 @@
 	    public static ExecutorService newCachedThreadPool() {
 	        return new ThreadPoolExecutor(0， Integer.MAX_VALUE，60L， TimeUnit.SECONDS，new SynchronousQueue<Runnable>());
 	    }
-
+    
 	    public static ExecutorService newFixedThreadPool(int nThreads) {
 	        return new ThreadPoolExecutor(nThreads， nThreads，0L， TimeUnit.MILLISECONDS，new LinkedBlockingQueue<Runnable>());
 	    }
@@ -393,9 +426,15 @@
 ### 线程工厂方法
 * 每当线程池需要创建一个线程时，通过线程工程方法完成，默认的线程工厂方法将创建一个新的、非守护的线程，并且不包含特殊的配置信息
 
-		public interface ThreadFactory {
-		    Thread newThread(Runnable r);
-		}
+   ```java
+   public interface ThreadFactory {
+   
+   	    Thread newThread(Runnable r);
+   
+   	}
+   ```
+
+   
 
 ## 扩展ThreadPoolExecutor
 * ThreadPoolExecutor生命周期方法
