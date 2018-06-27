@@ -1,5 +1,7 @@
 
 
+
+
 *安装xcode*
 
 ```bash
@@ -31,7 +33,7 @@ Homebrew安装成功后，会自动创建目录 **/usr/local/Cellar**来存放Ho
 
  *安装软件：brew install 软件名*
 
-```
+```bash
 brew install wget
 ```
 
@@ -43,19 +45,22 @@ brew search wget
  *卸载软件：brew uninstall 软件名*
 ```bash
 brew uninstall wget
-```
+
+​```bash
  *显示已安装软件*
-```bash
-brew list
 ```
- *查看安装过的包列表（包括版本号）*
+brew list
+
 ```bash
+ *查看安装过的包列表（包括版本号）*
+ 
+​```bash
 $ brew list --versions  
 ```
 
  *查看软件信息*
 
-```
+```bash
 brew info git
 ```
 
