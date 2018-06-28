@@ -29,7 +29,7 @@ $ brew doctor
 
 安装完成后，Homebrew 会将本地 /usr/local 初始化为 git 的工作树，并将目录所有者变更为当前所操作的用户，将来 brew 的相关操作不需要 sudo 
 
-Homebrew安装成功后，会自动创建目录 **/usr/local/Cellar**来存放Homebrew安装的程序
+Homebrew安装成功后，会自动创建目录 `/usr/local/Cellar`来存放Homebrew安装的程序
 
  *安装软件：brew install 软件名*
 
