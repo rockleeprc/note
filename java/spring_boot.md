@@ -35,3 +35,26 @@
 
 
 
+### 入口类
+
+* @SpringBootApplication标记该类是一个Spring boot入口类
+
+  ```java
+  @Target(ElementType.TYPE)
+  @Retention(RetentionPolicy.RUNTIME)
+  @Documented
+  @Inherited
+  @SpringBootConfiguration
+  @EnableAutoConfiguration//根据jar包依赖自动进行配置
+  @ComponentScan(excludeFilters = {
+  		@Filter(type = FilterType.CUSTOM, classes = TypeExcludeFilter.class),
+  		@Filter(type = FilterType.CUSTOM, classes = AutoConfigurationExcludeFilter.class) })
+  public @interface SpringBootApplication {}
+  ```
+
+* Spring boot扫描@SpringBootApplication所在类的同级包，及子包下的Bean
+
+### Profile配置
+
+* 定义多个配置文件application-dev.properties、application-prod.properties
+* 在application.properties中指定spring.profiles.active=dev使用哪个配置文件
