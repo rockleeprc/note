@@ -33,5 +33,33 @@
 * 依据条件选择配置类，如EnableAsync中`@Import(AsyncConfigurationSelector.class)`，配置类继承`AdviceModeImportSelector`实现`selectImports()`
 * 动态注入bean，如EnableAspectJAutoProxy中`@Import(AspectJAutoProxyRegistrar.class)`，配置类实现ImportBeanDefinitionRegistrar的作用是在运行时自动添加Bean到已有的配置类中
 
+### 配置
 
+* 配置类继承`WebMvcConfigurerAdapter`
 
+* 注解`@EnableWebMvc`开启对springMVC配置支持
+
+* 使用`@Bean`让spring管理对象
+
+* 静态资源映射
+
+  * org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter.addResourceHandlers(ResourceHandlerRegistry)
+
+* 拦截器
+
+  * org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter.addInterceptors(InterceptorRegistry)
+
+* 页面跳转（无业务逻辑）
+
+  * org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter.addViewControllers(ViewControllerRegistry)
+
+* 转换器
+
+  * org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter.extendMessageConverters(List<HttpMessageConverter<?>>)
+  * org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter.configureMessageConverters(List<HttpMessageConverter<?>>)
+
+* 参数路径（不忽略.以后的内容）
+
+  * org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter.configurePathMatch(PathMatchConfigurer)
+
+  
