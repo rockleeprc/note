@@ -33,7 +33,7 @@
 * 依据条件选择配置类，如EnableAsync中`@Import(AsyncConfigurationSelector.class)`，配置类继承`AdviceModeImportSelector`实现`selectImports()`
 * 动态注入bean，如EnableAspectJAutoProxy中`@Import(AspectJAutoProxyRegistrar.class)`，配置类实现ImportBeanDefinitionRegistrar的作用是在运行时自动添加Bean到已有的配置类中
 
-### 配置
+### SpringMVC配置
 
 * 配置类继承`WebMvcConfigurerAdapter`
 
@@ -63,7 +63,7 @@
   * org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter.configurePathMatch(PathMatchConfigurer)
 
   
-### 入口类
+### Spring boot入口类
 
 * @SpringBootApplication标记该类是一个Spring boot入口类
 
@@ -88,3 +88,46 @@
 * 在application.properties中指定spring.profiles.active=dev使用哪个配置文件
 
 
+
+### Spring boot web
+
+#### web相关配置
+
+* 于web相关的自动配置在spring-boot-autoconfigure-1.5.13.RELEASE.jar的org.springframework.boot.autoconfigure.web包下
+* Springmvc 自动配置类org.springframework.boot.autoconfigure.web.WebMvcAutoConfiguration
+  * viewResolver(BeanFactory beanFactory)
+  * addResourceHandlers(ResourceHandlerRegistry registry) 静态资源
+    * /static
+    * /public
+    * /resources
+    * /METE-INF/resourdces
+  *  addFormatters(FormatterRegistry registry)
+  * configureMessageConverters(List<HttpMessageConverter<?>> converters)
+
+##### 扩展配置
+
+* 三种方式
+  * org.springframework.web.servlet.config.annotation.WebMvcConfigurer
+  * org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter，无需使用@EnableWebMvc注解
+  * org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport
+* 注册Servlet、Filter、Listener
+  * 通过@Configuration+@Bean
+  * ServletRegistrantionBean、FilterRegistrantionBean、ServletListenerRegistrantionBean
+
+##### 容器配置
+
+*  容器参数置类org.springframework.boot.autoconfigure.web.ServerProperties
+* jetty 替换tomcat
+
+
+
+### Spring boot data
+
+##### 事务支持
+
+* 自动配置事务管理器
+  * org.springframework.boot.autoconfigure.jdbc.DataSourceTransactionManagerAutoConfiguration
+
+##### 缓存
+
+* spring定义CacheManager和Cache接口来统一不同的缓存技术
