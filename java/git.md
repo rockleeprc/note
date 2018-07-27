@@ -472,3 +472,19 @@ git：分布式版本控制系统，版本库存放在本地
 	$ git branch --set-upstream branch-name origin/branch-name
 
 # todo标签管理
+
+# 分支命名规范
+
+- **master** ：主分支，暂不使用
+- **deployment** ：线上发布的稳定版本分支，上线后的版本要合并到该分支
+- **feature**/version/${版本号} ：版本迭代分支
+  - feature/version/1.0.0 ：1.0.0 版本开发
+  - feature/version/1.1.0  ：1.1.0版本开发
+- **feature**/${模块/功能} ：模块/功能开发分支，非正式的版本迭代
+- **optimize**/${模块/功能名称}_${优化内容} ：优化分支
+  - optimize/order_sql_slow_query  ：订单慢查询优化
+- **hotfix**/${模块/功能名称}_${bug名称} ：线上紧急bug分支，修复后马上上线的版本
+  - hotfix/order_service_npe ：订单模块 service 层空指针异常，`service`不是非必须的
+- **fix**/${模块/功能名称}_${bug名称} ：非紧急bug分支，跟随下一个版本发布上线
+  - bug/pay_controller_npe ：pay功能 controller 层空指针异常,` controller`不是非必须的
+
