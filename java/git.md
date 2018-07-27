@@ -256,11 +256,11 @@ git：分布式版本控制系统，版本库存放在本地
 
 由于gitignore只能忽略那些原来没有被track的文件，如果某些文件已经被纳入了版本管理中，则修改.gitignore是无效的
 
-	# 删除本地缓存，文件变成untrack状态
-	git rm -r --cached .
-	# 全部提交
-	git add .
-	git commit -m 'commit log info'
+	# 有时候需要突然修改 .gitignore 文件，随后要立即生效
+	git rm -r --cached .  #清除缓存  
+	git add . #重新trace file  
+	git commit -m "update .gitignore" #提交和注释  
+	git push origin master #可选，如果需要同步到remote上的话  
 
 
 ## 创建分支
