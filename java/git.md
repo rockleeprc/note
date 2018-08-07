@@ -1,5 +1,3 @@
-
-a
 ## 什么是git
 
 cvs/svn：集中式的版本控制系统，版本库存放在中央服务器
@@ -43,6 +41,32 @@ git：分布式版本控制系统，版本库存放在本地
 	|        .. .+oo++|
 	|         ....++  |
 	+----[SHA256]-----+
+
+## 查看配置
+
+```
+# 查看系统config
+git config --system --list
+# 查看当前用户（global）配置
+git config --global  --list
+# 查看当前仓库配置信息
+git config --local  --list
+```
+
+
+
+## 用户名修改
+
+```
+$  git config --global user.name "输入你的用户名"
+$  git config --global user.email "输入你的邮箱"
+
+$  git config --global --replace-all user.email "输入你的邮箱" 
+$  git config --global --replace-all user.name "输入你的用户名"
+
+```
+
+
 
 ## 配置全英文
 
@@ -256,11 +280,11 @@ git：分布式版本控制系统，版本库存放在本地
 
 由于gitignore只能忽略那些原来没有被track的文件，如果某些文件已经被纳入了版本管理中，则修改.gitignore是无效的
 
-	# 删除本地缓存，文件变成untrack状态
-	git rm -r --cached .
-	# 全部提交
-	git add .
-	git commit -m 'commit log info'
+	# 有时候需要突然修改 .gitignore 文件，随后要立即生效
+	git rm -r --cached .  #清除缓存  
+	git add . #重新trace file  
+	git commit -m "update .gitignore" #提交和注释  
+	git push origin master #可选，如果需要同步到remote上的话  
 
 
 ## 创建分支
@@ -472,3 +496,19 @@ git：分布式版本控制系统，版本库存放在本地
 	$ git branch --set-upstream branch-name origin/branch-name
 
 # todo标签管理
+
+# 分支命名规范
+
+- **master** ：主分支，暂不使用
+- **deployment** ：线上发布的稳定版本分支，上线后的版本要合并到该分支
+- **feature**/version/${版本号} ：版本迭代分支
+  - feature/version/1.0.0 ：1.0.0 版本开发
+  - feature/version/1.1.0  ：1.1.0版本开发
+- **feature**/${模块/功能} ：模块/功能开发分支，非正式的版本迭代
+- **optimize**/${模块/功能名称}_${优化内容} ：优化分支
+  - optimize/order_sql_slow_query  ：订单慢查询优化
+- **hotfix**/${模块/功能名称}_${bug名称} ：线上紧急bug分支，修复后马上上线的版本
+  - hotfix/order_service_npe ：订单模块 service 层空指针异常，`service`不是非必须的
+- **fix**/${模块/功能名称}_${bug名称} ：非紧急bug分支，跟随下一个版本发布上线
+  - bug/pay_controller_npe ：pay功能 controller 层空指针异常,` controller`不是非必须的
+

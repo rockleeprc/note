@@ -25,34 +25,46 @@ Base64编码，之后的字符串就成了JWT的Header（头部）：
 
 ## payload
 
+```
+iss: jwt签发者
+sub: jwt所面向的用户
+aud: 接收jwt的一方
+exp: jwt的过期时间，这个过期时间必须要大于签发时间
+nbf: 定义在什么时间之前，该jwt都是不可用的.
+iat: jwt的签发时间
+jti: jwt的唯一身份标识，主要用来作为一次性token,从而回避重放攻击。
+```
+
+
+
 * 包含了claim， Claim是一些实体（通常指的用户）的状态和额外的元数据
 
 * 三种claim：
-	* Reserved claims: 这些claim是JWT预先定义的，在JWT中并不会强制使用它们，而是推荐使用，常用的有 
-		* iss（签发者）
-		* exp（过期时间戳）
-		* sub（面向的用户）
-		* aud（接收方）
-		* iat（签发时间）
-	* Public claims：根据需要定义自己的字段，注意应该避免冲突
-	* Private claims：这些是自定义的字段，可以用来在双方之间交换信息
+  * Reserved claims: 这些claim是JWT预先定义的，在JWT中并不会强制使用它们，而是推荐使用，常用的有 
+  	* iss（签发者）
+  	* exp（过期时间戳）
+  	* sub（面向的用户）
+  	* aud（接收方）
+  	* iat（签发时间）
+  * Public claims：根据需要定义自己的字段，注意应该避免冲突
+  * Private claims：这些是自定义的字段，可以用来在双方之间交换信息
 
-	
-	{
-	    "sub": "1",
-	    "iss": "http://localhost:8000/auth/login",
-	    "iat": 1451888119,
-	    "exp": 1454516119,
-	    "nbf": 1451888119,
-	    "jti": "37c107e4609ddbcc9c096ea5ee76c667"
-	}
-	
-	sub: 该JWT所面向的用户
-	iss: 该JWT的签发者
-	iat(issued at): 在什么时候签发的token
-	exp(expires): token什么时候过期
-	nbf(not before)：token在此时间之前不能被接收处理
-	jti：JWT ID为web token提供唯一标识
+
+  {
+      "sub": "1",
+      "iss": "http://localhost:8000/auth/login",
+      "iat": 1451888119,
+      "exp": 1454516119,
+      "nbf": 1451888119,
+      "jti": "37c107e4609ddbcc9c096ea5ee76c667"
+  }
+
+  sub: 该JWT所面向的用户
+  iss: 该JWT的签发者
+  iat(issued at): 在什么时候签发的token
+  exp(expires): token什么时候过期
+  nbf(not before)：token在此时间之前不能被接收处理
+  jti：JWT ID为web token提供唯一标识
 
 将上面的JSON对象进行base64编码可以得到下面的字符串：
 
