@@ -1,5 +1,3 @@
-
-a
 ## 什么是git
 
 cvs/svn：集中式的版本控制系统，版本库存放在中央服务器
@@ -43,6 +41,32 @@ git：分布式版本控制系统，版本库存放在本地
 	|        .. .+oo++|
 	|         ....++  |
 	+----[SHA256]-----+
+
+## 查看配置
+
+```
+# 查看系统config
+git config --system --list
+# 查看当前用户（global）配置
+git config --global  --list
+# 查看当前仓库配置信息
+git config --local  --list
+```
+
+
+
+## 用户名修改
+
+```
+$  git config --global user.name "输入你的用户名"
+$  git config --global user.email "输入你的邮箱"
+
+$  git config --global --replace-all user.email "输入你的邮箱" 
+$  git config --global --replace-all user.name "输入你的用户名"
+
+```
+
+
 
 ## 配置全英文
 
