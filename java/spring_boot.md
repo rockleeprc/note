@@ -1,8 +1,87 @@
+# 一、
+
+# 二、配置文件
+
+## 5、profile
+
+### 1）拆分多个文件
+
+* application.yml/properties
+* application-dev.yml/properties
+* application-prod.yml/properties
+
+### 2）yml文档块	
+
+使用`---`区分文档块，使用`spring.profiles=dev`声明该文档块属于哪个profile
+
+```yaml
+server:
+  port: 8080
+spring:
+  profiles:
+    active:
+      - dev
+
+---
+server:
+  port: 8081
+spring:
+  profiles:
+      - dev
+
+---
+server:
+  port: 8082
+spring:
+  profiles:
+      - prod
+
+```
+
+### 3）激活profile
+
+* 在application.yml/properties主配置文件中指定
+
+```yam
+spring:
+  profiles:
+    active: dev
+```
+
+* 命令行参数指定
+
+```shell
+java -jar spring-boot-profile-0.0.1-SNAPSHOT.jar --spring.profiles.active=prod
+```
+
+* 虚拟机参数
+
+```she
+-Dspring.profiles.active=dev
+```
+
+## 6、配置文件加载位置
+
+springboot启动时会扫描以下位置的application.properties/application.yml作为配置文件
+
+* –file:./config/
+* –file:./
+* –classpath:/config/
+* –classpath:/
+
+优先级由高到底，相同配置，高优先级的配置会覆盖低优先级的配置，不同配置高低互补
+
+也可以通过命令行指定外部配置文件，配置内容相同的覆盖，不同的互补
+
+```shell
+java -jar spring-boot-profile-0.0.1-SNAPSHOT.jar --spring.config.location=D:/application.yml
+```
+
+
+
 ## 8、自动配置原理
 
-
-
-### @SpringBootApplication作用
+### 1）@SpringBootApplication作用
 
 标注这是一个主程序类，说明这个一个spring boot应用
 
@@ -19,7 +98,7 @@
 public @interface SpringBootApplication {}
 ```
 
-### 自动配置类加载过程
+### 2）自动配置类加载过程
 
 @EnableAutoConfiguration开启启动配置功能，引入EnableAutoConfigurationImportSelector，这也是启动配置的入口类
 
@@ -151,7 +230,7 @@ org.springframework.boot.autoconfigure.websocket.WebSocketMessagingAutoConfigura
 org.springframework.boot.autoconfigure.webservices.WebServicesAutoConfiguration
 ```
 
-### HttpEncodingAutoConfiguration分析
+### 3）XXXAutoConfiguration
 
 ```java
 //这是一个配置类
@@ -223,7 +302,7 @@ Negative matches:（没有启动，没有匹配成功的自动配置类）
 
 
 
-### @Conditional派生注解（Spring注解版原生的@Conditional作用）
+### 4）@Conditional派生注解
 
 作用：必须是@Conditional指定的条件成立，才给容器中添加组件，配置配里面的所有内容才生效；
 
