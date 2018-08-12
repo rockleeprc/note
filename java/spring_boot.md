@@ -2,6 +2,77 @@
 
 # 二、配置文件
 
+## 1、yaml语法
+
+### 1）字面量：
+
+* 字符串默认不用加上单引号或者双引号
+* 双引号：不会转义字符串里面的特殊字符；特殊字符会作为本身想表示的意思
+  * name:   "zhangsan \n lisi"，输出 zhangsan 换行  lisi
+* 单引号；会转义特殊字符，特殊字符最终只是一个普通的字符串数据
+  * name:   ‘zhangsan \n lisi’，输出 zhangsan \n  lisi
+
+### 2）复杂对象映射:
+
+java bean
+
+```java
+public class Car {
+    private String brand;
+    private Integer number;
+}
+public class Person {
+    private String name;
+    private Integer age;
+    private Boolean boss;
+    private Date birth;
+}
+```
+
+yaml配置
+
+```yaml
+person:
+    name: zhangsan
+    age: 18
+    boss: false
+    birth: 2017/12/12
+    maps: {k1: v1,k2: 12}
+    cars:
+      - brand: beanz
+        number: 1234
+      - brand: bmw
+        number: 4321
+    pets:
+      - 小狗
+      - 猫
+```
+
+### 3）对象绑定
+
+* @ConfigurationProperties：类中的属性和配置文件中的配置进行绑定，默认从全局配置文件中获取配置
+* @Component：对象实例交给容器管理，只有对象在容器中才能使用配置绑定功能功能
+
+```java
+@Component
+@ConfigurationProperties(prefix = "person")
+public class Person {}
+```
+
+
+
+使yaml配置文件有提示功能，倒入以下配置，但是在ided中部起作用，spring官方文旦B.3
+
+```xml
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-configuration-processor</artifactId>
+			<optional>true</optional>
+		</dependency>
+```
+
+
+
 ## 5、profile
 
 ### 1）拆分多个文件
@@ -10,7 +81,7 @@
 * application-dev.yml/properties
 * application-prod.yml/properties
 
-### 2）yml文档块	
+# 2）yml文档块	
 
 使用`---`区分文档块，使用`spring.profiles=dev`声明该文档块属于哪个profile
 
@@ -320,6 +391,96 @@ Negative matches:（没有启动，没有匹配成功的自动配置类）
 | @ConditionalOnWebApplication    | 当前是web环境                                    |
 | @ConditionalOnNotWebApplication | 当前不是web环境                                  |
 | @ConditionalOnJndi              | JNDI存在指定项                                   |
+
+
+
+# 三、日志
+
+## 1、日志框架
+
+### 1）日志门面
+
+* JCL（Jakarta  Commons Logging）    
+* SLF4j（Simple  Logging Facade for Java）
+* jboss-logging
+
+### 2）日志实现
+
+* Log4j 
+* Log4j2
+* JUL（java.util.logging）
+*   Logback
+
+
+
+## 2、slf4j使用
+
+* 引入slf4j
+* 删除框架自己的日志依赖
+* 引入桥接slf4j包
+  * jcl-over-slf4j-1.7.25.jar
+  * log4j-over-slf4j-1.7.25.jar
+  * log4j-over-slf4j-1.7.25.jar
+* 引入slf4j实现包
+
+## 3、springboot中的日志实现
+
+### 1）pom依赖
+
+```xml
+<dependency>
+    <groupId>org.springframework</groupId>
+    <artifactId>spring-core</artifactId>
+    <version>${spring.version}</version>
+    <exclusions>
+        <exclusion>
+            <groupId>commons-logging</groupId>
+            <artifactId>commons-logging</artifactId>
+        </exclusion>
+    </exclusions>
+</dependency>
+```
+
+```
+<artifactId>spring-boot-starter-logging</artifactId>
+<dependencies>
+    <dependency>
+        <groupId>ch.qos.logback</groupId>
+        <artifactId>logback-classic</artifactId>
+    </dependency>
+    <dependency>
+        <groupId>org.slf4j</groupId>
+        <artifactId>jcl-over-slf4j</artifactId>
+    </dependency>
+    <dependency>
+        <groupId>org.slf4j</groupId>
+        <artifactId>jul-to-slf4j</artifactId>
+    </dependency>
+    <dependency>
+        <groupId>org.slf4j</groupId>
+        <artifactId>log4j-over-slf4j</artifactId>
+    </dependency>
+</dependencies>
+```
+
+### 2）日志级别
+
+* trace
+* debug
+* info（springboot 默认级别）
+* warn
+* error
+
+### 3）日志配置
+
+* logging.path：指定输出文件的路径，默认文件名称为spring.log
+* logging.file：指定输出文件的路径和文件名
+
+
+
+# 四、Web开发
+
+## 4、SpringMVC自动配置
 
 
 
