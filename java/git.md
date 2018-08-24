@@ -254,6 +254,8 @@ $  git config --global --replace-all user.name "输入你的用户名"
 	# 从版本库中删除
 	$ git rm test.txt
 	rm 'test.txt'
+	# 从git中删除，文件系统中保留
+	$ git reset filename
 	
 	# 提交到分支 彻底删除
 	$ git commit -m "rm test.txt"
@@ -494,6 +496,12 @@ $  git config --global --replace-all user.name "输入你的用户名"
 	
 	# 建立本地分支和远程分支的关系
 	$ git branch --set-upstream branch-name origin/branch-name
+	
+	$ git fetch origin master # 将远程仓库的master分支下载到本地当前branch中
+	$ git diff master origin/master # 当前master分支和仓库master比较
+	$ git log -p master  ..origin/maste	# 比较本地的master分支和origin/master分支的差别
+	$ git merge origin/master # 合并master到当前分支
+	$ git pull origin master # 从远程获取最新版本并merge到本地
 
 # todo标签管理
 

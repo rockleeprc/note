@@ -195,5 +195,5 @@ spring:
 * [23 个很有用的 ElasticSearch 查询示例](http://coyee.com/article/10764-23-useful-elasticsearch-example-queries/)
 * [死磕 Elasticsearch 方法论](https://blog.csdn.net/laoyang360/article/details/79293493)
 * [elastic知识库](http://lib.csdn.net/wojiushiwo987/structure/deep_elasticsearch)
-* 
+* [Springboot1.x整合elastic5.x](https://blog.csdn.net/come_sky/article/details/80291108)
 
