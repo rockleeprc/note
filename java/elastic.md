@@ -74,7 +74,48 @@ http.port: 9200
 
 * 创建两个数据目录path.data、path.logs
 
-### 运行
+### 可能遇到的问题
+
+* 不能使用root启动，新建elsearch用户和组
+
+```shell
+org.elasticsearch.bootstrap.StartupException: java.lang.RuntimeException: can not run elasticsearch as root
+```
+
+* 日志目录权限不够，日志目录也要修改用户和组权限
+
+```shell
+2018-08-25 12:07:39,060 main ERROR RollingFileManager (/data/es/logs/my-application.log) java.io.FileNotFoundException: /data/es/logs/my-application.log (权限不够) java.io.FileNotFoundException: /data/es/logs/my-application.log (权限不够)
+```
+
+* 修改/etc/security/limits.conf 文件
+
+```shell
+elsearch soft memlock unlimited
+elsearch hard memlock unlimited
+
+* soft nofile 65536
+* hard nofile 131072
+* soft nproc 2048
+* hard nproc 4096
+```
+
+* 修改/etc/sysctl.conf 文件
+
+```shell
+vm.max_map_count=655360
+$ sysctl -p
+```
+
+* 关闭防火墙
+
+```shell
+$ firewall-cmd --state # 查看防火墙状态
+$ systemctl stop firewalld # 临时关闭
+$ systemctl disable firewalld # 禁止开机启动
+```
+
+* 运行
 
 ```shell
 ./elasticsearch -d
@@ -102,6 +143,58 @@ export ES_HEAP_SIZE=1g # 设置环境变量
 
 ## 可视化插件
 
+* 下载插件
+
+```shell
+$ wget https://github.com/mobz/elasticsearch-head/archive/master.zip
+```
+
+* 解压，如果没有unzip需要安装
+
+```shell
+yum install zip unzip
+```
+
+* 安装nodejs
+
+```shell
+curl -sL https://rpm.nodesource.com/setup_8.x | bash - 
+yum install -y nodejs
+[root@node01 local]# node -v
+v8.11.4
+[root@node01 local]# npm -v
+5.6.0
+```
+
+* 安装grunt
+
+```shell
+npm install grunt --save-dev
+[root@node01 elasticsearch-head-master]# npm install
+
+```
+
+* 启动
+
+```shell
+[root@node01 bin]# ./grunt server &
+[1] 1678
+[root@node01 bin]# (node:1678) ExperimentalWarning: The http2 module is an experimental API.
+Running "connect:server" (connect) task
+Waiting forever...
+Started connect web server on http://localhost:9100
+```
+
+* 访问
+
+```shell
+http://192.168.56.11:9100/
+```
+
+
+
+
+
 ### head
 
 * elasticsearch-head是一个用来浏览、监控Elastic Search状态、与Elastic Search簇进行交互的web前端展示插件 
@@ -122,7 +215,7 @@ http.cors.enabled: true
 http.cors.allow-origin: "*"
 ```
 
-### IK粉刺
+### IK分词
 
 [github地址](https://github.com/medcl/elasticsearch-analysis-ik)
 
