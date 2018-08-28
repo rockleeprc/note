@@ -41,3 +41,7 @@ price:[10 to 15}：数值上的查询范围 大于等于10，小于15
 
 分片：把一个大的索引数据存储在多个节点上
 副本：每个分片保存多份
+
+
+https://blog.csdn.net/laoyang360/article/details/80920343
+https://blog.csdn.net/column/details/deep-elasticsearch.html
