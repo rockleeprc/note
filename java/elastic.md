@@ -255,7 +255,7 @@ put http://47.106.214.111:9200/map/articles3/_mapping/
 	},
 	"mappings": { //没有创建索引时指定，如果创建索引后执行：index_already_exists_exception
 		"person": { //type名称
-			"_all": {
+			"_all": { // 是否多多有字段检索
 				"enabled": false
 			},
 			"properties": { //指定文档中字段类型
