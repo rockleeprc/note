@@ -229,6 +229,69 @@ http://192.168.56.11:9100/
 
 
 
+* 创建mapping
+
+```shell
+# 1、先创建所索引
+# 2、创建映射
+put http://47.106.214.111:9200/map/_mapping/articles2/
+put http://47.106.214.111:9200/map/articles3/_mapping/
+```
+
+* mapping
+
+```json
+{
+	"settings": {
+		"number_of_shards": 5,
+		"number_of_replicas": 1,
+		"analysis": {
+			"analyzer": { //创建索引时指定分词器
+				"ik": {
+					"tokenizer": "ik_max_word"
+				}
+			}
+		}
+	},
+	"mappings": { //没有创建索引时指定，如果创建索引后执行：index_already_exists_exception
+		"person": { //type名称
+			"_all": {
+				"enabled": false
+			},
+			"properties": { //指定文档中字段类型
+				"id": {
+					"type": "integer"
+				},
+				"name": {
+					"type": "text",
+					"analyzer": "ik_max_word",
+					"search_analyzer": "ik_max_word"
+				},
+				"birth": {
+					"type": "date",
+					"format": "yyyy-MM-dd HH:mm:ss||yyyy-MM-dd||epoch_millis"
+				},
+				"status": {
+					"type": "keyword"
+				}
+			}
+		}
+	}
+}
+```
+
+* 对分词器的测试
+
+```shell
+http://47.106.214.111:9200/_analyze?pretty&analyzer=ik_max_word&text=这是一个对分词器的测试
+```
+
+
+
+
+
+
+
 ### head
 
 * elasticsearch-head是一个用来浏览、监控Elastic Search状态、与Elastic Search簇进行交互的web前端展示插件 
@@ -464,6 +527,10 @@ Building zip: E:\workspace\github\ik\elasticsearch-analysis-ik\target\releases\e
 * Node Client：废弃
 * Transport Client：7.x不支持
 * Rest API：
+
+
+
+
 
 
 
