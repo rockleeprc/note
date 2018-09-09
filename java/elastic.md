@@ -155,7 +155,7 @@ $ wget https://github.com/mobz/elasticsearch-head/archive/master.zip
 yum install zip unzip
 ```
 
-* 安装nodejs
+* 安装nodejs(centos)
 
 ```shell
 curl -sL https://rpm.nodesource.com/setup_8.x | bash - 
@@ -166,12 +166,46 @@ v8.11.4
 5.6.0
 ```
 
+* 安装nodejs(ubuntu)
+
+```shell
+curl -sL https://deb.nodesource.com/setup_8.x | sudo -E bash -
+sudo apt-get install -y nodejs
+```
+
 * 安装grunt
 
 ```shell
 npm install grunt --save-dev
 [root@node01 elasticsearch-head-master]# npm install
+```
 
+* 修改elasticsearch.yml配置文件，增加如下配置
+
+```SHELL
+http.cors.enabled: true
+http.cors.allow-origin: "*"
+```
+
+* 修改/usr/local/elasticsearch-head-master/Gruntfile.js，增加hostname配置
+
+```shell
+       connect: {
+            server: {
+                options: {
+                    port: 9100,
+                    hostname: '*',
+                    base: '.',
+                    keepalive: true
+                }
+            }
+        }
+```
+
+* 修改elasticsearch-head-master/_site/app.js，ip地址修改为本机
+
+```
+this.base_uri = this.config.base_uri || this.prefs.get("app-base_uri") || "http://47.106.214.111:9200";
 ```
 
 * 启动
@@ -190,6 +224,69 @@ Started connect web server on http://localhost:9100
 ```shell
 http://192.168.56.11:9100/
 ```
+
+
+
+
+
+* 创建mapping
+
+```shell
+# 1、先创建所索引
+# 2、创建映射
+put http://47.106.214.111:9200/map/_mapping/articles2/
+put http://47.106.214.111:9200/map/articles3/_mapping/
+```
+
+* mapping
+
+```json
+{
+	"settings": {
+		"number_of_shards": 5,
+		"number_of_replicas": 1,
+		"analysis": {
+			"analyzer": { //创建索引时指定分词器
+				"ik": {
+					"tokenizer": "ik_max_word"
+				}
+			}
+		}
+	},
+	"mappings": { //没有创建索引时指定，如果创建索引后执行：index_already_exists_exception
+		"person": { //type名称
+			"_all": { // 是否多多有字段检索
+				"enabled": false
+			},
+			"properties": { //指定文档中字段类型
+				"id": {
+					"type": "integer"
+				},
+				"name": {
+					"type": "text",
+					"analyzer": "ik_max_word",
+					"search_analyzer": "ik_max_word"
+				},
+				"birth": {
+					"type": "date",
+					"format": "yyyy-MM-dd HH:mm:ss||yyyy-MM-dd||epoch_millis"
+				},
+				"status": {
+					"type": "keyword"
+				}
+			}
+		}
+	}
+}
+```
+
+* 对分词器的测试
+
+```shell
+http://47.106.214.111:9200/_analyze?pretty&analyzer=ik_max_word&text=这是一个对分词器的测试
+```
+
+
 
 
 
@@ -256,6 +353,124 @@ spring:
 
 
 
+## logstash 安装
+
+* 下载地址
+
+```shell
+https://artifacts.elastic.co/downloads/logstash/logstash-5.6.10.tar.gz	
+```
+
+* ruby开发，需要gem命令，替换国内镜像
+
+```shell
+# 安装gem
+yum install gem
+# 替换镜像
+gem sources --add https://gems.ruby-china.com/ --remove https://rubygems.org/
+# 查看镜像地址
+gem sources -l
+```
+
+* 测试logstash是否安装成功
+
+```shell
+cd bin
+./logstash -e 'input { stdin { } } output { stdout {} }'
+# 随便输入
+hello word
+{
+      "@version" => "1",
+          "host" => "iZwz9j3wje0m1kqkiqlyb0Z",
+    "@timestamp" => 2018-08-27T09:01:42.289Z,
+       "message" => "hello word"
+}
+```
+
+* 修改/usr/local/logstash-5.6.10/Gemfile文件
+
+```shell
+source "https://gems.ruby-china.com"
+```
+
+* 安装logstash-input-jdbc（过程很漫长）
+
+```shell
+cd bin
+root@iZwz9j3wje0m1kqkiqlyb0Z:/usr/local/logstash-5.6.10/bin# ./logstash-plugin install logstash-input-jdbc
+Validating logstash-input-jdbc
+Installing logstash-input-jdbc
+Installation successful
+```
+
+* 配置mysql.conf
+
+```shell
+input {
+    stdin {
+    }
+    jdbc {
+      # 数据库
+      jdbc_connection_string => "jdbc:mysql://localhost:3306/test01"
+      # 用户名密码(你的数据库的用户名和密码)
+      jdbc_user => "root"
+      jdbc_password => "password"
+      # jar包的位置
+      jdbc_driver_library => "/usr/local/logstash-5.6.3/mysql-connector-java-5.1.41.jar"
+      # mysql的Driver
+      jdbc_driver_class => "com.mysql.jdbc.Driver"
+      #处理中文乱码问题
+      codec => plain { charset => "UTF-8"}
+      # true使用其它字段追踪，false使用时间字段追踪
+      use_column_value => false
+      tracking_column => birth
+      record_last_run => true
+     #上一个sql_last_value值的存放文件路径, 必须要在文件中指定字段的初始值
+     #last_run_metadata_path => "G:\Developer\Elasticsearch5.5.1\ES5\logstash-5.5.1\bin\mysql\station_parameter.txt"
+      jdbc_paging_enabled => "true"
+      jdbc_page_size => "50000"
+      #statement_filepath => "config-mysql/test02.sql"
+      statement => "select * from user u where u.birth > :sql_last_value"
+      schedule => "* * * * *"
+      #索引的类型
+      type => "test02"
+    }
+}
+
+filter {
+    json {
+        source => "message"
+        remove_field => ["message"]
+    }
+}
+
+output {
+    elasticsearch {
+    	# ES地址与端口
+        hosts => "127.0.0.1:9200"
+        # index名
+        index => "test01"
+        # 需要关联的数据库中有有一个id字段，对应索引的id号
+        document_id => "%{id}"
+    }
+    stdout {
+        codec => json_lines
+    }
+}
+```
+
+
+
+* 启动logstash
+
+```shell
+$ /usr/local/logstash-5.6.10/bin$ ./logstash -f config-mysql/mysql.conf
+```
+
+
+
+
+
 ## 五、MySQL与ES数据同步
 
 * 数据采集->MySQL->ES
@@ -272,11 +487,52 @@ spring:
 
 
 
+## 分词器安装
+
+* clone分词器到本地，ik分词器地址
+
+```shell
+https://github.com/medcl/elasticsearch-analysis-ik
+```
+
+* maven打包
+
+```shell
+$ mvn clean package -DskipTests
+Building zip: E:\workspace\github\ik\elasticsearch-analysis-ik\target\releases\elasticsearch-analysis-ik-5.6.9.zip
+```
+
+* 上传zip包
+
+```shell
+/usr/local/elasticsearch-5.6.10/plugins/
+```
+
+* 另一种直接安装
+
+```shell
+./bin/elasticsearch-plugin install https://github.com/medcl/elasticsearch-analysis-ik/releases/download/v5.6.5/elasticsearch-analysis-ik-5.6.5.zip
+```
+
+
+
+
+
+
+
+
+
 ## 六、elastic客户端
 
 * Node Client：废弃
 * Transport Client：7.x不支持
 * Rest API：
+
+
+
+
+
+
 
 
 
