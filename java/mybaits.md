@@ -2,7 +2,7 @@
 
 ### CRUD
 
-* `<select>`
+* <select>
   * resultType
     * 返回一个pojo对象
     * 返回一个pojo对象的集合
