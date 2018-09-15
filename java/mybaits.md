@@ -162,7 +162,7 @@ TODO 参数源码
 
 * MapperProxyFactory
   * 通过Configuration->MapperRegistry获得
-  * 创建MapperProxy，实例话Mapper接口
+  * 创建MapperProxy，实例化Mapper接口
 * MapperProxy
   * InvocationHandler
   * 返回MapperProxy代理的Mapper接口实例
@@ -200,6 +200,7 @@ TODO 参数源码
 * TypeHandler
   * 数据库类型和java类型的映射
 
+
 ## 插件
 
 ### 开发步骤
@@ -207,6 +208,25 @@ TODO 参数源码
 * 实现Interceptor接口
 * @Intercepts插件签名
 * 配置插件
+=======
+### Configuration
+
+* 构造方法初始化时，用TypeAliasRegistry注册系统级别名(如：JDBC、POOLED、SLF4J)
+
+
+
+
+
+
+
+- Executor（update、query、flushStatements、commint、rollback、getTransaction、close、isClosed）:执行器处理
+- StatementHandler（prepare、parameterize、batch、update、query）：Sql语法构建处理 
+- ParameterHandler（getParameterObject、setParameters）：参数 处理
+- ResultSetHandler（handleResultSets、handleOutputParameters）：结果集处理
+
+> 执行流程：SqlSession -> Executor -> StatementHandler -> ParameterHandler ->  ResultSetHandler 
+
+
 
 
 
@@ -221,6 +241,8 @@ TODO 参数源码
 ## 第二个月
 
 对接第三方支付平台码上赢，包括扫码接口、支付接口、下单回调接口、退单接口、订单查询接口。对接第三方支付平台美团，包括美团订单查询接口、美团商户签订电子协议接口、美团商户绿洲零费率申请接口、美团绿洲零费率查询接口。分析mysql错误日志，排查对order_detail表分页查询时，查询链接丢失导致查询失败原因。
+
+
 
 
 
