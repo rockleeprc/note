@@ -200,6 +200,14 @@ TODO 参数源码
 * TypeHandler
   * 数据库类型和java类型的映射
 
+## 插件
+
+### 开发步骤
+
+* 实现Interceptor接口
+* @Intercepts插件签名
+* 配置插件
+
 
 
 ## 第一个月
