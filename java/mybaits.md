@@ -200,6 +200,15 @@ TODO 参数源码
 * TypeHandler
   * 数据库类型和java类型的映射
 
+
+## 插件
+
+### 开发步骤
+
+* 实现Interceptor接口
+* @Intercepts插件签名
+* 配置插件
+=======
 ### Configuration
 
 * 构造方法初始化时，用TypeAliasRegistry注册系统级别名(如：JDBC、POOLED、SLF4J)
