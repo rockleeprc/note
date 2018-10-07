@@ -402,7 +402,154 @@ meet you/him/her
 
   That is his wife's friend.那是他妻子的朋友
 
-## Lesson 
+## Lesson 13 
+
+### 单词
+
+* a green hand：新手
+
+  green tea：绿茶
+
+* come upstairs：上楼
+
+  go downstairs：下楼
+
+* same：相同的
+
+  the same color：前必须有the，表示相同的...
+
+### 课文
+
+* What color is your...
+
+* Come and see her.
+
+  两个动作连续发生，用and连接
+
+* Here+主语+动词
+
+  Here it is.
+
+  I am here.	Here I am. 我在这
+
+  He is here.	Here he is. 他在这
+
+  Here we go. 我们开始吧
+
+### 语法
+
+* 特殊疑问句
+
+  your name is what？
+
+  特殊疑问词+be+名词
+
+  What is your name？
+
+### Lesson 14 
+
+* suitcase：手提箱（放一套衣服的箱子）
+* a lucky dog：幸运的儿
+
+## Lesson 15 
+
+### 单词
+
+* customs：海关
+
+  customer：顾客
+
+* visa：签证
+
+* brown：棕色
+
+  brown tea：红茶
+
+  brown sugar：红糖
+
+* tourist：旅游者
+
+  表示人后缀
+
+  -er：teacher、worker、driver
+
+  -man：policeman
+
+  -ist：dentis、arties
+
+  -or：doctor、diretor
+
+### 课文
+
+* 人称代词复数
+
+| 单数 | 复数 |
+| ---- | ---- |
+| I    | we   |
+| you  | you  |
+| he   | they |
+| she  | they |
+
+this these
+
+that those
+
+* 物主代词（形容词性）
+
+  our
+
+  their
+
+* That‘s fine
+
+  就这样吧/行了
+
+### 语法
+
+* 名词的单数/复数
+
+  单数：1
+
+  复数：>=2
+
+  a car/tow cars
+
+  a bag/three bags
+
+  单/复数只针对名词、人称代词
+
+  有些名词，没有复数
+
+  复数规则
+
+  * 名词+s：cars、bags
+  * s、sh、x、ch结尾+es：buses、boxes、brushes
+  * f、fe结尾+ves：wives、sheves、leaves
+  * 辅音+y结尾+ies：babies、ladies
+  * 原音+o结尾：zoos、radios
+  * 辅音+o结尾：herose、potatoes
+
+  单数+is
+
+  复数+are
+
+  复数在句子中的变化：代词，be动词、名词
+
+  复数形式出现：jeans、pants（长裤）、shorts（短裤）、glasses（眼镜）
+
+### Lesson 16 
+
+* grey hair：花白头发
+
+* black：黑色的
+
+  black tea：红茶
+
+  black coffe：纯咖啡
+
+
+
+## Lesson
 
 ### 单词
 
@@ -410,9 +557,9 @@ meet you/him/her
 
 ### 语法
 
-### Lesson 
+### Lesson
 
-## Lesson 
+## Lesson
 
 ### 单词
 
@@ -420,7 +567,347 @@ meet you/him/her
 
 ### 语法
 
-### Lesson 
+### Lesson
+
+## Lesson
+
+### 单词
+
+### 课文
+
+### 语法
+
+### Lesson
+
+## Lesson
+
+### 单词
+
+### 课文
+
+### 语法
+
+### Lesson
+
+## Lesson
+
+### 单词
+
+### 课文
+
+### 语法
+
+### Lesson
+
+## Lesson
+
+### 单词
+
+### 课文
+
+### 语法
+
+### Lesson
+
+## Lesson
+
+### 单词
+
+### 课文
+
+### 语法
+
+### Lesson
+
+## Lesson
+
+### 单词
+
+### 课文
+
+### 语法
+
+### Lesson
+
+## Lesson
+
+### 单词
+
+### 课文
+
+### 语法
+
+### Lesson
+
+## Lesson
+
+### 单词
+
+### 课文
+
+### 语法
+
+### Lesson
+
+## Lesson
+
+### 单词
+
+### 课文
+
+### 语法
+
+### Lesson
+
+## Lesson
+
+### 单词
+
+### 课文
+
+### 语法
+
+### Lesson
+
+## Lesson
+
+### 单词
+
+### 课文
+
+### 语法
+
+### Lesson
+
+## Lesson
+
+### 单词
+
+### 课文
+
+### 语法
+
+### Lesson
+
+## Lesson
+
+### 单词
+
+### 课文
+
+### 语法
+
+### Lesson
+
+## Lesson
+
+### 单词
+
+### 课文
+
+### 语法
+
+### Lesson
+
+## Lesson
+
+### 单词
+
+### 课文
+
+### 语法
+
+### Lesson
+
+## Lesson
+
+### 单词
+
+### 课文
+
+### 语法
+
+### Lesson
+
+## Lesson
+
+### 单词
+
+### 课文
+
+### 语法
+
+### Lesson
+
+## Lesson
+
+### 单词
+
+### 课文
+
+### 语法
+
+### Lesson
+
+## Lesson
+
+### 单词
+
+### 课文
+
+### 语法
+
+### Lesson
+
+## Lesson
+
+### 单词
+
+### 课文
+
+### 语法
+
+### Lesson
+
+## Lesson
+
+### 单词
+
+### 课文
+
+### 语法
+
+### Lesson
+
+## Lesson
+
+### 单词
+
+### 课文
+
+### 语法
+
+### Lesson
+
+## Lesson
+
+### 单词
+
+### 课文
+
+### 语法
+
+### Lesson
+
+## Lesson
+
+### 单词
+
+### 课文
+
+### 语法
+
+### Lesson
+
+## Lesson
+
+### 单词
+
+### 课文
+
+### 语法
+
+### Lesson
+
+## Lesson
+
+### 单词
+
+### 课文
+
+### 语法
+
+### Lesson
+
+## Lesson
+
+### 单词
+
+### 课文
+
+### 语法
+
+### Lesson
+
+## Lesson
+
+### 单词
+
+### 课文
+
+### 语法
+
+### Lesson
+
+## Lesson
+
+### 单词
+
+### 课文
+
+### 语法
+
+### Lesson
+
+## Lesson
+
+### 单词
+
+### 课文
+
+### 语法
+
+### Lesson
+
+## Lesson
+
+### 单词
+
+### 课文
+
+### 语法
+
+### Lesson
+
+## Lesson
+
+### 单词
+
+### 课文
+
+### 语法
+
+### Lesson
+
+## Lesson
+
+### 单词
+
+### 课文
+
+### 语法
+
+### Lesson
+
+## Lesson
+
+### 单词
+
+### 课文
+
+### 语法
+
+### Lesson
 
 
 
