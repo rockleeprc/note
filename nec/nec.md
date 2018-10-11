@@ -549,25 +549,81 @@ that those
 
 
 
-## Lesson
+## Lesson 17
 
 ### 单词
+
+* employ：雇佣
+
+  employee：雇员
+
+  employer：雇佣者，雇主
+
+  -er，…的人
+
+  -ee，被…的人
+
+* hard-working：勤奋的
+
+  adj.+doing
+
+  good-looking：好看的
+
+  easy-going：好相处的
+
+### 课文
+
+* Come and meet...
+
+  Come and sit down
+
+  Come and have a drink
+
+  两个动作同时或者瞬间很快发生
+
+### 语法
+
+### Lesson 18
+
+* What are their jobs?
+
+## Lesson 19
+
+### 单词
+
+* What's the matter?
+
+  必须有the
+
+* 孩子
+
+  kid-kids
+
+* 坐下
+
+  sit down
+
+  have a seat
 
 ### 课文
 
 ### 语法
 
-### Lesson
+### Lesson 20
 
-## Lesson
+* 大
 
-### 单词
+  heavy：风大、雪大、雨大
 
-### 课文
+  loud：声音大
 
-### 语法
+  old：年龄大
 
-### Lesson
+  large：面积大
+
+  big：体积大
+
+  small：小
 
 ## Lesson
 
