@@ -625,35 +625,150 @@ that those
 
   small：小
 
-## Lesson
+## Lesson 21
 
 ### 单词
 
+* give：给
+
+  give sb（宾语）
+
+* one：一个，pron.代词
+
+  the blue coat=the blue one
+
+  the short girl=the short one
+
+  ones 复数，代替复数名词
+
+* which：哪一个，那一些
+
+  单数、复数取决于后面加的名词
+
 ### 课文
+
+* You give me a book.
+
+  主+谓语+宾语+宾语
+
+* This book?=This one.
+
+  Not that book.=Not that one.
 
 ### 语法
 
-### Lesson
+* 双宾语的动词
 
-## Lesson
+  give
+
+* 句型结构复习
+
+### Lesson 22
+
+* full：满的
+
+  I'm full.我饱了
+
+  a full stop 句号
+
+  a full time job 一份全职工作
+
+* large 大的，强调面积，其它的用big
+
+* big：大的，指体积大
+
+* blunt：钝的
+
+  My English is blunt.我的英语不熟练
+
+## Lesson 23
 
 ### 单词
 
+* on：在...之上 prep.介词
+
 ### 课文
+
+* Give me some classses.
+
+  some：一些，后加复数名词
+
+  some books
+
+  some cups
+
+  some boxes
+
+* The ones on the shelf.
+
+  没有动词，不是句子
+
+  翻译为：架子上的那些书
+
+  介词短语做后置，翻译到前面
+
+  the book on the desk 桌子上的那些书
+
+  the cup on the table 桌子上的那些书
 
 ### 语法
 
-### Lesson
+* 介词
 
-## Lesson
+  连接两个词或词与句子
+
+  The book is on the desk 连接两个词
+
+  使用介词时，不要忘记动词
+
+### Lesson 24
+
+* cigarette：n.香烟，smoke 动词
+* dress：n.裙子 v.大半
+
+## Lesson 25
 
 ### 单词
 
+* fridge：冰箱
+
+* in the middle of：在...的中间
+
+* of：属于…的，介词
+
+* room
+
+  living room
+
+  dining room
+
+  bedroom
+
+  bathroom
+
 ### 课文
+
+* 描述物体的方式
+
+  There is ... in the kitchen.
+
+  描述顺序：位置、颜色、具体位置、状态
 
 ### 语法
 
-### Lesson
+* There be句型
+
+  构成：There be+地点
+
+  表示有：
+
+  ​	拥有： have 我有很多钱
+
+  ​	存在： There be 街上有很多车
+
+### Lesson 26
+
+
 
 ## Lesson
 
