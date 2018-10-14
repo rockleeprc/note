@@ -770,7 +770,7 @@ that those
 
 
 
-## Lesson
+## Lesson 27
 
 ### 单词
 
@@ -778,17 +778,104 @@ that those
 
 ### 语法
 
-### Lesson
+* There is a+单数/There are some+复数
+* 介词
 
-## Lesson
+### Lesson 28
+
+* trousers：长裤（英）
+
+  pants：长裤（美）
+
+  shorts：短裤
+
+  
+
+## Lesson 29
 
 ### 单词
 
+- shut adj./v.
+
+- -un否定前缀
+
+  unclean
+
+  uneasy
+
+  unhappy
+
+- must：必须
+
+  表示情感和态度的动词
+
+- color
+
+  n.颜色
+
+  v.上色
+
+- milk
+
+  n.牛奶
+
+  v.给奶牛挤奶
+
+- water
+
+  n 水
+
+  v 浇水
+
+- dust
+
+  n 灰尘
+
+  v 清扫灰尘
+
 ### 课文
+
+* What must I do？
+
+  What must I say/read/clean?
+
+  Where must I go/live/stay?
+
+  Who must I meet/love?
 
 ### 语法
 
-### Lesson
+* 祈使句
+
+  没有主语，动词开头
+
+  表示命令：动词原形+ ...
+
+  ​	Shut the door.
+
+  表示请求：please+动词原形+...
+
+  ​	Please give me it.
+
+  表示建议：Let's+ 动词原形+...
+
+  ​	Let's go.
+
+### Lesson 30
+
+* -en 动词后缀
+
+  adj.+en=v.
+
+  sharpen
+
+  shorten
+
+  weaken
+
+* put on/take off 穿/脱
+
+* 
 
 ## Lesson
 

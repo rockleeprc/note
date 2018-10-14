@@ -235,6 +235,51 @@ show variables like 'char%';
 
   ​	myi：索引文件
 
+## 索引优化
+
+* 创建索引
+
+```
+# idx_user_name：索引名	user：表名	name：字段名 
+create index idx_user_name on user(name)
+```
+
+* sql语句执行顺序
+
+  from
+
+  on
+
+  where
+
+  group by
+
+  having
+
+  select
+
+  distinct
+
+  order by
+
+  limit
+
+* 关联查询
+
+  inner join：左右相同的部分
+
+  left join：
+
+  right join：
+
+  左表独有：select * from a left join b on a.id = b.id where b.id is null
+
+  右表独有：select * from a left join b on a.id = b.id where a.id is null
+
+  全部：select from a full outer join b on a.id = b.id
+
+  左右独有：select * from a full outer join b on a.id=b.id where a.id is null or b.id is null 
+
 ## 备份
 
 ```shell
