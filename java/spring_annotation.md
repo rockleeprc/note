@@ -33,6 +33,8 @@
 
 * matches()方法可以获得beanFactory、classLoader、beanDefinitionRegistry、environment等基础信息
 
+* 组件注入时会根据matches()返回值判断是否注入
+
   ```java
   public class WindowsCondition implements Condition {
       public boolean matches(ConditionContext context, AnnotatedTypeMetadata metadata) {
@@ -46,7 +48,6 @@
           if (os.contains("Windows")) {
               return true;
           }
-  
           return false;
       }
   }
@@ -60,7 +61,7 @@
   @Import({Red.class})
   ```
 
-* 导入一个实现ImportSelector接口的类，可以导入多个类，类必须为全路径（Springboot中大量应用）
+* 导入实现ImportSelector接口的类，可以导入多个类，类必须为全路径（Springboot中大量应用）
 
   ```java
   public class MyImport implements ImportSelector {
@@ -70,7 +71,7 @@
   }
   ```
 
-* 导入一个实现ImportBeanDefinitionRegistrar接口的类，使用beanDefinitionRegistry手动注册一个bean
+* 导入实现ImportBeanDefinitionRegistrar接口的类，使用beanDefinitionRegistry手动注册一个bean
 
   ```java
   public class MyImportRegister implements ImportBeanDefinitionRegistrar {
@@ -82,7 +83,9 @@
 
 ### FactoryBean
 
-* 实现FactoryBean接口，通过@Bean注入FactoryBean（不是bean本身，但获取的是bean实例），用`&Bean`要获取FactoryBean
+* 实现FactoryBean接口，通过@Bean注入FactoryBean（不是bean本身，但获取的是bean实例）
+
+* 获取bean实例时用@Bean标注的方法名称`green`，使用`&Bean`要获取FactoryBean实例
 
   ```java
   public class GreenFactoryBean implements FactoryBean<Green> {
@@ -134,13 +137,13 @@
 
 ### BeanPostProcessor
 
-* 实现BeanPostProcessor接口，在Bean实例化后，init方法前调用`postProcessBeforeInitialization()`，destory方法前`postProcessAfterInitialization()`
+* 实现BeanPostProcessor接口，在Bean实例化后，自定义init方法前调用`postProcessBeforeInitialization()`，自定义destory方法前`postProcessAfterInitialization()`
 * bean生命周期流程
   * Bean Constructor
   * postProcessBeforeInitialization
-  * afterPropertiesSet/@Bean initMethod/@PostConstruct
+  * afterPropertiesSet/@Bean initMethod/@PostConstruct（自定义初始化方法）
   * postProcessAfterInitialization
-  * destroyMethod/@Bean destroyMethod/@PreDestroy
+  * destroyMethod/@Bean destroyMethod/@PreDestroy（自定义销毁方法）
 * 源码调用过程
   * org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory
     * doCreateBean(); 	//创建bean
@@ -238,7 +241,7 @@
 - @Qualifier，优先级最高
 - @Primary，多个实例时，优先使用
 - 类型，@Autowired先匹配类型
-- 属性名称，@Autowired在匹配属性名称
+- 属性名称，@Autowired在类型不匹配时，匹配属性名称
 
 ### @Resource(JSR250)
 
@@ -302,7 +305,7 @@
 
 ### @Pointcut
 
-* 标注在方法上，声明一个连接点
+* 标注在方法上，声明一个连接点，方法没有任何实现
 
   ```java
   @Pointcut("execution(public Integer com.foo.service.CalcService.*(..))")
@@ -310,13 +313,19 @@
 
 ### @Before、@After、@AfterReturning、@Around、@AfterThrowing
 
-* 引用本类中的切点，直接使用方法名，引用其他类的切点使用完整的类名
+* 引用本类中的切点，直接使用方法名
+
+  ```java
+   @Before("pointCut()")
+  ```
+
+* 引用其他类的切点使用完整的类名
 
   ```java
   @After("com.foo.aspect.LogAspect.pointCut()")
   ```
 
-* 方法中的参数JoinPoint必须位于参数列表的首位
+* 标注通知的方法中要引用JoinPoint时，该参数必须位于参数列表的首位
 
 ### @EnableAspectJAutoProxy
 
@@ -508,7 +517,7 @@ AbstractAutowireCapableBeanFactory#initializeBean(java.lang.String, java.lang.Ob
     }
 
     try {
-        //执行自定义初始化方法
+        //执行自定义init方法
         invokeInitMethods(beanName, wrappedBean, mbd);
     }
     catch (Throwable ex) {
@@ -532,7 +541,7 @@ AbstractAutowireCapableBeanFactory#initializeBean(java.lang.String, java.lang.Ob
 
 ### PlatformTransactionManager
 
-* 向容器中要注入PlatformTransactionManager组件
+* 向容器中要注入PlatformTransactionManager组件，该组件需要数据源
 
   ```java
   @Bean
@@ -543,13 +552,13 @@ AbstractAutowireCapableBeanFactory#initializeBean(java.lang.String, java.lang.Ob
 
 ### @Transactional
 
-* 在方法或类上声明，标注使用事务控制
+* 标注在方法或类上，该类或方法使用spring事务控制
 
 ## 扩展点
 
 ### BeanPostProcessor
 
-* bean后置处理器，bean创建对象`初始化`前后进行拦截工作的
+* bean后置处理器，bean创建对象，及自定义init()前后进行拦截工作的
 
   ```java
   public interface BeanPostProcessor {
@@ -610,4 +619,145 @@ AbstractAutowireCapableBeanFactory#initializeBean(java.lang.String, java.lang.Ob
   context.publishEvent(new ApplicationEvent(new String("自定义事件")){});
   ```
 
+## SpringMVC
+
+### AbstractAnnotationConfigDispatcherServletInitializer
+
+* 配置spring容器类、springmvc的自容器类、拦截路径
+
+  ```java
+  public class WebAppInitializer extends AbstractAnnotationConfigDispatcherServletInitializer {
+      @Override
+      protected Class<?>[] getRootConfigClasses() {
+          return new Class[]{RootConfiguration.class};
+      }
   
+      @Override
+      protected Class<?>[] getServletConfigClasses() {
+          return new Class[]{WebAppConfiguration.class};
+      }
+  
+      /**
+       * /：拦截所有请求（包括静态资源（xx.js,xx.png）），但是不包括*.jsp；
+       * /*：拦截所有请求；连*.jsp页面都拦截；jsp页面是tomcat的jsp引擎解析的；
+       */
+      @Override
+      protected String[] getServletMappings() {
+          return new String[]{"/"};
+      }
+  }
+  ```
+
+* spring容器扫描出@Controller外的所有注解
+
+  ```java
+  @ComponentScan(basePackages = "com.foo",
+          excludeFilters = @ComponentScan.Filter(type = FilterType.ANNOTATION, classes = {Controller.class}))
+  public class RootConfiguration {
+  }
+  ```
+
+* springmvc容器只扫描@Controller
+
+  ```java
+  @ComponentScan(basePackages = "com.foo",
+          includeFilters = @ComponentScan.Filter(classes = {Controller.class}), useDefaultFilters = false)
+  @EnableWebMvc
+  public class WebAppConfiguration extends WebMvcConfigurerAdapter {
+      @Override
+      public void configureViewResolvers(ViewResolverRegistry registry) {
+          //默认所有的页面都从 /WEB-INF/ xxx .jsp
+          //registry.jsp();
+          registry.jsp("/WEB-INF/views/", ".jsp");
+      }
+      //静态资源访问
+      @Override
+      public void configureDefaultServletHandling(DefaultServletHandlerConfigurer configurer) {
+          configurer.enable();
+      }
+  }
+  ```
+
+### @EnableWebMvc
+
+* 在配置类中开启对WebMvc的支持
+
+### WebMvcConfigurer、WebMvcConfigurerAdapter
+
+* 自定义SpringMVC的配置
+* WebMvcConfigurerAdapter对WebMvcConfigurer做了空实现
+
+### 加载原理
+
+* 配置在spring-web/4.3.19.RELEASE/spring-web-4.3.19.RELEASE.jar!/META-INF/services/javax.servlet.ServletContainerInitializer中的类会被加载
+
+  ```java
+  org.springframework.web.SpringServletContainerInitializer
+  ```
+
+* SpringServletContainerInitializer类会实例化WebApplicationInitializer，并调用onStartup()
+
+  ```java
+  @Override
+  public void onStartup(Set<Class<?>> webAppInitializerClasses, ServletContext servletContext)
+      throws ServletException {
+  
+      List<WebApplicationInitializer> initializers = new LinkedList<WebApplicationInitializer>();
+  
+      if (webAppInitializerClasses != null) {
+          for (Class<?> waiClass : webAppInitializerClasses) {
+              // Be defensive: Some servlet containers provide us with invalid classes,
+              // no matter what @HandlesTypes says...
+              if (!waiClass.isInterface() && !Modifier.isAbstract(waiClass.getModifiers()) &&
+                  WebApplicationInitializer.class.isAssignableFrom(waiClass)) {
+                  try {
+                      initializers.add((WebApplicationInitializer) waiClass.newInstance());
+                  }
+                  catch (Throwable ex) {
+                      throw new ServletException("Failed to instantiate WebApplicationInitializer class", ex);
+                  }
+              }
+          }
+      }
+      if (initializers.isEmpty()) {
+          servletContext.log("No Spring WebApplicationInitializer types detected on classpath");
+          return;
+      }
+  
+      servletContext.log(initializers.size() + " Spring WebApplicationInitializers detected on classpath");
+      AnnotationAwareOrderComparator.sort(initializers);
+      for (WebApplicationInitializer initializer : initializers) {
+          initializer.onStartup(servletContext);
+      }
+  }
+  ```
+
+  
+
+## 内嵌Tomcat容器
+
+* debug需在idea配置命令行这行
+
+```xml
+<plugins>
+    <plugin>
+        <groupId>org.apache.tomcat.maven</groupId>
+        <artifactId>tomcat7-maven-plugin</artifactId>
+        <version>2.2</version>
+        <configuration>
+            <path>/</path>
+            <port>8080</port>
+            <server>tomcat7</server>
+        </configuration>
+        <executions>
+            <execution>
+                <phase>package</phase>
+                <goals>
+                    <goal>run</goal>
+                </goals>
+            </execution>
+        </executions>
+    </plugin>
+</plugins>
+```
+
