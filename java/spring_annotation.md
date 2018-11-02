@@ -664,6 +664,24 @@ AbstractAutowireCapableBeanFactory#initializeBean(java.lang.String, java.lang.Ob
           includeFilters = @ComponentScan.Filter(classes = {Controller.class}), useDefaultFilters = false)
   @EnableWebMvc
   public class WebAppConfiguration extends WebMvcConfigurerAdapter {
+  }
+  ```
+
+### @EnableWebMvc
+
+* 在配置类中开启对WebMvc的支持
+
+### WebMvcConfigurer、WebMvcConfigurerAdapter
+
+* 自定义SpringMVC的配置
+
+* WebMvcConfigurerAdapter对WebMvcConfigurer做了空实现
+
+  ```java
+  @ComponentScan(basePackages = "com.foo",
+          includeFilters = @ComponentScan.Filter(classes = {Controller.class}), useDefaultFilters = false)
+  @EnableWebMvc
+  public class WebAppConfiguration extends WebMvcConfigurerAdapter {
       @Override
       public void configureViewResolvers(ViewResolverRegistry registry) {
           //默认所有的页面都从 /WEB-INF/ xxx .jsp
@@ -677,15 +695,6 @@ AbstractAutowireCapableBeanFactory#initializeBean(java.lang.String, java.lang.Ob
       }
   }
   ```
-
-### @EnableWebMvc
-
-* 在配置类中开启对WebMvc的支持
-
-### WebMvcConfigurer、WebMvcConfigurerAdapter
-
-* 自定义SpringMVC的配置
-* WebMvcConfigurerAdapter对WebMvcConfigurer做了空实现
 
 ### 加载原理
 
