@@ -237,11 +237,18 @@ show variables like 'char%';
 
 ## 索引优化
 
-* 创建索引
+### 索引分类
+
+- 单值索引：一个索引只包含一列，一个表可以多个单列索引
+- 唯一索引：索引列的值必须唯一，但允许有空值
+- 复合索引：一个索引包含多个列
+
+### 创建索引
 
 ```
 # idx_user_name：索引名	user：表名	name：字段名 
-create index idx_user_name on user(name)
+create unique|index idx_user_name on user(name)
+drop index idx_user_name on user
 ```
 
 * sql语句执行顺序
@@ -276,9 +283,85 @@ create index idx_user_name on user(name)
 
   右表独有：select * from a left join b on a.id = b.id where a.id is null
 
-  全部：select from a full outer join b on a.id = b.id
+  全部（mysql不支持）：select from a full outer join b on a.id = b.id
+
+  ​	select * from a left join b on a.id = b.id
+
+  ​	union（自带去重功能）
+
+  ​	select * from a left join b on a.id = b.id 
 
   左右独有：select * from a full outer join b on a.id=b.id where a.id is null or b.id is null 
+
+* 索引：帮助mysql高效获取数据的数据结构（排序+快速查找）
+
+## Explain
+
+### id
+
+* 查询序号，包含一组数字，表示查询中执行select子句或操作表的顺序
+* id相同，执行顺序由上至下
+* id不同，id值大的优先执行
+* id相同/不同，先执行id值大的，相同id值的由上至下
+
+### select_type
+
+* simple，简单select查询，不包含子查询或union
+* primary，包含子查询，最外层查询被标记为primary
+* subquery，select或where中包含子查询
+* derived，from中包含的子查询被标记为derived，结果放在临时表中
+* union，第二个select出现在union后，被标记为union
+* union result，从union表中获取结果的select
+
+### table
+
+* 本行数据是关于哪张表
+
+### type（重点）
+
+- system，表只有一条记录，const类型特例
+- const，通过索引一次就能找到，const用于比较primary key或unique索引，在where条件中，msyql可以将查询转换为一个常量
+- eq_ref，唯一索引扫描，表中只有一条记录与之匹配，常见于主键或唯一索引扫描
+- ref，非唯一性索引扫描，通过索引访问，但返回匹配某个单独值的所有行
+- range，检索指定的范围，使用一个索引选择数据，不扫描全部索引，只扫描部分，一般存在于between、<、>、in查询中
+- index，全索引扫描
+
+* all，全表扫描
+
+> 最好 sytem>const>eq_ref>ref>range>index>all 最差
+>
+> 至少达到range，最好达到ref级别
+
+### possible_keys
+
+* 可能使用到的索引，一个或多个，但不一定被查询实际使用
+
+### key（重点）
+
+* 实际使用到的索引，null表示没有使用到索引
+* 索引覆盖时，possible_keys为null
+
+### key_len
+
+* 索引中使用的字节数，长度越短越好
+
+### ref
+
+* 显示索引的哪个列被使用，如果可能最好是const
+
+### rows
+
+* 根据表的统计信息及索引选用情况，大致估算出找到所需的记录数
+
+### Extra（重点）
+
+* Using filesort，无法按照索引顺序读取，mysql使用外部索引排序
+* Using temporary，使用临时表保存中间结果，常见于order by和group by
+* Using index，select操作使用了覆盖索引，同时出现Using where表明索引被用来执行索引键值的查找，如果没有出现Using where表明索引用来读取数据而非执行查找动作（覆盖索引：select查询的列只从索引中获取，不必读取数据行）
+* Using where
+* Using join buffer，使用了连接缓存
+* ipossible where，where子句的表达式返回false，不能用来检索任何数据
+* select tables optimized away，在没有group by的情况下，基于索引min、max操作
 
 ## 备份
 
