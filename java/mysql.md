@@ -295,6 +295,25 @@ drop index idx_user_name on user
 
 * 索引：帮助mysql高效获取数据的数据结构（排序+快速查找）
 
+### 索引创建
+
+* 单表，多条件，范围匹配（>、<、between）后索引会失效
+* 两表关联，左连接索引建在右表，右连接索引建在左表
+* 三表关联，小表驱动大表
+
+### 索引失效
+
+* 索引多列时，索引顺序匹配左前缀，不能跳过索引列
+
+* 不在索引列上做任何操作（计算、函数、类型转换）
+* 字符串类型没有单引号，导致mysql自行转换
+* 多列索引时检索范围条件后的索引列失效
+* 使用!=、<、>、or无法使用索引，导致全表扫描，多列索引时将导致部分索引失效
+
+* 不使用select *，select字段尽量使用索引覆盖
+* like '%xxx'、like '%xxx%'，索引失效，like 'xxx%'使用索引时type=range级，like %xxx%使用覆盖索引时range=index，like在多列索引中会导致索引中断
+* is null、is not null无法使用索引
+
 ## Explain
 
 ### id
@@ -309,7 +328,7 @@ drop index idx_user_name on user
 * simple，简单select查询，不包含子查询或union
 * primary，包含子查询，最外层查询被标记为primary
 * subquery，select或where中包含子查询
-* derived，from中包含的子查询被标记为derived，结果放在临时表中
+* derived，from中包含的子查询被标记为derived，结果放在临时表中，derived后的数字表示执行id号
 * union，第二个select出现在union后，被标记为union
 * union result，从union表中获取结果的select
 
@@ -319,8 +338,8 @@ drop index idx_user_name on user
 
 ### type（重点）
 
+- const，通过索引一次就能找到，const用于比较primary key或unique索引，在where条件中，mysql可以将查询转换为一个常量
 - system，表只有一条记录，const类型特例
-- const，通过索引一次就能找到，const用于比较primary key或unique索引，在where条件中，msyql可以将查询转换为一个常量
 - eq_ref，唯一索引扫描，表中只有一条记录与之匹配，常见于主键或唯一索引扫描
 - ref，非唯一性索引扫描，通过索引访问，但返回匹配某个单独值的所有行
 - range，检索指定的范围，使用一个索引选择数据，不扫描全部索引，只扫描部分，一般存在于between、<、>、in查询中
@@ -362,6 +381,8 @@ drop index idx_user_name on user
 * Using join buffer，使用了连接缓存
 * ipossible where，where子句的表达式返回false，不能用来检索任何数据
 * select tables optimized away，在没有group by的情况下，基于索引min、max操作
+
+
 
 ## 备份
 
