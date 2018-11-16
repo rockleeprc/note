@@ -295,7 +295,7 @@ drop index idx_user_name on user
 
 * 索引：帮助mysql高效获取数据的数据结构（排序+快速查找）
 
-### 索引创建
+### 索引建立
 
 * 单表，多条件，范围匹配（>、<、between）后索引会失效
 * 两表关联，左连接索引建在右表，右连接索引建在左表
@@ -311,8 +311,13 @@ drop index idx_user_name on user
 * 使用!=、<、>、or无法使用索引，导致全表扫描，多列索引时将导致部分索引失效
 
 * 不使用select *，select字段尽量使用索引覆盖
-* like '%xxx'、like '%xxx%'，索引失效，like 'xxx%'使用索引时type=range级，like %xxx%使用覆盖索引时range=index，like在多列索引中会导致索引中断
+* like '%xxx'、like '%xxx%'索引失效，like 'xxx%'使用索引时type=range级，like %xxx%使用覆盖索引时range=index，like在多列索引中会导致索引中断
 * is null、is not null无法使用索引
+
+### order by
+
+* sort_buffer_size，内存中排序的容量
+* max_length_for_sort_data，
 
 ## Explain
 
@@ -355,7 +360,7 @@ drop index idx_user_name on user
 
 * 可能使用到的索引，一个或多个，但不一定被查询实际使用
 
-### key（重点）
+### key
 
 * 实际使用到的索引，null表示没有使用到索引
 * 索引覆盖时，possible_keys为null
@@ -372,7 +377,7 @@ drop index idx_user_name on user
 
 * 根据表的统计信息及索引选用情况，大致估算出找到所需的记录数
 
-### Extra（重点）
+### extra（重点）
 
 * Using filesort，无法按照索引顺序读取，mysql使用外部索引排序
 * Using temporary，使用临时表保存中间结果，常见于order by和group by
@@ -382,7 +387,14 @@ drop index idx_user_name on user
 * ipossible where，where子句的表达式返回false，不能用来检索任何数据
 * select tables optimized away，在没有group by的情况下，基于索引min、max操作
 
+## 慢查询
 
+* 开启慢查询，影响数据库性能
+* 超过long_query_time设置的值
+* show variables like '%slow_query_log%'/show status like '%queries%';
+* slow_query_log，开启慢查询
+* show_query_log_file，慢查询日志
+* select sleep(7);
 
 ## 备份
 
