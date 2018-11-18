@@ -40,6 +40,12 @@
   firewall-cmd--list-ports
   ```
 
+* 查看防火墙状态
+
+  ```shell
+  firewall-cmd --state
+  ```
+
 * 关闭防火墙
 
   ```shell
@@ -64,12 +70,10 @@
 # 生成ssh公私钥
 ssh-keygen –t rsa
 # 拷贝并重命名id_rsa.pub
-cp  ~/.ssh/id_rsa.pub  ~/.ssh.authorized_keys
+cp  ~/.ssh/id_rsa.pub  ~/.ssh/authorized_keys
 # 验证当前机器是否可以免密登录
 ssh localhost
 ```
-
-
 
 ### ip到主机名称映射
 
@@ -84,6 +88,31 @@ scp  –r /etc/hosts  hadoop@192.168.0.212：/etc/
 
 ## Zookeeper安装
 
+* 修改配置
+
+  ```shell
+  dataDir=/data/zkData
+  ## zk cluster ##
+  server.1=node1:2888:3888
+  server.2=node3:2888:3888
+  server.3=node3:2888:3888
+  ```
+
+* 在dataDir目录创建myid文件，设置zNode id
+
+* 自动
+
+  ```shell
+  zkServer.sh status
+  ZooKeeper JMX enabled by default
+  Using config: /usr/local/zookeeper/bin/../conf/zoo.cfg
+  Mode: leader
+  ```
+
+  
+
+
+
 ## Hadoop安装
 
 * ### 环境规划
@@ -94,7 +123,7 @@ scp  –r /etc/hosts  hadoop@192.168.0.212：/etc/
 
 ### 伪分布
 
-* hadoop-env.sh，添加JAVA_HOME
+* hadoop-env.sh，修改JAVA_HOME
 
   ```shell
   export JAVA_HOME=/opt/module/jdk1.8.0_144
@@ -139,7 +168,7 @@ scp  –r /etc/hosts  hadoop@192.168.0.212：/etc/
   sbin/hadoop-daemon.sh start datanode
   ```
 
-* yarn-evn.sh，添加JAVA_HOME
+* yarn-evn.sh，修改JAVA_HOME
 
   ```shell
   export JAVA_HOME=/opt/module/jdk1.8.0_144
@@ -161,7 +190,7 @@ scp  –r /etc/hosts  hadoop@192.168.0.212：/etc/
   </property>
   ```
 
-* yarn-site.xml，配置日志聚集
+* yarn-site.xml，配置日志聚集，需要重启NodeManager、ResourceManager、HistoryManager节点
 
   ```xml
   <!-- 日志聚集功能使能 -->
@@ -216,6 +245,17 @@ scp  –r /etc/hosts  hadoop@192.168.0.212：/etc/
   sbin/yarn-daemon.sh start nodemanager
   sbin/mr-jobhistory-daemon.sh start historyserver
   ```
+
+### 分布式
+
+* 节点规划
+
+|      | node1             | node2                      | node3                       |
+| ---- | ----------------- | -------------------------- | --------------------------- |
+| HDFS | NameNode/DataNode | SecondaryNameNode/DataNode | DataNode                    |
+| YARN | NodeManager       | NodeManager                | ResourceManager/NodeManager |
+
+
 
 ### 分布式HA
 

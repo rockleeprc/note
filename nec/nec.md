@@ -875,7 +875,25 @@ that those
 
 * put on/take off 穿/脱
 
-* 
+* turn on/turn off 打开/关闭带电的设备
+
+  turn on the television
+
+  turn off the radio
+
+* 表示洗手间
+
+  bathroom：自己家的
+
+  restroom：公共厕所
+
+  washroom
+
+  toilet：（英）
+
+  loo：口语
+
+  lady's room/man's room
 
 ## Lesson
 
