@@ -9,19 +9,19 @@
 * 添加hadoop组
 
   ```shell
-  groupadd group
+  groupadd hadoop
   ```
 
 * 添加hadoop用户
 
   ```shell
-  groupadd mysql
+  groupadd hadoop
   ```
 
 * 将hadoop用户添加到hadoop组、
 
   ```shell
-  useradd mysql -g mysql
+  useradd hadoop -g hadoop
   ```
 
 * 赋予hadoop用户root权限，修改/etc/sudoers 
@@ -79,11 +79,11 @@ ssh localhost
 
 ```shell
 /etc/hosts
-192.168.0.211 hadoop001
-192.168.0.212 hadoop002
-192.168.0.213 hadoop003
+192.168.56.11 node1
+192.168.56.12 node2
+192.168.56.13 node3
 # 将修改hosts拷贝到其它节点
-scp  –r /etc/hosts  hadoop@192.168.0.212：/etc/
+scp  –r /etc/hosts  hadoop@node2：/etc/
 ```
 
 ## Zookeeper安装
@@ -100,7 +100,7 @@ scp  –r /etc/hosts  hadoop@192.168.0.212：/etc/
 
 * 在dataDir目录创建myid文件，设置zNode id
 
-* 自动
+* 启动
 
   ```shell
   zkServer.sh status
@@ -263,23 +263,23 @@ scp  –r /etc/hosts  hadoop@192.168.0.212：/etc/
   <!-- 指定HDFS中NameNode的地址 -->
   <property>
   		<name>fs.defaultFS</name>
-        <value>hdfs://hadoop102:9000</value>
+        <value>hdfs://node1:9000</value>
   </property>
   
   <!-- 指定Hadoop运行时产生文件的存储目录 -->
   <property>
   		<name>hadoop.tmp.dir</name>
-  		<value>/opt/module/hadoop-2.7.2/data/tmp</value>
+  		<value>/data/hadoop/tmp</value>
   </property>
   ```
-
-#### HDFS配置
 
 * hadoop-env.sh 
 
   ```xml
-  export JAVA_HOME=/opt/module/jdk1.8.0_144
+  export JAVA_HOME=/usr/local/jdk
   ```
+
+#### HDFS配置
 
 * hdfs-site.xml 
 
@@ -292,7 +292,7 @@ scp  –r /etc/hosts  hadoop@192.168.0.212：/etc/
   <!-- 指定Hadoop辅助名称节点主机配置 -->
   <property>
         <name>dfs.namenode.secondary.http-address</name>
-        <value>hadoop104:50090</value>
+        <value>node2:50090</value>
   </property>
   ```
 
@@ -316,9 +316,8 @@ scp  –r /etc/hosts  hadoop@192.168.0.212：/etc/
   <!-- 指定YARN的ResourceManager的地址 -->
   <property>
   		<name>yarn.resourcemanager.hostname</name>
-  		<value>hadoop103</value>
+  		<value>node3</value>
   </property>
-  
   ```
 
 #### MapReduce配置
@@ -339,6 +338,12 @@ scp  –r /etc/hosts  hadoop@192.168.0.212：/etc/
   </property>
   
   ```
+
+#### 格式化集群
+
+```shell
+bin/hdfs namenode -format
+```
 
 ####  启动集群
 
@@ -364,6 +369,7 @@ scp  –r /etc/hosts  hadoop@192.168.0.212：/etc/
   ```http
   http://node1:500770 //hdfs
   http://node2:50090/status.html //SecondaryNameNode
+  http://192.168.56.13:8088/cluster //yarn
   ```
 
   
