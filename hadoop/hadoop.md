@@ -69,8 +69,8 @@
 ```shell
 # 生成ssh公私钥
 ssh-keygen –t rsa
-# 拷贝并重命名id_rsa.pub
-cp  ~/.ssh/id_rsa.pub  ~/.ssh/authorized_keys
+# copy公钥到授权服务器，同时也要对自己授权
+ssh-copy-id node1
 # 验证当前机器是否可以免密登录
 ssh localhost
 ```
@@ -248,14 +248,125 @@ scp  –r /etc/hosts  hadoop@192.168.0.212：/etc/
 
 ### 分布式
 
-* 节点规划
+#### 节点规划
 
 |      | node1             | node2                      | node3                       |
 | ---- | ----------------- | -------------------------- | --------------------------- |
 | HDFS | NameNode/DataNode | SecondaryNameNode/DataNode | DataNode                    |
 | YARN | NodeManager       | NodeManager                | ResourceManager/NodeManager |
 
+#### 核心配置
 
+* core-site.xml
+
+  ```xml
+  <!-- 指定HDFS中NameNode的地址 -->
+  <property>
+  		<name>fs.defaultFS</name>
+        <value>hdfs://hadoop102:9000</value>
+  </property>
+  
+  <!-- 指定Hadoop运行时产生文件的存储目录 -->
+  <property>
+  		<name>hadoop.tmp.dir</name>
+  		<value>/opt/module/hadoop-2.7.2/data/tmp</value>
+  </property>
+  ```
+
+#### HDFS配置
+
+* hadoop-env.sh 
+
+  ```xml
+  export JAVA_HOME=/opt/module/jdk1.8.0_144
+  ```
+
+* hdfs-site.xml 
+
+  ```xml
+  <property>
+  		<name>dfs.replication</name>
+  		<value>3</value>
+  </property>
+  
+  <!-- 指定Hadoop辅助名称节点主机配置 -->
+  <property>
+        <name>dfs.namenode.secondary.http-address</name>
+        <value>hadoop104:50090</value>
+  </property>
+  ```
+
+#### YARN配置
+
+* yarn-env.sh
+
+  ```xml
+  export JAVA_HOME=/opt/module/jdk1.8.0_144
+  ```
+
+* yarn-site.xml
+
+  ```xml
+  <!-- Reducer获取数据的方式 -->
+  <property>
+  		<name>yarn.nodemanager.aux-services</name>
+  		<value>mapreduce_shuffle</value>
+  </property>
+  
+  <!-- 指定YARN的ResourceManager的地址 -->
+  <property>
+  		<name>yarn.resourcemanager.hostname</name>
+  		<value>hadoop103</value>
+  </property>
+  
+  ```
+
+#### MapReduce配置
+
+* mapred-env.sh 
+
+  ```xml
+  export JAVA_HOME=/opt/module/jdk1.8.0_144
+  ```
+
+* mapred-site.xml
+
+  ```xml
+  <!-- 指定MR运行在Yarn上 -->
+  <property>
+  		<name>mapreduce.framework.name</name>
+  		<value>yarn</value>
+  </property>
+  
+  ```
+
+####  启动集群
+
+* 配置slaves，用于集群启动
+
+  ```shell
+  node1
+  node2
+  node3
+  ```
+
+* 启动集群
+
+  ```shell
+  # 启动hdfs，必须在NameNode节点
+  start-dfs.sh
+  # 启动yarn，不惜在ResourceManager节点
+  start-yarn.sh
+  ```
+
+* 查看集群启动
+
+  ```http
+  http://node1:500770 //hdfs
+  http://node2:50090/status.html //SecondaryNameNode
+  ```
+
+  
 
 ### 分布式HA
 
