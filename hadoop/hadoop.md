@@ -4,7 +4,7 @@
 
 * 略
 
-### 创建hadoop用户/租/分配root权限
+### 创建hadoop用户/组/分配root权限
 
 * 添加hadoop组
 
@@ -52,7 +52,7 @@
   systemctl stop firewalld.service 
   ```
 
-  禁止firewallk开机启动
+* 禁止firewallk开机启动
 
   ```shell
   systemctl disable firewalld.service
@@ -100,7 +100,7 @@ scp  –r /etc/hosts  hadoop@node2：/etc/
 
 * 在dataDir目录创建myid文件，设置zNode id
 
-* 启动
+* 分别在每个zNode节点启动
 
   ```shell
   zkServer.sh status
@@ -109,17 +109,7 @@ scp  –r /etc/hosts  hadoop@node2：/etc/
   Mode: leader
   ```
 
-  
-
-
-
 ## Hadoop安装
-
-* ### 环境规划
-
-  - /opt/modul，存放所有解压后jar
-  - /opt/software，存放下载*.jar
-  - 所有安装都使用hadoop用户
 
 ### 伪分布
 
@@ -257,7 +247,13 @@ scp  –r /etc/hosts  hadoop@node2：/etc/
 
 #### 核心配置
 
-* core-site.xml
+* hadoop-env.sh，配置java环境变量 
+
+  ```xml
+  export JAVA_HOME=/usr/local/jdk
+  ```
+
+* core-site.xml，配置NameNode节点地址，hadoop运行时目录位置
 
   ```xml
   <!-- 指定HDFS中NameNode的地址 -->
@@ -273,15 +269,17 @@ scp  –r /etc/hosts  hadoop@node2：/etc/
   </property>
   ```
 
-* hadoop-env.sh 
+* 配置slaves，用于集群启动
 
-  ```xml
-  export JAVA_HOME=/usr/local/jdk
+  ```shell
+  node1
+  node2
+  node3
   ```
 
 #### HDFS配置
 
-* hdfs-site.xml 
+* hdfs-site.xml，配置副本数（默认是3），配置SecondaryNameNode节点地址
 
   ```xml
   <property>
@@ -298,13 +296,13 @@ scp  –r /etc/hosts  hadoop@node2：/etc/
 
 #### YARN配置
 
-* yarn-env.sh
+* yarn-env.sh，配置java环境变量
 
   ```xml
   export JAVA_HOME=/opt/module/jdk1.8.0_144
   ```
 
-* yarn-site.xml
+* yarn-site.xml，配置reduce阶段获取数据方式，配置ResourceManager节点地址
 
   ```xml
   <!-- Reducer获取数据的方式 -->
@@ -322,13 +320,13 @@ scp  –r /etc/hosts  hadoop@node2：/etc/
 
 #### MapReduce配置
 
-* mapred-env.sh 
+* mapred-env.sh，配置java环境变量
 
   ```xml
   export JAVA_HOME=/opt/module/jdk1.8.0_144
   ```
 
-* mapred-site.xml
+* mapred-site.xml，配置MR任务提交到yarn运行
 
   ```xml
   <!-- 指定MR运行在Yarn上 -->
@@ -347,29 +345,21 @@ bin/hdfs namenode -format
 
 ####  启动集群
 
-* 配置slaves，用于集群启动
-
-  ```shell
-  node1
-  node2
-  node3
-  ```
-
-* 启动集群
+* 启动集群，必须配置slaves节点
 
   ```shell
   # 启动hdfs，必须在NameNode节点
   start-dfs.sh
-  # 启动yarn，不惜在ResourceManager节点
+  # 启动yarn，必须在ResourceManager节点
   start-yarn.sh
   ```
 
 * 查看集群启动
 
   ```http
-  http://node1:500770 //hdfs
-  http://node2:50090/status.html //SecondaryNameNode
-  http://192.168.56.13:8088/cluster //yarn
+  http://node1:50070 //hdfs
+  http://node2:50090 //SecondaryNameNode
+  http://node3:8088 //yarn
   ```
 
   
