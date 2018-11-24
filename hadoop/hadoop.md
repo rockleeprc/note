@@ -334,10 +334,9 @@ scp  –r /etc/hosts  hadoop@192.168.0.212：/etc/
   ```xml
   <!-- 指定MR运行在Yarn上 -->
   <property>
-  		<name>mapreduce.framework.name</name>
-  		<value>yarn</value>
+      <name>mapreduce.framework.name</name>
+      <value>yarn</value>
   </property>
-  
   ```
 
 ####  启动集群
@@ -372,5 +371,97 @@ scp  –r /etc/hosts  hadoop@192.168.0.212：/etc/
 
 ## HDFS操作
 
+## MR
 
+### WC编写
+
+#### pom
+
+```xml
+<dependencies>
+    <dependency>
+        <groupId>junit</groupId>
+        <artifactId>junit</artifactId>
+        <version>RELEASE</version>
+    </dependency>
+    <dependency>
+        <groupId>org.apache.logging.log4j</groupId>
+        <artifactId>log4j-core</artifactId>
+        <version>2.8.2</version>
+    </dependency>
+    <dependency>
+        <groupId>org.apache.hadoop</groupId>
+        <artifactId>hadoop-common</artifactId>
+        <version>2.7.2</version>
+    </dependency>
+    <dependency>
+        <groupId>org.apache.hadoop</groupId>
+        <artifactId>hadoop-client</artifactId>
+        <version>2.7.2</version>
+    </dependency>
+    <dependency>
+        <groupId>org.apache.hadoop</groupId>
+        <artifactId>hadoop-hdfs</artifactId>
+        <version>2.7.2</version>
+    </dependency>
+</dependencies>
+```
+
+#### 日志文件
+
+```properties
+log4j.rootLogger=INFO, stdout
+log4j.appender.stdout=org.apache.log4j.ConsoleAppender
+log4j.appender.stdout.layout=org.apache.log4j.PatternLayout
+log4j.appender.stdout.layout.ConversionPattern=%d %p [%c] - %m%n
+log4j.appender.logfile=org.apache.log4j.FileAppender
+log4j.appender.logfile.File=target/spring.log
+log4j.appender.logfile.layout=org.apache.log4j.PatternLayout
+log4j.appender.logfile.layout.ConversionPattern=%d %p [%c] - %m%n
+```
+
+#### 运行
+
+* 本地运行需要配置HADOOP_HOME
+
+* 提交到集群运行需要打包
+
+  ```xml
+  <build>
+      <plugins>
+          <plugin>
+              <artifactId>maven-compiler-plugin</artifactId>
+              <version>2.3.2</version>
+              <configuration>
+                  <source>1.8</source>
+                  <target>1.8</target>
+              </configuration>
+          </plugin>
+          <plugin>
+              <artifactId>maven-assembly-plugin </artifactId>
+              <configuration>
+                  <descriptorRefs>
+                      <descriptorRef>jar-with-dependencies</descriptorRef>
+                  </descriptorRefs>
+                  <archive>
+                      <manifest>
+                          <mainClass>com.atguigu.mr.WordcountDriver</mainClass>
+                      </manifest>
+                  </archive>
+              </configuration>
+              <executions>
+                  <execution>
+                      <id>make-assembly</id>
+                      <phase>package</phase>
+                      <goals>
+                          <goal>single</goal>
+                      </goals>
+                  </execution>
+              </executions>
+          </plugin>
+      </plugins>
+  </build>
+  ```
+
+  
 
