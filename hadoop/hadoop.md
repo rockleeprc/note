@@ -4,24 +4,24 @@
 
 * 略
 
-### 创建hadoop用户/租/分配root权限
+### 创建hadoop用户/组/分配root权限
 
 * 添加hadoop组
 
   ```shell
-  groupadd group
+  groupadd hadoop
   ```
 
 * 添加hadoop用户
 
   ```shell
-  groupadd mysql
+  groupadd hadoop
   ```
 
 * 将hadoop用户添加到hadoop组、
 
   ```shell
-  useradd mysql -g mysql
+  useradd hadoop -g hadoop
   ```
 
 * 赋予hadoop用户root权限，修改/etc/sudoers 
@@ -52,7 +52,7 @@
   systemctl stop firewalld.service 
   ```
 
-  禁止firewallk开机启动
+* 禁止firewallk开机启动
 
   ```shell
   systemctl disable firewalld.service
@@ -79,11 +79,11 @@ ssh localhost
 
 ```shell
 /etc/hosts
-192.168.0.211 hadoop001
-192.168.0.212 hadoop002
-192.168.0.213 hadoop003
+192.168.56.11 node1
+192.168.56.12 node2
+192.168.56.13 node3
 # 将修改hosts拷贝到其它节点
-scp  –r /etc/hosts  hadoop@192.168.0.212：/etc/
+scp  –r /etc/hosts  hadoop@node2：/etc/
 ```
 
 ## Zookeeper安装
@@ -100,7 +100,7 @@ scp  –r /etc/hosts  hadoop@192.168.0.212：/etc/
 
 * 在dataDir目录创建myid文件，设置zNode id
 
-* 自动
+* 分别在每个zNode节点启动
 
   ```shell
   zkServer.sh status
@@ -109,17 +109,7 @@ scp  –r /etc/hosts  hadoop@192.168.0.212：/etc/
   Mode: leader
   ```
 
-  
-
-
-
 ## Hadoop安装
-
-* ### 环境规划
-
-  - /opt/modul，存放所有解压后jar
-  - /opt/software，存放下载*.jar
-  - 所有安装都使用hadoop用户
 
 ### 伪分布
 
@@ -257,31 +247,39 @@ scp  –r /etc/hosts  hadoop@192.168.0.212：/etc/
 
 #### 核心配置
 
-* core-site.xml
+* hadoop-env.sh，配置java环境变量 
+
+  ```xml
+  export JAVA_HOME=/usr/local/jdk
+  ```
+
+* core-site.xml，配置NameNode节点地址，hadoop运行时目录位置
 
   ```xml
   <!-- 指定HDFS中NameNode的地址 -->
   <property>
   		<name>fs.defaultFS</name>
-        <value>hdfs://hadoop102:9000</value>
+        <value>hdfs://node1:9000</value>
   </property>
   
   <!-- 指定Hadoop运行时产生文件的存储目录 -->
   <property>
   		<name>hadoop.tmp.dir</name>
-  		<value>/opt/module/hadoop-2.7.2/data/tmp</value>
+  		<value>/data/hadoop/tmp</value>
   </property>
+  ```
+
+* 配置slaves，用于集群启动
+
+  ```shell
+  node1
+  node2
+  node3
   ```
 
 #### HDFS配置
 
-* hadoop-env.sh 
-
-  ```xml
-  export JAVA_HOME=/opt/module/jdk1.8.0_144
-  ```
-
-* hdfs-site.xml 
+* hdfs-site.xml，配置副本数（默认是3），配置SecondaryNameNode节点地址
 
   ```xml
   <property>
@@ -292,19 +290,19 @@ scp  –r /etc/hosts  hadoop@192.168.0.212：/etc/
   <!-- 指定Hadoop辅助名称节点主机配置 -->
   <property>
         <name>dfs.namenode.secondary.http-address</name>
-        <value>hadoop104:50090</value>
+        <value>node2:50090</value>
   </property>
   ```
 
 #### YARN配置
 
-* yarn-env.sh
+* yarn-env.sh，配置java环境变量
 
   ```xml
   export JAVA_HOME=/opt/module/jdk1.8.0_144
   ```
 
-* yarn-site.xml
+* yarn-site.xml，配置reduce阶段获取数据方式，配置ResourceManager节点地址
 
   ```xml
   <!-- Reducer获取数据的方式 -->
@@ -316,20 +314,19 @@ scp  –r /etc/hosts  hadoop@192.168.0.212：/etc/
   <!-- 指定YARN的ResourceManager的地址 -->
   <property>
   		<name>yarn.resourcemanager.hostname</name>
-  		<value>hadoop103</value>
+  		<value>node3</value>
   </property>
-  
   ```
 
 #### MapReduce配置
 
-* mapred-env.sh 
+* mapred-env.sh，配置java环境变量
 
   ```xml
   export JAVA_HOME=/opt/module/jdk1.8.0_144
   ```
 
-* mapred-site.xml
+* mapred-site.xml，配置MR任务提交到yarn运行
 
   ```xml
   <!-- 指定MR运行在Yarn上 -->
@@ -339,30 +336,29 @@ scp  –r /etc/hosts  hadoop@192.168.0.212：/etc/
   </property>
   ```
 
+#### 格式化集群
+
+```shell
+bin/hdfs namenode -format
+```
+
 ####  启动集群
 
-* 配置slaves，用于集群启动
-
-  ```shell
-  node1
-  node2
-  node3
-  ```
-
-* 启动集群
+* 启动集群，必须配置slaves节点
 
   ```shell
   # 启动hdfs，必须在NameNode节点
   start-dfs.sh
-  # 启动yarn，不惜在ResourceManager节点
+  # 启动yarn，必须在ResourceManager节点
   start-yarn.sh
   ```
 
 * 查看集群启动
 
   ```http
-  http://node1:500770 //hdfs
-  http://node2:50090/status.html //SecondaryNameNode
+  http://node1:50070 //hdfs
+  http://node2:50090 //SecondaryNameNode
+  http://node3:8088 //yarn
   ```
 
   
