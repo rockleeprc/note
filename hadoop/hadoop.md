@@ -388,17 +388,17 @@ bin/hdfs namenode -format
     <dependency>
         <groupId>org.apache.hadoop</groupId>
         <artifactId>hadoop-common</artifactId>
-        <version>2.7.2</version>
+        <version>2.7.7</version>
     </dependency>
     <dependency>
         <groupId>org.apache.hadoop</groupId>
         <artifactId>hadoop-client</artifactId>
-        <version>2.7.2</version>
+        <version>2.7.7</version>
     </dependency>
     <dependency>
         <groupId>org.apache.hadoop</groupId>
         <artifactId>hadoop-hdfs</artifactId>
-        <version>2.7.2</version>
+        <version>2.7.7</version>
     </dependency>
 </dependencies>
 ```

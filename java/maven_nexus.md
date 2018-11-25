@@ -30,4 +30,4 @@ http://ip:8081/nexus
 
 nexus 下载的jar保存位置
 
-`/usr/local/nexus/sonatype-work/nexus/storage`
+`/usr/local/nexus/sonatype-work/nexus/storage`:q!
