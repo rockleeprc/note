@@ -359,6 +359,7 @@ bin/hdfs namenode -format
   http://node1:50070 //hdfs
   http://node2:50090 //SecondaryNameNode
   http://node3:8088 //yarn
+  http://192.168.56.14:19888/jobhistory //HistoryManager
   ```
 
   
@@ -367,18 +368,23 @@ bin/hdfs namenode -format
 
 #### 节点规划
 
-| node1     | node2           | node3           | node4          | node5       | node6 |
-| --------- | --------------- | --------------- | -------------- | ----------- | ----- |
-| Zookeeper | Zookeeper       | Zookeeper       |                |             |       |
-|           |                 |                 | NameNode(A)    | NameNode(S) |       |
-|           |                 |                 | JournalNode    | JournalNode |       |
-|           | ResourceManager | ResourceManager |                |             |       |
-| DataNode  | DataNode        | DataNode        |                |             |       |
-|           |                 |                 | HistoryManager |             |       |
+| node1       | node2       | node3       | node4              | node5              | node6 |
+| ----------- | ----------- | ----------- | ------------------ | ------------------ | ----- |
+| Zookeeper   | Zookeeper   | Zookeeper   |                    |                    |       |
+|             |             |             | NameNode(A)        | NameNode(S)        |       |
+|             |             |             | JournalNode        | JournalNode        |       |
+|             |             |             | ResourceManager(A) | ResourceManager(S) |       |
+| DataNode    | DataNode    | DataNode    |                    |                    |       |
+| NodeManager | NodeManager | NodeManager |                    |                    |       |
+|             |             |             | HistoryManager     |                    |       |
 
 #### mapred-site.xml
 
 ```xml
+<property>
+    <name>mapreduce.framework.name</name>
+    <value>yarn</value>
+</property>
 <!-- 历史服务器端地址 -->
 <property>
     <name>mapreduce.jobhistory.address</name>
@@ -410,7 +416,7 @@ bin/hdfs namenode -format
     <!-- 配置zk地址 -->
     <property>
         <name>ha.zookeeper.quorum</name>
-        <value>node1:2181,node1:2181,node1:2181</value>
+        <value>node1:2181,node2:2181,node3:2181</value>
     </property>
 </configuration>
 ```
@@ -419,6 +425,10 @@ bin/hdfs namenode -format
 
 ```xml
 <configuration>
+    <property>
+        <name>dfs.replication</name>
+        <value>3</value>
+    </property>
     <!-- 完全分布式集群名称 -->
     <property>
         <name>dfs.nameservices</name>
@@ -476,7 +486,7 @@ bin/hdfs namenode -format
     <!-- 声明journalnode服务器存储目录-->
     <property>
         <name>dfs.journalnode.edits.dir</name>
-        <value/data/hadoopha/jn</value>
+        <value>/data/hadoopha/jn</value>
     </property>
 
     <!-- 关闭权限检查-->
@@ -488,7 +498,7 @@ bin/hdfs namenode -format
     <!-- 访问代理类：client，mycluster，active配置失败自动切换实现方式-->
     <property>
         <name>dfs.client.failover.proxy.provider.mycluster</name>
-  <value>org.apache.hadoop.hdfs.server.namenode.ha.ConfiguredFailoverProxyProvider</value>
+        <value>org.apache.hadoop.hdfs.server.namenode.ha.ConfiguredFailoverProxyProvider</value>
     </property>
     <!-- 开启HA自动故障转移 -->
     <property>
@@ -549,7 +559,7 @@ bin/hdfs namenode -format
     <!--指定zookeeper集群的地址--> 
     <property>
         <name>yarn.resourcemanager.zk-address</name>
-        <value>node1:2181,node1:2181,node1:2181</value>
+        <value>node1:2181,node2:2181,node3:2181</value>
     </property>
 
     <!--启用自动恢复--> 
@@ -567,7 +577,7 @@ bin/hdfs namenode -format
 
 #### 启动集群
 
-* 先启动JournalNode
+* 在各个节点启动JournalNode
 
   ```shell
   sbin/hadoop-daemon.sh start journalnode
@@ -603,6 +613,7 @@ bin/hdfs namenode -format
 
   ```shell
   bin/zkServer.sh start
+  # 在NameNode节点
   bin/hdfs zkfc -formatZK
   ```
 
@@ -642,7 +653,13 @@ bin/hdfs namenode -format
   sbin/mr-jobhistory-daemon.sh start/stop historyserver
   ```
 
-  
+#### 问题
+
+```shell
+2018-11-25 20:39:42,427 WARN org.apache.hadoop.ha.SshFenceByTcpPort: PATH=$PATH:/sbin:/usr/sbin fuser -v -k -n tcp 9000 via ssh: bash: fuser: 未找到命令
+```
+
+* 安装yum install psmisc
 
 
 
