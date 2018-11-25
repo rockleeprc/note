@@ -365,6 +365,287 @@ bin/hdfs namenode -format
 
 ### 分布式HA
 
+#### 节点规划
+
+| node1     | node2           | node3           | node4          | node5       | node6 |
+| --------- | --------------- | --------------- | -------------- | ----------- | ----- |
+| Zookeeper | Zookeeper       | Zookeeper       |                |             |       |
+|           |                 |                 | NameNode(A)    | NameNode(S) |       |
+|           |                 |                 | JournalNode    | JournalNode |       |
+|           | ResourceManager | ResourceManager |                |             |       |
+| DataNode  | DataNode        | DataNode        |                |             |       |
+|           |                 |                 | HistoryManager |             |       |
+
+#### mapred-site.xml
+
+```xml
+<!-- 历史服务器端地址 -->
+<property>
+    <name>mapreduce.jobhistory.address</name>
+    <value>node4:10020</value>
+</property>
+<!-- 历史服务器web端地址 -->
+<property>
+    <name>mapreduce.jobhistory.webapp.address</name>
+    <value>node4:19888</value>
+</property>
+```
+
+#### core-site.xml
+
+```xml
+<configuration>
+    <!-- 把两个NameNode）的地址组装成一个集群mycluster -->
+    <property>
+        <name>fs.defaultFS</name>
+        <value>hdfs://mycluster</value>
+    </property>
+
+    <!-- 指定hadoop运行时产生文件的存储目录 -->
+    <property>
+        <name>hadoop.tmp.dir</name>
+        <value>/data/hadoopha/tmp</value>
+    </property>
+    
+    <!-- 配置zk地址 -->
+    <property>
+        <name>ha.zookeeper.quorum</name>
+        <value>node1:2181,node1:2181,node1:2181</value>
+    </property>
+</configuration>
+```
+
+#### hdfs-site.xml
+
+```xml
+<configuration>
+    <!-- 完全分布式集群名称 -->
+    <property>
+        <name>dfs.nameservices</name>
+        <value>mycluster</value>
+    </property>
+
+    <!-- 集群中NameNode节点都有哪些 -->
+    <property>
+        <name>dfs.ha.namenodes.mycluster</name>
+        <value>nn1,nn2</value>
+    </property>
+
+    <!-- nn1的RPC通信地址 -->
+    <property>
+        <name>dfs.namenode.rpc-address.mycluster.nn1</name>
+        <value>node4:9000</value>
+    </property>
+
+    <!-- nn2的RPC通信地址 -->
+    <property>
+        <name>dfs.namenode.rpc-address.mycluster.nn2</name>
+        <value>node5:9000</value>
+    </property>
+
+    <!-- nn1的http通信地址 -->
+    <property>
+        <name>dfs.namenode.http-address.mycluster.nn1</name>
+        <value>node4:50070</value>
+    </property>
+
+    <!-- nn2的http通信地址 -->
+    <property>
+        <name>dfs.namenode.http-address.mycluster.nn2</name>
+        <value>node5:50070</value>
+    </property>
+
+    <!-- 指定NameNode元数据在JournalNode上的存放位置 -->
+    <property>
+        <name>dfs.namenode.shared.edits.dir</name>
+        <value>qjournal://node4:8485;node5:8485/mycluster</value>
+    </property>
+
+    <!-- 配置隔离机制，即同一时刻只能有一台服务器对外响应 -->
+    <property>
+        <name>dfs.ha.fencing.methods</name>
+        <value>sshfence</value>
+    </property>
+
+    <!-- 使用隔离机制时需要ssh无秘钥登录-->
+    <property>
+        <name>dfs.ha.fencing.ssh.private-key-files</name>
+        <value>/home/root/.ssh/id_rsa</value>
+    </property>
+
+    <!-- 声明journalnode服务器存储目录-->
+    <property>
+        <name>dfs.journalnode.edits.dir</name>
+        <value/data/hadoopha/jn</value>
+    </property>
+
+    <!-- 关闭权限检查-->
+    <property>
+        <name>dfs.permissions.enable</name>
+        <value>false</value>
+    </property>
+
+    <!-- 访问代理类：client，mycluster，active配置失败自动切换实现方式-->
+    <property>
+        <name>dfs.client.failover.proxy.provider.mycluster</name>
+  <value>org.apache.hadoop.hdfs.server.namenode.ha.ConfiguredFailoverProxyProvider</value>
+    </property>
+    <!-- 开启HA自动故障转移 -->
+    <property>
+        <name>dfs.ha.automatic-failover.enabled</name>
+        <value>true</value>
+    </property>
+</configuration>
+```
+
+#### yarn-site.xml
+
+```xml
+<configuration>
+    <!-- 日志聚集功能使能 -->
+    <property>
+        <name>yarn.log-aggregation-enable</name>
+        <value>true</value>
+    </property>
+
+    <!-- 日志保留时间设置7天 -->
+    <property>
+        <name>yarn.log-aggregation.retain-seconds</name>
+        <value>604800</value>
+    </property>
+
+    <property>
+        <name>yarn.nodemanager.aux-services</name>
+        <value>mapreduce_shuffle</value>
+    </property>
+
+    <!--启用resourcemanager ha-->
+    <property>
+        <name>yarn.resourcemanager.ha.enabled</name>
+        <value>true</value>
+    </property>
+
+    <!--声明两台resourcemanager的地址-->
+    <property>
+        <name>yarn.resourcemanager.cluster-id</name>
+        <value>cluster-yarn</value>
+    </property>
+
+    <property>
+        <name>yarn.resourcemanager.ha.rm-ids</name>
+        <value>rm1,rm2</value>
+    </property>
+
+    <property>
+        <name>yarn.resourcemanager.hostname.rm1</name>
+        <value>node2</value>
+    </property>
+
+    <property>
+        <name>yarn.resourcemanager.hostname.rm2</name>
+        <value>node3</value>
+    </property>
+
+    <!--指定zookeeper集群的地址--> 
+    <property>
+        <name>yarn.resourcemanager.zk-address</name>
+        <value>node1:2181,node1:2181,node1:2181</value>
+    </property>
+
+    <!--启用自动恢复--> 
+    <property>
+        <name>yarn.resourcemanager.recovery.enabled</name>
+        <value>true</value>
+    </property>
+
+    <!--指定resourcemanager的状态信息存储在zookeeper集群--> 
+    <property>
+        <name>yarn.resourcemanager.store.class</name>     <value>org.apache.hadoop.yarn.server.resourcemanager.recovery.ZKRMStateStore</value>
+    </property>
+</configuration>
+```
+
+#### 启动集群
+
+* 先启动JournalNode
+
+  ```shell
+  sbin/hadoop-daemon.sh start journalnode
+  ```
+
+* 在`nn1`上格式化hdfs
+
+  ```shell
+  bin/hdfs namenode -format
+  ```
+
+* 在`nn1`上启动NameNode
+
+  ```shell
+  sbin/hadoop-daemon.sh start namenode
+  ```
+
+*  在`nn2`同步`nn1`的 数据
+
+  ```shell
+  bin/hdfs namenode -bootstrapStandby
+  ```
+
+* 在`nn2`上启动NameNode
+
+  ```shell
+  sbin/hadoop-daemon.sh start namenode
+  ```
+
+---
+
+* 启动zk，初始化HA在zk中的状态
+
+  ```shell
+  bin/zkServer.sh start
+  bin/hdfs zkfc -formatZK
+  ```
+
+* 启动hdfs
+
+  ```shell
+  sbin/start-dfs.sh
+  ```
+
+* 在各个NameNode节点启动DFSZK Failover Controller 
+
+  ```shell
+  sbin/hadoop-daemin.sh start zkfc
+  ```
+
+* 在node2上启动yarn
+
+  ```shell
+  sbin/start-yarn.sh
+  ```
+
+* 在node3上单独启动ResourceManager
+
+  ```shell
+  sbin/yarn-daemon.sh start resourcemanager
+  ```
+
+* 查看yarn状态
+
+  ```shell
+  bin/yarn rmadmin -getServiceState rm1
+  ```
+
+* 启动历史服务器
+
+  ```shell
+  sbin/mr-jobhistory-daemon.sh start/stop historyserver
+  ```
+
+  
+
+
+
 ## HDFS操作
 
 ## MR
@@ -459,5 +740,36 @@ log4j.appender.logfile.layout.ConversionPattern=%d %p [%c] - %m%n
   </build>
   ```
 
-  
+### FileInputFormat实现类 
+
+#### TextInputFormat
+
+* FileInputFormat默认实现类
+* 按行读取数据
+* key是LongWritable类型，表示该行起始位置在整个文件中的偏移量
+* value是当前行内容，不包含任何换行符、回车符
+
+#### KeyValueTextInputFormat
+
+* 每一行为一条记录
+* key是被分割符分割的第一个数据，index[0]
+* value是被分割符分割的其他数据，index[1-->]
+
+#### NLineInputFormat
+
+* map处理的InputSplit不在按照block划分，分片数按照指定的行数划分
+* key是LongWritable类型，表示该行起始位置在整个文件中的偏移量
+* value是当前行内容，不包含任何换行符、回车符
+
+### CombineTextInputFormat切片机制 
+
+```java
+// 如果不设置InputFormat，它默认用的是TextInputFormat.class
+job.setInputFormatClass(CombineTextInputFormat.class);
+
+//虚拟存储切片最大值设置4m
+CombineTextInputFormat.setMaxInputSplitSize(job, 4194304);
+```
+
+
 
