@@ -368,15 +368,15 @@ bin/hdfs namenode -format
 
 #### 节点规划
 
-| node1       | node2       | node3       | node4              | node5              | node6 |
-| ----------- | ----------- | ----------- | ------------------ | ------------------ | ----- |
-| Zookeeper   | Zookeeper   | Zookeeper   |                    |                    |       |
-|             |             |             | NameNode(A)        | NameNode(S)        |       |
-|             |             |             | JournalNode        | JournalNode        |       |
-|             |             |             | ResourceManager(A) | ResourceManager(S) |       |
-| DataNode    | DataNode    | DataNode    |                    |                    |       |
-| NodeManager | NodeManager | NodeManager |                    |                    |       |
-|             |             |             | HistoryManager     |                    |       |
+| node1       | node2       | node3       | node4              | node5              | node6       |
+| ----------- | ----------- | ----------- | ------------------ | ------------------ | ----------- |
+| Zookeeper   | Zookeeper   | Zookeeper   |                    |                    |             |
+|             |             |             | NameNode(A)        | NameNode(S)        |             |
+|             |             |             | JournalNode        | JournalNode        |             |
+|             |             |             | ResourceManager(A) | ResourceManager(S) |             |
+| DataNode    | DataNode    | DataNode    |                    |                    | DataNode    |
+| NodeManager | NodeManager | NodeManager |                    |                    | NodeManager |
+|             |             |             | HistoryManager     |                    |             |
 
 #### mapred-site.xml
 
@@ -425,6 +425,7 @@ bin/hdfs namenode -format
 
 ```xml
 <configuration>
+    <!-- 文件副本数 -->
     <property>
         <name>dfs.replication</name>
         <value>3</value>
@@ -441,7 +442,7 @@ bin/hdfs namenode -format
         <value>nn1,nn2</value>
     </property>
 
-    <!-- nn1的RPC通信地址 -->
+    <!-- nn1的RPC通信地址，官网docs使用的端口时8020 -->
     <property>
         <name>dfs.namenode.rpc-address.mycluster.nn1</name>
         <value>node4:9000</value>
@@ -476,6 +477,11 @@ bin/hdfs namenode -format
         <name>dfs.ha.fencing.methods</name>
         <value>sshfence</value>
     </property>
+    <!-- 连接超时时间 -->
+    <property>
+        <name>dfs.ha.fencing.ssh.connect-timeout</name>
+        <value>30000</value>
+    </property>
 
     <!-- 使用隔离机制时需要ssh无秘钥登录-->
     <property>
@@ -489,7 +495,7 @@ bin/hdfs namenode -format
         <value>/data/hadoopha/jn</value>
     </property>
 
-    <!-- 关闭权限检查-->
+    <!-- 关闭权限检查，生产环境建议开启，针对不同用户做权限检查-->
     <property>
         <name>dfs.permissions.enable</name>
         <value>false</value>
@@ -540,20 +546,23 @@ bin/hdfs namenode -format
         <name>yarn.resourcemanager.cluster-id</name>
         <value>cluster-yarn</value>
     </property>
-
+	
+    <!-- 指定ResourceManager名称 -->
     <property>
         <name>yarn.resourcemanager.ha.rm-ids</name>
         <value>rm1,rm2</value>
     </property>
-
+	
+    <!-- 指定rm1主机 -->
     <property>
         <name>yarn.resourcemanager.hostname.rm1</name>
-        <value>node2</value>
+        <value>node4</value>
     </property>
 
+    <!-- 指定rm2主机 -->
     <property>
         <name>yarn.resourcemanager.hostname.rm2</name>
-        <value>node3</value>
+        <value>node5</value>
     </property>
 
     <!--指定zookeeper集群的地址--> 
@@ -573,6 +582,15 @@ bin/hdfs namenode -format
         <name>yarn.resourcemanager.store.class</name>     <value>org.apache.hadoop.yarn.server.resourcemanager.recovery.ZKRMStateStore</value>
     </property>
 </configuration>
+```
+
+#### slaves
+
+```xml
+<!-- 指定DataNode节点主机，只用于启动集群 -->
+node1
+node2
+node3
 ```
 
 #### 启动集群
@@ -595,10 +613,10 @@ bin/hdfs namenode -format
   sbin/hadoop-daemon.sh start namenode
   ```
 
-*  在`nn2`同步`nn1`的 数据
+* 在`nn2`同步`nn1`的 数据
 
   ```shell
-  bin/hdfs namenode -bootstrapStandby
+    bin/hdfs namenode -bootstrapStandby
   ```
 
 * 在`nn2`上启动NameNode
@@ -606,8 +624,6 @@ bin/hdfs namenode -format
   ```shell
   sbin/hadoop-daemon.sh start namenode
   ```
-
----
 
 * 启动zk，初始化HA在zk中的状态
 
@@ -629,13 +645,13 @@ bin/hdfs namenode -format
   sbin/hadoop-daemin.sh start zkfc
   ```
 
-* 在node2上启动yarn
+* 在node4上启动yarn
 
   ```shell
   sbin/start-yarn.sh
   ```
 
-* 在node3上单独启动ResourceManager
+* 在node5上单独启动ResourceManager
 
   ```shell
   sbin/yarn-daemon.sh start resourcemanager
@@ -655,17 +671,17 @@ bin/hdfs namenode -format
 
 #### 问题
 
-```shell
-2018-11-25 20:39:42,427 WARN org.apache.hadoop.ha.SshFenceByTcpPort: PATH=$PATH:/sbin:/usr/sbin fuser -v -k -n tcp 9000 via ssh: bash: fuser: 未找到命令
-```
+* standby无法切换到active状态，查看日志没有fuser命令，安装yum install psmisc
 
-* 安装yum install psmisc
+  ```shell
+  2018-11-25 20:39:42,427 WARN org.apache.hadoop.ha.SshFenceByTcpPort: PATH=$PATH:/sbin:/usr/sbin fuser -v -k -n tcp 9000 via ssh: bash: fuser: 未找到命令
+  ```
 
-
+  
 
 ## HDFS操作
 
-## MR
+## MapReduce
 
 ### WC编写
 
@@ -739,7 +755,7 @@ log4j.appender.logfile.layout.ConversionPattern=%d %p [%c] - %m%n
                   </descriptorRefs>
                   <archive>
                       <manifest>
-                          <mainClass>com.atguigu.mr.WordcountDriver</mainClass>
+                          <mainClass>com.foo.WordcountDriver</mainClass>
                       </manifest>
                   </archive>
               </configuration>
@@ -756,6 +772,12 @@ log4j.appender.logfile.layout.ConversionPattern=%d %p [%c] - %m%n
       </plugins>
   </build>
   ```
+
+#### windows下运行
+
+
+
+
 
 ### FileInputFormat实现类 
 
@@ -780,13 +802,40 @@ log4j.appender.logfile.layout.ConversionPattern=%d %p [%c] - %m%n
 
 ### CombineTextInputFormat切片机制 
 
-```java
-// 如果不设置InputFormat，它默认用的是TextInputFormat.class
-job.setInputFormatClass(CombineTextInputFormat.class);
+* 计算方式
 
-//虚拟存储切片最大值设置4m
-CombineTextInputFormat.setMaxInputSplitSize(job, 4194304);
-```
+  ```java
+  虚拟存储 4M
+  	if(f>4M,f<4M*2)
+  		4M/2
+  	10M=4+3+3
+  ```
+
+* 程序设置
+
+  ```java
+  // 如果不设置InputFormat，它默认用的是TextInputFormat.class
+  job.setInputFormatClass(CombineTextInputFormat.class);
+  //虚拟存储切片最大值设置4m
+  CombineTextInputFormat.setMaxInputSplitSize(job, 4194304);
+  ```
 
 
 
+
+
+Maptask
+
+​	环形缓冲区-快排（分区）
+
+​	写磁盘-归并
+
+Reducetask
+
+​	从map获取数据
+
+​	内存（分区）
+
+​	磁盘-归并（Grouping）
+
+​	reduce
