@@ -1,5 +1,168 @@
 ## Linux准备
 
+### CDH安装
+
+#### 下载cloudera-manager
+
+* 下载与linux版本对应的，比如centos7使用[cloudera-manager-centos7-cm5.16.1_x86_64.tar.gz](http://archive.cloudera.com/cm5/cm/5/cloudera-manager-centos7-cm5.16.1_x86_64.tar.gz)
+
+```html
+http://archive.cloudera.com/cm5/cm/5/
+```
+
+#### 下载CDH安装包
+
+* 下载与linux版本对应的，比如centos7使用
+
+  * [CDH-5.6.1-1.cdh5.6.1.p0.3-el7.parcel.sha1](http://archive.cloudera.com/cdh5/parcels/5.6.1/CDH-5.6.1-1.cdh5.6.1.p0.3-el7.parcel.sha1)
+  * [CDH-5.6.1-1.cdh5.6.1.p0.3-el7.parcel](http://archive.cloudera.com/cdh5/parcels/5.6.1/CDH-5.6.1-1.cdh5.6.1.p0.3-el7.parcel)
+  * [CDH-5.6.1-1.cdh5.6.1.p0.3-el6.parcel.sha1](http://archive.cloudera.com/cdh5/parcels/5.6.1/CDH-5.6.1-1.cdh5.6.1.p0.3-el6.parcel.sha1)
+
+  ```html
+  http://archive.cloudera.com/cdh5/parcels/latest/
+  ```
+
+#### 基础配置
+
+* 关闭防火墙
+
+* 主机名ip映射
+
+* ssh
+
+* jdk
+
+* 时间同步：master节点作为ntp服务器与外界对时中心同步时间，随后对所有datanode节点提供时间同步服务
+
+  ```shell
+  yum install ntp
+  # 配置开机启动
+  chkconfig ntpd on
+  # 检查是否设置成功：其中2-5为on状态就代表成功。
+  chkconfig --list ntpd'
+  # 在master手动同步一下时间
+  ntpdate
+  # 设置对时中心
+  ntpdate -u 65.55.56.206
+  ```
+
+  ntp master服务配置文件
+
+  ```shell
+  driftfile /var/lib/ntp/drift
+  restrict 127.0.0.1
+  restrict -6 ::1
+  restrict default nomodify notrap 
+  server 65.55.56.206 prefer
+  includefile /etc/ntp/crypto/pw
+  keys /etc/ntp/keys
+  ```
+
+  重启
+
+  ```shell
+  service ntpd start
+  # 用ntpstat命令查看同步状态，出现以下状态代表启动成功
+  > ntpstat
+  synchronised to NTP server () at stratum 2
+  time correct to within 74 ms
+  polling server every 128 s
+  ```
+
+  ntp slave配置文件
+
+  ```shell
+  driftfile /var/lib/ntp/drift
+  restrict 127.0.0.1
+  restrict -6 ::1
+  restrict default kod nomodify notrap nopeer noquery
+  restrict -6 default kod nomodify notrap nopeer noquery
+  #这里是主节点的主机名或者ip
+  server n1
+  includefile /etc/ntp/crypto/pw
+  keys /etc/ntp/keys
+  
+  ```
+
+  在slave启动ntp服务，手动同步一下时间
+
+  ```shell
+  service ntpd start
+  ntpdate -u n1
+  ```
+
+  > 一般是本地的ntp服务器还没有正常启动，一般需要等待5-10分钟才可以正常同步
+
+* mysql
+
+  ```mysql
+  #hive
+  create database hive DEFAULT CHARSET utf8 COLLATE utf8_general_ci;
+  #activity monitor
+  create database amon DEFAULT CHARSET utf8 COLLATE utf8_general_ci;
+  
+  #授权root用户在主节点拥有所有数据库的访问权限
+  grant all privileges on *.* to 'root'@'n1' identified by 'xxxx' with grant option;
+  flush privileges;
+  
+  ```
+
+#### 安装Cloudera Manager Server/Agent
+
+* 解压
+
+  ```shell
+  tar xzvf cloudera-manager*.tar.gz
+  ```
+
+  将解压后的cm-5.12.1和cloudera目录放到/opt目录下
+
+* 为Cloudera Manager 5建立数据库，找到mysql-connector-java-5.1.33-bin.jar，放到/opt/cm-5.12.1/share/cmf/lib/，在master节点生成数据库
+
+  ```shell
+  /opt/cm-5.12.1/share/cmf/schema/scm_prepare_database.sh mysql cm -hlocalhost -uroot -pxxxx --scm-host localhost scm scm scm
+  ```
+
+* 配置Agent，修改/opt/cm-5.12.1/etc/cloudera-scm-agent/config.ini中的server_host为主节点的主机名
+
+* 分发cm-5.12.1到slave
+
+* 在所有节点创建cloudera-scm用户组
+
+  ```shell
+  useradd --system --home=/opt/cm-5.12.1/run/cloudera-scm-server/ --no-create-home --shell=/bin/false --comment "Cloudera SCM User" cloudera-scm
+  ```
+
+* 将CHD5相关的Parcel包放到主节点的/opt/cloudera/parcel-repo/目录中（parcel-repo需要手动创建）
+
+  ```shell
+  CDH-5.12.1-1.cdh5.12.1.p0.3-el6.parcel
+  CDH-5.12.1-1.cdh5.12.1.p0.3-el6.parcel.sha1
+  manifest.json
+  ```
+
+  最后将CDH-5.12.1-1.cdh5.12.1.p0.3-el6.parcel.sha1，重命名为CDH-5.12.1-1.cdh5.12.1.p0.3-el6.parcel.sha，这点必须注意，否则，系统会重新下载CDH-5.12.1-1.cdh5.12.1.p0.3-el6.parcel文件。
+
+* 相关启动脚本
+
+  通过`/opt/cm-5.12.1/etc/init.d/cloudera-scm-server start`启动服务端
+
+  通过`/opt/cm-5.12.1/etc/init.d/cloudera-scm-agent start`启动Agent服务
+
+  我们启动的其实是个service脚本，需要停止服务将以上的start参数改为stop就可以了，重启是restart。
+
+#### CDH5的安装配置
+
+* 这时可以通过浏览器访问主节点的7180端口测试一下了（由于CM Server的启动需要花点时间，这里可能要等待一会才能访问），默认的用户名和密码均为admin
+
+#### 集群测试
+
+```shell
+sudo -u hdfs hadoop jar /opt/cloudera/parcels/CDH/lib/hadoop-mapreduce/hadoop-mapreduce-examples.jar pi 10 100
+```
+
+* 参考`https://blog.csdn.net/gtsina/article/details/78048925`
+
 ### 安装JDK
 
 * 略
@@ -362,7 +525,6 @@ bin/hdfs namenode -format
   http://192.168.56.14:19888/jobhistory //HistoryManager
   ```
 
-  
 
 ### 分布式HA
 
@@ -677,7 +839,6 @@ node3
   2018-11-25 20:39:42,427 WARN org.apache.hadoop.ha.SshFenceByTcpPort: PATH=$PATH:/sbin:/usr/sbin fuser -v -k -n tcp 9000 via ssh: bash: fuser: 未找到命令
   ```
 
-  
 
 ## HDFS操作
 

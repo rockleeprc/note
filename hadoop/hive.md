@@ -457,7 +457,7 @@ sum(cost) over(partition by name) as sample2,
 -- 按name分组，组内数据累加 
 sum(cost) over(partition by name order by orderdate) as sample3,
 -- 和sample3一样,由起点到当前行的聚合 
-sum(cost) over(partition by name order by orderdate rows between UNBOUNDED PRECEDING and current row ) as sample4 ,
+sum(cost) over(partition by name order by orderdate rows between UNBOUNDED PRECEDING and current row ) as sample4,
 -- 当前行和前面一行做聚合 
 sum(cost) over(partition by name order by orderdate rows between 1 PRECEDING and current row) as sample5, 
 -- 当前行和前边一行及后面一行 
@@ -537,8 +537,7 @@ where sorted = 1;
   
   # 如果没有order by，不仅分区内没有排序，sum()计算的pv也是整个分区的pv
   # max()函数无论有没有order by 都是计算整个分区的最大值
-  select cookieid,createtime,pv,
-  sum(pv) over(PARTITION BY cookieid) as pv1 
+  select cookieid,createtime,pv,sum(pv) over(PARTITION BY cookieid) as pv1 
   FROM test1
   ```
 
