@@ -443,23 +443,34 @@ select name,count(*) over ()
 from business 
 where substring(orderdate,1,7) = '2017-04' 
 group by name;
+
 # 查询顾客的购买明细及月购买总额
-select name,orderdate,cost,sum(cost) over(partition by month(orderdate)) from
- business;
+select name,orderdate,cost,sum(cost) over(partition by month(orderdate)) 
+from business;
+
 # 要将cost按照日期进行累加
 select name,orderdate,cost, 
-sum(cost) over() as sample1,--所有行相加 
-sum(cost) over(partition by name) as sample2,--按name分组，组内数据相加 
-sum(cost) over(partition by name order by orderdate) as sample3,--按name分组，组内数据累加 
-sum(cost) over(partition by name order by orderdate rows between UNBOUNDED PRECEDING and current row ) as sample4 ,--和sample3一样,由起点到当前行的聚合 
-sum(cost) over(partition by name order by orderdate rows between 1 PRECEDING and current row) as sample5, --当前行和前面一行做聚合 
-sum(cost) over(partition by name order by orderdate rows between 1 PRECEDING AND 1 FOLLOWING ) as sample6,--当前行和前边一行及后面一行 
-sum(cost) over(partition by name order by orderdate rows between current row and UNBOUNDED FOLLOWING ) as sample7 --当前行及后面所有行 
+-- 所有行相加 
+sum(cost) over() as sample1,
+-- 按name分组，组内数据相加 
+sum(cost) over(partition by name) as sample2,
+-- 按name分组，组内数据累加 
+sum(cost) over(partition by name order by orderdate) as sample3,
+-- 和sample3一样,由起点到当前行的聚合 
+sum(cost) over(partition by name order by orderdate rows between UNBOUNDED PRECEDING and current row ) as sample4 ,
+-- 当前行和前面一行做聚合 
+sum(cost) over(partition by name order by orderdate rows between 1 PRECEDING and current row) as sample5, 
+-- 当前行和前边一行及后面一行 
+sum(cost) over(partition by name order by orderdate rows between 1 PRECEDING AND 1 FOLLOWING ) as sample6,
+-- 当前行及后面所有行 
+sum(cost) over(partition by name order by orderdate rows between current row and UNBOUNDED FOLLOWING ) as sample7 
 from business;
+
 # 查看顾客上次的购买时间
 select name,orderdate,cost, 
 lag(orderdate,1,'1900-01-01') over(partition by name order by orderdate ) as time1, lag(orderdate,2) over (partition by name order by orderdate) as time2 
 from business;
+
 # 查询前20%时间的订单信息
 select * from (
     select name,orderdate,cost, ntile(5) over(order by orderdate) sorted
@@ -468,7 +479,113 @@ select * from (
 where sorted = 1;
 ```
 
-#### Rank
+
+> 聚合函数：**对于每个组只返回一行**
+
+> 分析函数：**对于每个组返回多行**
+
+- 基础结构
+
+  ```mysql
+  # 分析函数（如:sum(),max(),row_number()...） + 窗口子句（over函数）
+  # 先根据cookieid字段分区，相同的cookieid分为一区，每个分区内根据createtime字段排序（默认升序）
+  # 不加 partition by 的话则把整个数据集当作一个分区
+  # 不加 order by的话会对某些函数统计结果产生影响，如sum()
+  over（partition by cookieid order by createtime）
+  
+  -- 关键是理解 ROWS BETWEEN 含义,也叫做window子句： 
+  -- PRECEDING：往前 
+  -- FOLLOWING：往后 
+  -- CURRENT ROW：当前行 
+  -- UNBOUNDED：无边界
+  	-- UNBOUNDED PRECEDING 表示从最前面的起点开始
+  	-- UNBOUNDED FOLLOWING：表示到最后面的终点 
+  -- 其他AVG，MIN，MAX，和SUM用法一样
+  
+  SELECT cookieid,createtime,pv,
+  -- 默认为从起点到当前行
+  SUM(pv) OVER(PARTITION BY cookieid ORDER BY createtime) AS pv1, 
+  -- 从起点到当前行，结果同pv1 
+  SUM(pv) OVER(PARTITION BY cookieid ORDER BY createtime ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) AS pv2, 
+  -- 当前行+往前3行
+  SUM(pv) OVER(PARTITION BY cookieid ORDER BY createtime ROWS BETWEEN 3 PRECEDING AND CURRENT ROW) AS pv3,
+  -- 当前行+往前3行+往后1行   
+  SUM(pv) OVER(PARTITION BY cookieid ORDER BY createtime ROWS BETWEEN 3 PRECEDING AND 1 FOLLOWING) AS pv4,    
+  -- 当前行+往后所有行  
+  SUM(pv) OVER(PARTITION BY cookieid ORDER BY createtime ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING) AS pv5   
+  FROM test1;
+  # 首先 PARTITION BY cookieid，根据cookieid分区，各分区之间默认根据字典顺序排序
+  # ORDER BY createtime，指定的是分区内部的排序，默认为升序
+  
+  # 查询结果，这些窗口的划分都是在分区内部！超过分区大小就无效了
+  # 如果不指定ROWS BETWEEN,默认统计窗口为从起点到当前行
+  # 如果不指定ORDER BY，则将分组内所有值累加
+  cookieid    createtime  pv  pv1  pv2    pv3  pv4  pv5
+  a           2017-12-01  3    3    3      3    3    3
+  b           2017-12-00  3    3    3      3    3    3
+  cookie1     2017-12-10  1    1    1      1    6    26
+  cookie1     2017-12-11  5    6    6      6    13   25
+  cookie1     2017-12-12  7    13  13      13   16   20
+  cookie1     2017-12-13  3    16  16      16   18   13
+  cookie1     2017-12-14  2    18  18      17   21   10
+  cookie1     2017-12-15  4    22  22      16   20   8
+  cookie1     2017-12-16  4    26  26      13   13   4
+  cookie2     2017-12-12  7    7    7      7    13   14
+  cookie2     2017-12-16  6    13  13      13   14   7
+  cookie2     2017-12-24  1    14  14      14   14   1
+  cookie3     2017-12-22  5    5    5      5     5   5
+  
+  # 如果没有order by，不仅分区内没有排序，sum()计算的pv也是整个分区的pv
+  # max()函数无论有没有order by 都是计算整个分区的最大值
+  select cookieid,createtime,pv,
+  sum(pv) over(PARTITION BY cookieid) as pv1 
+  FROM test1
+  ```
+
+* 窗口函数总结
+  * partiion by：等同于group by
+  * 窗口函数和聚合函数的不同：
+    * sum()函数可以根据每一行的窗口返回各自行对应的值，有多少行记录就有多少个sum值，
+    * group by只能计算每一组的sum，每组只有一个值
+    * sum()计算的是分区内排序后一个个叠加的值，和order by有关
+
+#### NTILE 函数
+
+* NTILE(n)，用于将分组数据按照顺序切分成n片，返回当前切片值
+
+  * 注1：如果切片不均匀，默认增加第一个切片的分布
+  * 注2：NTILE不支持ROWS BETWEEN
+
+  ```mysql
+  SELECT cookieid,createtime,pv,
+  -- 分组内将数据分成2片
+  NTILE(2) OVER(PARTITION BY cookieid ORDER BY createtime) AS ntile1, 
+  -- 分组内将数据分成3片
+  NTILE(3) OVER(PARTITION BY cookieid ORDER BY createtime) AS ntile2,  
+  -- 将所有数据分成4片
+  NTILE(4) OVER(PARTITION BY cookieid ORDER BY createtime) AS ntile3   
+  FROM test1 
+  
+  # 用法举例： 统计一个cookie，pv数最多的前1/3的天，取 ntile = 1 的记录，就是我们想要的结果
+  SELECT cookieid,createtime,pv,
+  NTILE(3) OVER(PARTITION BY cookieid ORDER BY pv DESC) AS ntile 
+  FROM test1;
+  ```
+
+#### ROW_NUMBER 函数
+
+* ROW_NUMBER() 从1开始，按照顺序，生成分组内记录的序列
+
+  ```mysql
+  SELECT cookieid,createtime,pv,
+  ROW_NUMBER() OVER(PARTITION BY cookieid ORDER BY pv desc) AS rn  
+  FROM test1;
+  ```
+
+  > ROW_NUMBER() 的应用场景非常多，比如获取分组内排序第一的记录、获取一个session中的第一条refer等
+
+
+#### Rank/DENSE_RANK
 
 ```mysql
 create table score(
@@ -501,5 +618,15 @@ row_number() over(partition by subject order by score desc) rmp
 from score;
 ```
 
+* `RANK()` 生成数据项在分组中的排名，**排名相等会在名次中留下空位** 
 
+* `DENSE_RANK()` 生成数据项在分组中的排名，**排名相等会在名次中不会留下空位**
 
+  ```mysql
+  # 把 rank、dense_rank、row_number三者对比，这样比较清晰
+  SELECT cookieid,createtime,pv,
+  RANK() OVER(PARTITION BY cookieid ORDER BY pv desc) AS rank1,
+  DENSE_RANK() OVER(PARTITION BY cookieid ORDER BY pv desc) AS d_rank2,
+  ROW_NUMBER() OVER(PARTITION BY cookieid ORDER BY pv DESC) AS rn3 
+  FROM test1 
+  ```
