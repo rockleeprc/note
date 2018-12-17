@@ -127,7 +127,7 @@ hive(default)>! ls /opt/module/datas;
 
   ```mysql
   # 创建外部表
-  > create external table if not exists default.emp(
+  > create external table if not exists te.emp(
       empno int,
       ename string,
       job string,
