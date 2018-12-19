@@ -39,7 +39,7 @@
   ```shell
   sqoop job \
   --create jobperson \
-  -- import \
+  --import \
   --connect jdbc:mysql://172.18.123.139/test?useSSL=false \
   --username root \
   --password root \
@@ -88,3 +88,61 @@
   --input-fields-terminated-by "\t" \
   --columns="id,name,age" 
   ```
+
+* Lastmodified 和Append模式的区别
+
+  * Append 支持动态增加 不支持修改
+  * Lastmodified 可以修改数据 也可以增加
+
+* 语法范式解析： 
+  sqoop import: SQOOP 命令，从关系型数据库导数到Hadoop 
+  –check-column: 用于检查增量数据的列 
+  –incremental append: 设置为增量模式 
+
+  –last-value :源数据中所有大于–last value的值都会被导入Hadoop
+
+  ```shell
+  sqoop import \
+  --connect jdbc:mysql://192.168.164.25:3306/stock \
+  --username root \
+  --password 111111 \
+  --query "select id,name from person_all where \$CONDITIONS" \
+  --target-dir /user/root/person_all \
+  --split-by id \
+  -m 1 \
+  --check-column id \
+  --incremental append \
+  --last-value 4
+  Id大于4的记
+  录都被导出
+  
+  ```
+
+* 语法范式解析： 
+  sqoop import: SQOOP 命令，从关系型数据库导数到Hadoop 
+  –check-column: 必须是timestamp列 
+  –incremental lastmodified: 设置为最后改动模式 
+  –merge-key: 必须是唯一主键 
+
+  –last-value: 所有大于最后一个时间的数据都会被更新
+
+  ```shell
+  sqoop import \
+  --connect jdbc:mysql://192.168.164.25:3306/test \
+  --username root \
+  --password 111111 \
+  --query "select id,name,time from t1 where \$CONDITIONS" \
+  --target-dir /user/root/person_all \
+  --split-by id \
+  -m 1 \
+  --check-column time \
+  --incremental lastmodified \
+  --merge-key Id \
+  --last-value "2015-08-25 03:12:46"
+  ```
+
+
+
+
+
+

@@ -14,9 +14,9 @@ http://archive.cloudera.com/cm5/cm/5/
 
 * 下载与linux版本对应的，比如centos7使用
 
-  * [CDH-5.6.1-1.cdh5.6.1.p0.3-el7.parcel.sha1](http://archive.cloudera.com/cdh5/parcels/5.6.1/CDH-5.6.1-1.cdh5.6.1.p0.3-el7.parcel.sha1)
-  * [CDH-5.6.1-1.cdh5.6.1.p0.3-el7.parcel](http://archive.cloudera.com/cdh5/parcels/5.6.1/CDH-5.6.1-1.cdh5.6.1.p0.3-el7.parcel)
-  * [CDH-5.6.1-1.cdh5.6.1.p0.3-el6.parcel.sha1](http://archive.cloudera.com/cdh5/parcels/5.6.1/CDH-5.6.1-1.cdh5.6.1.p0.3-el6.parcel.sha1)
+  * [CDH-5.16.1-1.cdh5.16.1.p0.3-el6.parcel](http://archive.cloudera.com/cdh5/parcels/5.16.1/CDH-5.16.1-1.cdh5.16.1.p0.3-el6.parcel)
+  * [CDH-5.16.1-1.cdh5.16.1.p0.3-el6.parcel.sha1](http://archive.cloudera.com/cdh5/parcels/5.16.1/CDH-5.16.1-1.cdh5.16.1.p0.3-el6.parcel.sha1)
+  * [manifest.json](http://archive.cloudera.com/cdh5/parcels/5.16.1/manifest.json)
 
   ```html
   http://archive.cloudera.com/cdh5/parcels/latest/

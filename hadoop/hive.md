@@ -489,8 +489,8 @@ where sorted = 1;
   ```mysql
   # 分析函数（如:sum(),max(),row_number()...） + 窗口子句（over函数）
   # 先根据cookieid字段分区，相同的cookieid分为一区，每个分区内根据createtime字段排序（默认升序）
-  # 不加 partition by 的话则把整个数据集当作一个分区
-  # 不加 order by的话会对某些函数统计结果产生影响，如sum()
+  # 不加 partition by则把整个数据集当作一个分区
+  # 不加 order by对某些函数统计结果产生影响，如sum()
   over（partition by cookieid order by createtime）
   
   -- 关键是理解 ROWS BETWEEN 含义,也叫做window子句： 
