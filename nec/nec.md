@@ -976,15 +976,47 @@ that those
   * 实义动词，
   * 助动词，do，be
 
-## Lesson
+## Lesson 35
 
 ### 单词
 
+* between .prep 在...之间，前+动词
+  * between A and B 在A、B之间
+* along .prep 沿着...
+* bank 银行，河岸
+* park n.公园 v.停车
+* into .prep 进入
+  * come into
+  * jump into
+
 ### 课文
+
+* 另外
+  * another >= 3
+  * the other >= 2 
+* out of 出来
+  * come out of
+  * walk out of
+  * run out of
+* some of ...中的一些（表示复数形式）
+  * some of them 他们中的一些
+  * some of us 我们中的一些
 
 ### 语法
 
-### Lesson
+* 谁谁谁“的”
+  * 形容词物主代词：my、your
+  * 名词性物主代词：
+  * 名词所有格
+    * 's 表示人，有生命的
+    * of 无生命的
+
+### Lesson 36
+
+* beside .prep 在...的旁边
+* off .prep 离开
+  * drive of 驾车离开
+  * jump off 离开
 
 ## Lesson
 
