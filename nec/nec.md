@@ -895,25 +895,86 @@ that those
 
   lady's room/man's room
 
-## Lesson
+## Lesson 31
 
 ### 单词
 
+* gardener 园艺师
+* run after 追赶
+* runner 跑步运动员 Liu xiang is a runner.
+* after prep. 在…之后 介词前用动词
+  * after you 您先请
+* across prep. 穿过 介词前用动词
+  * go across the street
+  * walk across the street
+  * run across the street
+
 ### 课文
+
+* 没听清楚，在说一遍
+  * pardon
+  * excuse me 
+  * sorry
+  * say it again
+* What about ...?
 
 ### 语法
 
-### Lesson
+* 时态
+  * 时间：过去、现在、将来
+  * 状态：通常状态、正在进行的、完成
+* 现在进行时：此时此刻正在做的事情
+  * doing变化规则
+    * 一般+ing
+    * 不发音e结尾，去e+ing
+    * 辅元辅，双写福音字母+ing，除opening
+  * 结构：主语+is/am/are+doing
+    * 疑问句：Be 主语 doing？
+    * 特殊疑问句：What be 主语 doing？
+* 动词中心说
+  * 所有失态现在动词
+  * 句子必须有动词
+  * do代表动词
 
-## Lesson
+### Lesson 32
+
+* a love letter 情书
+* 时态的变化只针对动词
+
+## Lesson 33
 
 ### 单词
 
+* sun
+  * sumhat，遮阳帽
+  * sunglass，太阳镜
+  * sunblock，防晒霜
+* with prep. 和…在一起
+* family，家庭、家人、家属
+* bridge，桥
+  * foot bridge，天桥
+  * over the bridge 过桥 He is walking over the bridge.
+* dream boat 梦中情人
+
 ### 课文
+
+* it 作主语，描述天气
+  * It is fine today
+  * It is bad in spring
+* ...is with his family 介词+动词
 
 ### 语法
 
-### Lesson
+* 复习失态的概念
+* 复习现在进行时
+
+### Lesson 34
+
+* 动词分类
+  * 连系动词，be
+  * 情态动词，must
+  * 实义动词，
+  * 助动词，do，be
 
 ## Lesson
 
