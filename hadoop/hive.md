@@ -189,8 +189,13 @@ hive(default)>! ls /opt/module/datas;
 #### insert
 
 ```mysql
+# 插入到表
 > insert overwrite table student partition(month='201708')
 select id, name from student where month='201709';
+#
+> insert overwrite directory 'hdfs路径' select * ...
+> insert overwrite local directory '路径' select * ...
+
 ```
 
 #### as select
