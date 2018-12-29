@@ -99,6 +99,8 @@ $ bin/hive -f /opt/module/datas/hivef.sql  > /opt/module/datas/hive_result.txt
 hive(default)>dfs -ls /;
 # 查看本地文件系统
 hive(default)>! ls /opt/module/datas;
+# beeline连接
+beeline> !connect jdbc:hive2://node1:10000 
 ```
 
 ### DDL
