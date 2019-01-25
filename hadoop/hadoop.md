@@ -157,48 +157,74 @@ http://archive.cloudera.com/cm5/cm/5/
   ntpdate -u 65.55.56.206
   ```
 
-* ntp master服务配置文件
+* ntp master服务配置文件`/etc/ntp.conf`
 
-	```shell
-	driftfile /var/lib/ntp/drift
-	restrict 127.0.0.1
-	restrict -6 ::1
-	restrict default nomodify notrap 
-	server 65.55.56.206 prefer
-	includefile /etc/ntp/crypto/pw
-	keys /etc/ntp/keys
-	```
+  ```shell
+  driftfile /var/lib/ntp/ntp.drift #草稿文件
+  # 允许内网其他机器同步时间
+  restrict 192.168.137.0 mask 255.255.255.0 nomodify notrap
+   
+  # Use public servers from the pool.ntp.org project.
+  # 中国这边最活跃的时间服务器 : [http://www.pool.ntp.org/zone/cn](http://www.pool.ntp.org/zone/cn)
+  server 210.72.145.44 perfer   # 中国国家受时中心
+  server 202.112.10.36             # 1.cn.pool.ntp.org
+  server 59.124.196.83             # 0.asia.pool.ntp.org
+   
+  # allow update time by the upper server 
+  # 允许上层时间服务器主动修改本机时间
+  restrict 210.72.145.44 nomodify notrap noquery
+  restrict 202.112.10.36 nomodify notrap noquery
+  restrict 59.124.196.83 nomodify notrap noquery
+   
+  # 外部时间服务器不可用时，以本地时间作为时间服务
+  server  127.127.1.0     # local clock
+  fudge   127.127.1.0 stratum 10
+  ```
 
 * 重启master
 
-	```shell
-	service ntpd start
-	# 用ntpstat命令查看同步状态，出现以下状态代表启动成功
-	> ntpstat
-	synchronised to NTP server () at stratum 2
-	time correct to within 74 ms
-	polling server every 128 s
-	```
+  ```shell
+  # 所有子节点ntp加入开机启动
+  systemctl enable ntpd
+  # 重启ntpd服务
+  service ntpd start/systemctl ntpd restart
+  # 用ntpstat命令查看同步状态，出现以下状态代表启动成功
+  > ntpstat
+  synchronised to NTP server () at stratum 2
+  time correct to within 74 ms
+  polling server every 128 s
+  ```
 
-* ntp slave配置文件
+* ntp slave配置文件`/etc/ntp.conf`
 
-	```shell
-	driftfile /var/lib/ntp/drift
-	restrict 127.0.0.1
-	restrict -6 ::1
-	restrict default kod nomodify notrap nopeer noquery
-	restrict -6 default kod nomodify notrap nopeer noquery
-	#这里是主节点的主机名或者ip
-	server n1
-	includefile /etc/ntp/crypto/pw
-	keys /etc/ntp/keys
-	```
+  ```shell
+  driftfile /var/lib/ntp/ntp.drift # 草稿文件
+  
+  statsdir /var/log/ntpstats/
+  statistics loopstats peerstats clockstats
+  filegen loopstats file loopstats type day enable
+  filegen peerstats file peerstats type day enable
+  filegen clockstats file clockstats type day enable
+  
+  # 让NTP Server为内网的ntp服务器
+  server 192.168.137.110
+  fudge 192.168.137.110 stratum 5
+  
+  # 不允许来自公网上ipv4和ipv6客户端的访问
+  restrict -4 default kod notrap nomodify nopeer noquery 
+  restrict -6 default kod notrap nomodify nopeer noquery
+  
+  # Local users may interrogate the ntp server more closely.
+  restrict 127.0.0.1
+  restrict ::1
+  
+  ```
 
 * 在slave启动ntp服务，手动同步一下时间
 
 	```shell
-	service ntpd start
-	ntpdate -u n1
+	service ntpd start/systemctl ntpd restart
+	ntpdate -u node1
 	```
 
 	> 一般是本地的ntp服务器还没有正常启动，一般需要等待5-10分钟才可以正常同步
@@ -218,25 +244,25 @@ http://archive.cloudera.com/cm5/cm/5/
 
 #### 安装Cloudera Manager Server/Agent
 
-* 将cloudera-manager*.tar.gz解压后的cm-5.12.1和cloudera目录放到/opt目录下
+* 将cloudera-manager*.tar.gz解压后的cm-5.16.1和cloudera目录放到/opt目录下
 
 * 为Cloudera Manager 5建立数据库，找到mysql-connector-java-5.1.33-bin.jar，放到`/opt/cm-5.12.1/share/cmf/lib/`，在master节点生成数据库
 
   ```shell
-  /opt/cm-5.12.1/share/cmf/schema/scm_prepare_database.sh mysql cm -hlocalhost -uroot -pxxxx --scm-host localhost scm scm scm
+  /opt/cm-5.16.1/share/cmf/schema/scm_prepare_database.sh mysql cm -hlocalhost -uroot -pxxxx --scm-host localhost scm scm scm
   # 参数说明
   /usr/share/cmf/schema/scm_prepare_database.sh [options] <databaseType>  <databaseName>  <databaseUser>  <password>
   --scm-host：安装Cloudera Manager Server的主机名。如果Cloudera Manager Server和数据库安装在同一主机上，请不要使用此选项或-h 选项。
   ```
 
-* 配置Agent，修改`/opt/cm-5.12.1/etc/cloudera-scm-agent/config.ini`中的server_host为主节点的主机名
+* 配置Agent，修改`/opt/cm-5.16.1/etc/cloudera-scm-agent/config.ini`中的server_host为主节点的主机名
 
-* 分发cm-5.12.1到slave
+* 分发cm-5.16.1到slave
 
 * 在所有节点创建cloudera-scm用户组
 
   ```shell
-  useradd --system --home=/opt/cm-5.12.1/run/cloudera-scm-server/ --no-create-home --shell=/bin/false --comment "Cloudera SCM User" cloudera-scm
+  useradd --system --home=/opt/cm-5.16.1/run/cloudera-scm-server/ --no-create-home --shell=/bin/false --comment "Cloudera SCM User" cloudera-scm
   ```
 
 * 将CHD5相关的Parcel包放到主节点的`/opt/cloudera/parcel-repo/`目录中（parcel-repo需要手动创建）
@@ -247,20 +273,20 @@ http://archive.cloudera.com/cm5/cm/5/
   manifest.json
   ```
 
-  > 最后将CDH-5.12.1-1.cdh5.12.1.p0.3-el6.parcel.sha1，重命名为CDH-5.12.1-1.cdh5.12.1.p0.3-el6.parcel.sha，这点必须注意，否则，系统会重新下载CDH-5.12.1-1.cdh5.12.1.p0.3-el6.parcel文件。
+  > 最后将CDH-5.16.1-1.cdh5.16.1.p0.3-el7.parcel.sha1，重命名为CDH-5.16.1-1.cdh5.16.1.p0.3-el7.parcel.sha，这点必须注意，否则，系统会重新下载CDH-5.16.1-1.cdh5.16.1.p0.3-el7.parcel文件。
 
 * 相关启动脚本
 
-  通过`/opt/cm-5.12.1/etc/init.d/cloudera-scm-server start`启动服务端
+  通过`/opt/cm-5.16.1/etc/init.d/cloudera-scm-server start`启动服务端
 
-  通过`/opt/cm-5.12.1/etc/init.d/cloudera-scm-agent start`启动Agent服务
+  通过`/opt/cm-5.16.1/etc/init.d/cloudera-scm-agent start`启动Agent服务
 
   > 需要停止服务将以上的start参数改为stop就可以了，重启是restart
 
 #### CDH5的安装配置
 
 * 这时可以通过浏览器访问主节点的7180端口测试一下了（由于CM Server的启动需要花点时间，这里可能要等待一会才能访问），默认的用户名和密码均为admin
-* 拷贝mysql驱动到`/opt/cloudera/parcels/CDH-5.12.1-1.cdh5.12.1.p0.3/lib/hive/lib/`下
+* 拷贝mysql驱动到`/opt/cloudera/parcels/CDH-5.16.1-1.cdh5.12.1.p0.3/lib/hive/lib/`下
 
 #### 集群测试
 
@@ -269,9 +295,8 @@ sudo -u hdfs hadoop jar /opt/cloudera/parcels/CDH/lib/hadoop-mapreduce/hadoop-ma
 ```
 
 * 安装参考`https://blog.csdn.net/gtsina/article/details/78048925`
-
 * HA参考`https://blog.csdn.net/post_yuan/article/details/78626340`、`https://blog.csdn.net/freedomboy319/article/details/46357495`
-
+* 存储空间`https://www.cnblogs.com/xiqing/p/9645566.html`
 
 ### 伪分布
 
