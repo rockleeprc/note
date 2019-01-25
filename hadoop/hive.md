@@ -446,7 +446,7 @@ neil,2017-06-12,80
 mart,2017-04-13,94
 
 # 查询在2017年4月份购买过的顾客及总人数
-select name,count(*) over () 
+select name,count(*) eovr () 
 from business 
 where substring(orderdate,1,7) = '2017-04' 
 group by name;
