@@ -4,9 +4,10 @@
 
 * 配置文件目录$spark_home/conf 
 
-* slaves.template中加入savle主机名
+* slaves中加入savle主机名
 
   ```shell
+  node1
   node2
   node3
   node4
@@ -15,16 +16,19 @@
 * spark-env.sh，配置master主机名、端口、历史服务器启动参数
 
   ```shell
-  export SPARK_HISTORY_OPTS="-Dspark.history.ui.port=4000
-  -Dspark.history.retainedApplications=3
-  -Dspark.history.fs.logDirectory=hdfs://master01:9000/directory"
+  SPARK_MASTER_HOST=node1
+  SPARK_MASTER_PORT=7077
+  export JAVA_HOME=/usr/local/jdk
+  export SCALA_HOME=/usr/local/scala
+  export HADOOP_HOME=/usr/local/hadoop
+  export SPARK_HISTORY_OPTS="-Dspark.history.ui.port=4000 -Dspark.history.retainedApplications=3 -Dspark.history.fs.logDirectory=hdfs://node1:9000/directory"
   ```
 
 * spark-default.conf，配置历史服务器
 
   ```shell
   spark.eventLog.enabled  true
-  spark.eventLog.dir       hdfs://master01:9000/directory
+  spark.eventLog.dir       hdfs://node1:9000/directory
   spark.eventLog.compress true
   ```
 
@@ -33,8 +37,6 @@
 * 启动spark $spark_home/sbin/start-all.sh
 
 * 启动spark历史服务器 $spark_home/sbin/start-history-server.sh
-
-* spark-config.sh中增加JAVA_HOME
 
 * 权限问题在hdfs-site.xml中配置关闭权限
 
