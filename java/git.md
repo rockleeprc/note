@@ -278,6 +278,11 @@ $  git config --global --replace-all user.name "输入你的用户名"
 	$ git push origin feature/original_publishing:feature/original_publishing
 	$ git push origin featurn/slowquery
 
+## 删除远程分支
+	# 推送一个空分支到远程分支，其实就相当于删除远程分支
+	$ git push origin :dbg_lichen_star
+	$ git push origin --delete dbg_lichen_star
+
 ## .gitignore配置
 
 由于gitignore只能忽略那些原来没有被track的文件，如果某些文件已经被纳入了版本管理中，则修改.gitignore是无效的

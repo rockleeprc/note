@@ -27,6 +27,31 @@
   @ComponentScan(basePackages = "com.foo",includeFilters =   {@ComponentScan.Filter(type=FilterType.ANNOTATION,classes={Repository.class})},useDefaultFilters=false)
   ```
 
+* 自定义扫描类
+
+  ```java
+  @ComponentScan(basePackages = "com.foo", includeFilters = {@ComponentScan.Filter(type = FilterType.CUSTOM, classes={MyTypeFilter.class})}, useDefaultFilters = false)
+  
+  public class MyTypeFilter implements TypeFilter {
+      @Override
+      public boolean match(MetadataReader metadataReader, MetadataReaderFactory metadataReaderFactory) throws IOException {
+          ClassMetadata classMetadata = metadataReader.getClassMetadata();
+          if(classMetadata.getClassName().contains("Service")|| classMetadata.getClassName().contains("Dao")){
+              return true;
+          }
+          return false;
+      }
+  }
+  ```
+
+* 配置bean的sceop
+
+  ```java
+  @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+  ```
+
+  
+
 ### @Conditional
 
 * 有条件的添加bean，实现Condition接口
