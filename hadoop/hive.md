@@ -452,7 +452,9 @@ where substring(orderdate,1,7) = '2017-04'
 group by name;
 
 # 查询顾客的购买明细及月购买总额
-select name,orderdate,cost,sum(cost) over(partition by month(orderdate)) 
+select name,orderdate,cost,sum(cost) over(partition by month(orderdate))
+from business;
+select name,orderdate,cost,sum(cost) over(distribute by month(orderdate))
 from business;
 
 # 要将cost按照日期进行累加
@@ -475,7 +477,8 @@ from business;
 
 # 查看顾客上次的购买时间
 select name,orderdate,cost, 
-lag(orderdate,1,'1900-01-01') over(partition by name order by orderdate ) as time1, lag(orderdate,2) over (partition by name order by orderdate) as time2 
+lag(orderdate,1,) over(partition by name order by orderdate ) as time1, 
+lead(orderdate,1) over (partition by name order by orderdate) as time2 
 from business;
 
 # 查询前20%时间的订单信息
