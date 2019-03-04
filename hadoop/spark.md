@@ -209,7 +209,7 @@
 
 * intersection：返回两个RDD交集，去重
 
-* subtract：返回在RDD中出现，且不在otherRDD中中出现的元素
+* subtract：返回在RDD中出现，且不在otherRDD中出现的元素
 
   ```shell
   > val rdd1 = sc.makeRDD(1 to 2,1)
