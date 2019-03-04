@@ -86,7 +86,7 @@
 ## scope生命周期
 
 * compile：编译范围，默认scope，在classpath中存在，存活整个生命周期
-* provided：已提供范围，比如容器提供Servlet API，不参与打包码，只参与编译测试
+* provided：期望jdk或容器提供，比如容器提供Servlet API，不参与打包码，只参与编译测试
 * runtime：运行时范围，编译不需要，接口与实现分离，不参与编译，参与打包
 * test：测试范围，单元测试环境需要，只在测试时使用
 * system：系统范围，自定义构件，指定systemPath，引入外部系统的jar包
