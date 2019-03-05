@@ -175,7 +175,7 @@
 
 * coalesce：使用hashPartitoner进行重分区，默认不使用shuffle
 
-* repartiton：和coalesce函数一样，不同的是使用shuffle
+* repartiton：和coalesce函数一样，使用shuffle
 
   ```shell
   > val data = sc.textFile("")
@@ -218,12 +218,12 @@
   > rdd1.union(rdd2).collect 
   # 交集，去重
   > rdd1.intersection(rdd2).collect
-  
+  > rdd1.subtract(rdd2).coolect
   ```
 
 * mapPartitions：使用迭代器处理RDD中每一个分区的数据
 
-* mapPartitionsWithIndex：
+* mapPartitionsWithIndex：使用迭代器处理RDD中每一个分区的数据，函数中带分区标识
 
   ```shell
   > val rdd = sc.makeRDD(1 to 5,2)
@@ -236,9 +236,42 @@
       }
       result.::(i).iterator
   }).collect
+  > val rdd: RDD[Int] = sc.makeRDD(1 to 10, 3)
+      rdd.mapPartitionsWithIndex((idx, iter) => {
+        while (iter.hasNext) {
+          println(s"$idx-" + iter.next())
+        }
+        iter
+      }).collect()
   ```
 
-  
+* partitionBy：根据partitioner函数将原RDD重新分区，生成新的ShuffleRDD，使用groupByKey
+
+* mapValues：针对[K,V]中的V进行map操作
+
+* flatMapValues：针对[K,V]中的V进行flatMap操作
+
+  ```shell
+  > val rdd = sc.makdeRDD(Array)
+  > rdd.mapValues(v=>{
+        println(v)
+        }).collect()
+  ```
+
+* combineByKey：将RDD[K,V]转换为RDD[K,C]，V、C类型可以相同也可以不同
+
+  ```shell
+  val rdd: RDD[(String, String)] = sc.makeRDD(Array(("A","a"),("B","b"),("B","bb"),("B","bbb"),("B","bbbb"),("C","c"),("D","d")),2)
+      val newRdd: Array[(String, String)] = rdd.combineByKey(
+        (v:String)=>v+"#",
+        (c:String,v:String)=>c+"_"+v,
+        (c1:String,c2:String)=>c1+"*"+c2).collect
+      newRdd.foreach(x=>{
+        println(x._2+"-"+x._1)
+      })
+  ```
+
+* foldByKey：
 
 
 
