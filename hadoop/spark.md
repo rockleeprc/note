@@ -273,7 +273,12 @@
 
 * foldByKey：
 
+### 行动
 
+* first：返回RDD中的第一个元素，不排序
+* count：返回RDD中元素个数
+* reduce：对RDD中的元素进行二元运算
+* collect：将RDD转换为数组
 
 
 
