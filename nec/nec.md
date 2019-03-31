@@ -1018,25 +1018,61 @@ that those
   * drive of 驾车离开
   * jump off 离开
 
-## Lesson
+## Lesson 37
 
 ### 单词
 
+* hard 
+  * adv. 努力地，用来修饰adj. v. adv.
+  * adj. 勤奋的，艰苦的
+  * 位置：形前动后
+    * I am very/so/too tired.
+    * I love you awfully/very much.
+  * hard work adj.
+  * work hard adv.
+
 ### 课文
+
+* 主 谓 宾 宾补
+* for prep. 
+  * 为了谁，给谁 it's for you.
+  * 对sb来说... xxx is difficult for me.
+  * 表示原因 what are you sorry/happy/busy for?
+  * 长达.. i study english for two years.
 
 ### 语法
 
+* be going to 句型
+  * 预先计划和打算要做的事
+  * be going to do
+  * 
+
 ### Lesson
 
-## Lesson
+## Lesson 39
 
 ### 单词
 
+* front n.
+  * in front of 在...前面(没范围的)
+  * in the front of 在...前面(有范围的里面)
+
 ### 课文
+
+* do with... 处理
+* give it to me：祈使句、双宾语
+  * you give the vase to me=you give me the vase
+  * 结构：主+谓+宾+宾
+  * 双宾语：give、show、take、teach
 
 ### 语法
 
-### Lesson
+* 否定表达
+  * don’t + v.
+
+### Lesson 40
+
+* 双宾语动词：show/send/take
 
 ## Lesson
 
