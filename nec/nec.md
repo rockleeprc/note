@@ -1073,16 +1073,39 @@ that those
 ### Lesson 40
 
 * 双宾语动词：show/send/take
+* xunlei:494253892  
 
-## Lesson
+## Lesson 41
 
 ### 单词
 
 ### 课文
 
+* What's in/on/under/over/behind it?
+
 ### 语法
 
-### Lesson
+* 名称
+  * 冠词+名词
+  * 名词所有格：‘s/of
+  * 单/复数
+  * 可数/不可数
+* 不可数名词
+  * 液体状：water、tea
+  * 物质名词：soap、rice
+  * 抽象名词：love、work
+  * 不可以加one、two、three
+  * 不可以加a/an
+  * 不可以加s，永远是单数
+  * 与量词搭配
+
+### Lesson 42
+
+* some/any+复数名词/不可数名词，表示一些
+  * some用在肯定句，表示请求/建议的疑问句中用some
+  * any用在否定\疑问句
+  * any+单数名词：任一，any day 任一天
+  * some+单数名词：某一，some day 某一天
 
 ## Lesson
 
