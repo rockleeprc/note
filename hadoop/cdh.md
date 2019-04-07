@@ -32,8 +32,7 @@
 * 安装三方依赖包
 
   ```shell
-  yum install -y chkconfig python bind-utils psmisc libxslt zlib sqlite cyrus-sasl-plain 
-  cyrus-sasl-gssapi fuse fuse-libs redhat-lsb 
+  yum install -y chkconfig python bind-utils psmisc libxslt zlib sqlite cyrus-sasl-plain cyrus-sasl-gssapi fuse fuse-libs redhat-lsb 
   ```
 
 * 在每节点上创建目录
@@ -67,14 +66,14 @@
 * 创建scm的专属用户
 
   ```mysql
-  grant all on *.* to 'temp'@'%' identified by 'temp' with grant option;
+  grant all on *.* to 'scm'@'%' identified by 'scm' with grant option;
   ```
 
 * 将数据库连接写入配置文件，测试数据库连接
 
   ```shell
   cd /opt/cloudera-manager/cm-5.4.3/share/cmf/schema/
-  ./scm_prepare_database.sh mysql temp -h node01 -utemp -ptemp --scm-host node01 scm scm scm
+  ./scm_prepare_database.sh mysql scm -h node3 -uscm -pscm --scm-host node1 scm scm scm
   格式：数据库类型、数据库、数据库服务器、用户名、密码、cm server服务器
   ```
 
@@ -90,7 +89,10 @@
   
   ```
 
-* 在server节点配置cdh本地源，下载好文件CDH-5.4.0-1.cdh5.4.0.p0.27-el6.parcel以及manifest.json，将这两个文件放到server节点的/opt/cloudera/parcel-repo下 
+* 在server节点配置cdh本地源，将这三个文件放到server节点的/opt/cloudera/parcel-repo下
+CDH-5.16.1-1.cdh5.16.1.p0.3-el7.parcel
+CDH-5.16.1-1.cdh5.16.1.p0.3-el7.parcel.sha(改文件名称)
+manifest.json
 
 * 启动 server、agent，Sever首次启动会自动创建表以及数据，不要立即关闭或重启，否则需要删除所有表及数据重新安装
 
