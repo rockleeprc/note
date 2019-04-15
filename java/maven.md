@@ -221,3 +221,23 @@ maven中的所有的命令都是由插件构成
 * Tomcat6插件： tomcat6:run 
 * Tomcat7插件： tomcat7:run 
 
+# 版本号管理
+```xml
+	<plugin>
+		<groupId>org.codehaus.mojo</groupId>
+		<artifactId>versions-maven-plugin</artifactId>
+		<version>2.7</version>
+	</plugin>
+```
+
+```shell
+# parent项目中，设置版本号，无法回滚
+mvn -DnewVersion=1.0.0 -DgenerateBackupPoms=false versions:set
+
+# parent项目中，设置版本号
+mvn versions:set -DnewVersion=2.0-SNAPSHOT
+# 当更改版本号时有问题，进行版本号回滚
+mvn versions:revert
+# 提交版本号
+mvn versions:commit
+```
