@@ -35,6 +35,13 @@ server_id=1 #配置mysql replaction需要定义，不能和canal的slaveId重复
   canal.instance.connectionCharset = UTF-8
   # 默认连接数据库
   canal.instance.defaultDatabaseName = 
+  # 一下三个文件通过SHOW MASTER STATUS;获得
+  # binlog文件
+  canal.instance.master.journal.name=mysql-bin.000179
+  # 位置
+  canal.instance.master.position=495357483
+  # 时间戳
+  canal.instance.master.timestamp=1556171216000
   ```
 
 ### 启动
@@ -63,6 +70,7 @@ $canal_home/bin/startup.sh
 
   ```properties
   canal.serverMode = kafka
+  canal.mq.servers = node3:9092,node4:9092,node5:9092
   ```
 
 ###  Canal HA
@@ -90,7 +98,7 @@ $canal_home/bin/startup.sh
 * zk中查看节点状态
 
   ```shell
-  [zk: localhost:2181(CONNECTED) 49] get /otter/canal/destinations/example/running
+  [zk: localhost:2181(CONNECTED) 49] get /otter/canal/destinations/canteen/running
   {"active":true,"address":"192.168.13.213:11111","cid":1}
   ```
 
