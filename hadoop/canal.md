@@ -35,7 +35,7 @@ server_id=1 #配置mysql replaction需要定义，不能和canal的slaveId重复
   canal.instance.connectionCharset = UTF-8
   # 默认连接数据库
   canal.instance.defaultDatabaseName = 
-  # 一下三个文件通过SHOW MASTER STATUS;获得
+  # 一下三个文件mysql中通过SHOW MASTER STATUS;获得
   # binlog文件
   canal.instance.master.journal.name=mysql-bin.000179
   # 位置
