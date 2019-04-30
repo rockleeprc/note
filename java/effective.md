@@ -31,18 +31,16 @@
 
 ### Item2：遇到多个构造器参数时要考虑用构建器
 
-* 静态工厂方法和构造器有共同的距现象，不能很好的扩展到大量的可选参数
-
+* 静态工厂方法和构造器有共同的局限性，不能很好的扩展到大量的可选参数
 * 构造器重载，将使构造器变得庞大，参数阅读性低
-
 * JavaBean模式的setter()在构造过程中可能导致对象状态不一致，状态不一致就有可能导致线程安全问题
 
 * Builder模式，不直接生成想要的对象，让客户端利用所有必要的参数调用构造器或静态工厂方法，得到一个Builder对象
 
 		public class Person {
 			//require
-			private String name;
-			private int age;
+			private final String name;
+			private final int age;
 			//optional
 			private double height;
 			private double weight;
@@ -60,8 +58,8 @@
 
 			// 不直接生成对象，客户端使用Builder实例化
 			public static class Builder {
-				private String name;
-				private int age;
+				private final String name;
+				private final int age;
 				private double height;
 				private double weight;
 
