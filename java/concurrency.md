@@ -128,7 +128,7 @@ it
 
 	Thread t = new Thread();
 	t.start();
-
+	
 	Thread t = new Thread(new Runnable());
 	/*调用Runnable.run()，见Thread.run()源码*/
 	t.start();
@@ -192,7 +192,7 @@ yield()当前线程一些重要的工作已经完成，可以休息一下，给�
 
 	t.setDaemon(true);
 	t.start();
-
+	
 	Exception in thread "main" java.lang.IllegalThreadStateException
 
 setDaemon(true)一定要在start()前，不然会得到一个IllegalThreadStateException异常，setDaemon()设置失败，但程序仍能正常执行
@@ -351,7 +351,7 @@ synchronized、ReentrantLock一次都只能允许一个线程访问一个资源�
 		doSomething();/*重量级方法*/
 		...
 	}
-
+	
 	public void synMethod(){
 		...
 		doSomething();
@@ -386,3 +386,37 @@ JVM遇到连续地对同一把锁不断的请求和释放操作时，会把所�
 ## CAS
 
 CAS(V,E,N) 仅当V.value==E时，才会将V.setValue(N)
+
+
+
+### CopyOnWriteArrayList
+
+```java
+public E remove(int index=2) {
+	final ReentrantLock lock = this.lock;
+	lock.lock();
+	try {
+		Object[] elements = getArray();
+		int len = elements.length; 
+			6
+		E oldValue = get(elements, index);
+		int numMoved = len - index - 1;	// 计算index位置后还剩下多少元素
+				3			6-2-1
+		if (numMoved == 0) // 删除最后的位置
+			setArray(Arrays.copyOf(elements, len - 1));
+		else {
+			Object[] newElements = new Object[len - 1];// 缩减元素个数
+												6-1=5
+			System.arraycopy(elements, 0, newElements, 0, index);	// index之前的元素
+															2(0,1)
+			System.arraycopy(elements, index + 1, newElements, index,numMoved);// index只有的元素
+										3						2		3
+			setArray(newElements);
+		}
+		return oldValue;
+	} finally {
+		lock.unlock();
+	}
+}
+```
+
