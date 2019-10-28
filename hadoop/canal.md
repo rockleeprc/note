@@ -25,6 +25,8 @@ server_id=1 #配置mysql replaction需要定义，不能和canal的slaveId重复
 * `$canal_home/conf/example/instance.properties`
 
   ```properties
+  # 数据实例id
+  canal.instance.mysql.slaveId=
   # 数据库实例地址
   canal.instance.master.address=
   # 数据库用户名
@@ -63,7 +65,7 @@ $canal_home/bin/startup.sh
 
   ```properties
   canal.mq.topic=example
-  canal.mq.partition=0
+  canal.mq.partition=1
   ```
 
 * `$canal_home/conf/canal.properties`

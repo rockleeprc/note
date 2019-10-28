@@ -83,15 +83,15 @@
 
 ```shell
 # 创建topic
-kafka-topics --create --zookeeper node1:2181,node2:2181,node3:2181 --topic kafka2 --partitions 3 --replication-factor 3
+kafka-topics --create --zookeeper temporaryProd3:2181,temporaryProd4:2181,temporaryProd5:2181 --topic kafka2 --partitions 3 --replication-factor 3
 # 生产者
 kafka-console-producer --broker-list node4:9092 --topic test
 # 消费者
-kafka-console-consumer --bootstrap-server node4:9092 --topic canal_syscenter --from-beginning
+kafka-console-consumer --bootstrap-server temporaryProd1:9092,temporaryProd2:9092,temporaryProd3:9092, --topic canal_syscenter_hj --from-beginning
 # 查看topic
-kafka-topics --zookeeper node1:2181,node2:2181,node3:2181 --list
+kafka-topics --zookeeper temporaryProd3:2181,temporaryProd4:2181,temporaryProd5:2181 --list
 # 查看topic描述信息
-kafka-topics --describe --zookeeper node1:2181,node2:2181,node3:2181 --topic kafka2
+kafka-topics --describe --zookeeper node1:2181,node2:2181,node3:218	1 --topic kafka2
 # 删除topic
 kafka-topics --delete --zookeeper node1:2181,node2:2181,node3:2181 --topic canteen
 # producer吞吐量
