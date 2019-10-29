@@ -94,7 +94,7 @@ dir /usr/local/redis/data/6379
 # 启动集群模式
 cluster-enabled yes
 # 生成的集群配置文件名称，执行redis-trib.rb后自动生成
-cluster-config-file /usr/local/redis/conf/node-6379.conf
+cluster-config-file /usr/local/redis/conf/nodes-6379.conf
 # 后台启动
 daemonize yes
 # 指定集群节点超时时间
@@ -119,7 +119,7 @@ save ""
 > cluster keyslot key # 计算key落在那个slot里
 ```
 
-### 集群压测
+### 集群压测（只支持单节点）
 
 ```shell
 # 100个并发连接，100000个请求，检测host端口为6379的redis服务器性能
@@ -128,6 +128,8 @@ $ redis-benchmark -h node3 -p 6379 -c 100 -n 1000000
 $ redis-benchmark -h node3 -p 6379 -q -d 100  
 # 测试set，lpush性能
 $ redis-benchmark -h node3 -p 6379 -t set,lpush -n 100000 -q
+# 计算key的slot
+> cluster keyslot 20
 ```
 
 ### 集群扩容
@@ -139,10 +141,46 @@ $ redis-trib add-node 192.168.0.201:7007 192.168.0.201:7001
 $ redis-trib reshard 192.168.0.201:7007
 ```
 
+### JedisCluster API
+
+```java
+JedisPoolConfig config = new JedisPoolConfig();
+config.setMaxTotal(30);// 最大连接 默认8
+config.setMaxIdle(10);// 空闲连接 默认8
+config.setMinIdle(0);  //最小空闲连接数 默认0
+config.setMaxWaitMillis(5000);// 获取连接时的最大等待毫秒数(如果设置为阻塞时BlockWhenExhausted),如果超时就抛异常, 小于零:阻塞不确定的时间,  默认-1
+config.setTestOnBorrow(true);// 对拿到的connection进行validateObject校验
+
+Set<HostAndPort> redisNodes = new HashSet<>();
+redisNodes.addAll(getHostByDev());
+/*
+connectTimeOut 连接超时
+soTimeOut 读写超时
+maxAttemts 重试次数
+*/
+JedisCluster jedisCluster = new JedisCluster(redisNodes, 10000, 6000, 7, config);
+```
+
  ### Tips
 
 * 配置文件中bind 配置不能是127.0.0.1，执行redis-trib.rb脚本是会`Waiting for the cluster to join......`
 
 * 重新执行redis-trib.rb时需要删除每个节点的数据和集群自动成成的conf文件
+
 * `redis-trib.rb`在`redis_home/src`下
+
 * 如果redis配置了密码认证，需要修改ruby文件的密码配置项`/usr/local/rvm/gems/ruby-2.4.1/gems/redis-4.1.2/lib/redis/client.rb`
+
+* JedisCluster对master被kill情况无法自动感知，需要重新new一个新的JedisCluster
+
+  ```java
+  try{
+      jedisCluster.get(xx)
+  }catch(JedisClusterMaxAttemptsException e){
+      jedisCluster = new JedisCluster(xx...)
+      jedisCluster.get(xx)
+      ......
+  }
+  ```
+
+  
