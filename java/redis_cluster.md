@@ -28,7 +28,7 @@ $ mkdir -p /usr/local/redis/{conf,data,logs}
 ### cluster安装
 
 ```shell
-# 每个节点启动redis
+# 启动所有节点，创建集群
 $ ./redis-trib.rb create --replicas 1 192.168.13.213:6379 192.168.13.213:6380 192.168.13.214:6379 192.168.13.214:6380 192.168.13.215:6379 192.168.13.215:6380
 >>> Creating cluster
 >>> Performing hash slots allocation on 6 nodes...
@@ -80,6 +80,42 @@ S: 72c416492087966d328f1bb19cfeacf14023459e 192.168.13.215:6380
 >>> Check slots coverage...
 [OK] All 16384 slots covered.
 
+# 集群完整性检测
+$ ./redis-trib.rb check node4:6379
+>>> Performing Cluster Check (using node node4:6379)
+S: 09d3478473498b2665132c707d8b89d90e962d0e node4:6379
+   slots: (0 slots) slave
+   replicates 72c416492087966d328f1bb19cfeacf14023459e
+M: d35d97e88bb561ace53c8fe57ac952c3ceeeb1de 192.168.13.213:6380
+   slots:10923-16383 (5461 slots) master
+   1 additional replica(s)
+M: bc2ac9edeb73205cce02ea81b963f20e2a938637 192.168.13.213:6379
+   slots:0-5460 (5461 slots) master
+   1 additional replica(s)
+S: fbd03eac9f7e57abc2c8d9162b1489393b8fb019 192.168.13.214:6380
+   slots: (0 slots) slave
+   replicates bc2ac9edeb73205cce02ea81b963f20e2a938637
+M: 72c416492087966d328f1bb19cfeacf14023459e 192.168.13.215:6380
+   slots:5461-10922 (5462 slots) master
+   1 additional replica(s)
+S: 1024092cca267f271d4a99d702752706d5af4336 192.168.13.215:6379
+   slots: (0 slots) slave
+   replicates d35d97e88bb561ace53c8fe57ac952c3ceeeb1de
+[OK] All nodes agree about slots configuration.
+>>> Check for open slots...
+>>> Check slots coverage...
+[OK] All 16384 slots covered.
+
+# 检查节点之间槽的均衡性
+$ ./redis-trib.rb rebalance node4:6379
+>>> Performing Cluster Check (using node node4:6379)
+[OK] All nodes agree about slots configuration.
+>>> Check for open slots...
+>>> Check slots coverage...
+[OK] All 16384 slots covered.
+*** No rebalancing needed! All nodes are within the 2.0% threshold.
+
+
 ```
 
 ### 配置文件
@@ -114,9 +150,16 @@ save ""
 ### 集群信息
 
 ```shell
+# 集群节点信息
 > cluster nodes
+# <id> <ip:port@cport> <flags> <master> <ping-sent> <pong-recv> <config-epoch> <link-state> <slot> <slot> ... <slot>
+bc2ac9edeb73205cce02ea81b963f20e2a938637 192.168.13.213:6379@16379 master - 0 1572415198047 28 connected 0-5460
 > cluster info
-> cluster keyslot key # 计算key落在那个slot里
+# 计算key落在那个slot里
+> cluster keyslot key 
+# slots点信息
+> cluster slots
+
 ```
 
 ### 集群压测（只支持单节点）
@@ -165,22 +208,14 @@ JedisCluster jedisCluster = new JedisCluster(redisNodes, 10000, 6000, 7, config)
 
 * 配置文件中bind 配置不能是127.0.0.1，执行redis-trib.rb脚本是会`Waiting for the cluster to join......`
 
-* 重新执行redis-trib.rb时需要删除每个节点的数据和集群自动成成的conf文件
+* 重新执行redis-trib.rb时需要删除每个节点的数据目录和集群自动生成的conf文件
 
 * `redis-trib.rb`在`redis_home/src`下
 
 * 如果redis配置了密码认证，需要修改ruby文件的密码配置项`/usr/local/rvm/gems/ruby-2.4.1/gems/redis-4.1.2/lib/redis/client.rb`
 
-* JedisCluster对master被kill情况无法自动感知，需要重新new一个新的JedisCluster
+* 目前的client JedisCluster是无法感知的，只能通过执行命令后, 服务端返回的“-MOVED”信息感知节点的变化，并以此来刷新缓存信息
 
-  ```java
-  try{
-      jedisCluster.get(xx)
-  }catch(JedisClusterMaxAttemptsException e){
-      jedisCluster = new JedisCluster(xx...)
-      jedisCluster.get(xx)
-      ......
-  }
-  ```
+  
 
   
