@@ -159,7 +159,6 @@ bc2ac9edeb73205cce02ea81b963f20e2a938637 192.168.13.213:6379@16379 master - 0 15
 > cluster keyslot key 
 # slots点信息
 > cluster slots
-
 ```
 
 ### 集群压测（只支持单节点）
