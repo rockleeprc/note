@@ -403,6 +403,21 @@ $  git config --global --replace-all user.name "输入你的用户名"
 	To https://github.com/rockleeprc/firstproject.git
 	 - [deleted]         dev
 
+## 分支拉取
+
+```shell
+	# 将远程修改拉取到本地仓库
+	$ git fetch origin dev
+	# 查看当前工作区和本地仓库的差异
+	$ git diff dev origin/dev
+	# 查看本地仓库修改代码
+	$ git log -p fetch_head
+	# 合并fetch_head到工作区
+	$ git merge fetch_head
+```
+
+
+
 ## 冲突解决
 
 	# 创建dev分支 修改gitcommd.txt后commit 在master分支修改gitcommd 在master分支合并dev分支
@@ -501,12 +516,7 @@ $  git config --global --replace-all user.name "输入你的用户名"
 	
 	# 建立本地分支和远程分支的关系
 	$ git branch --set-upstream branch-name origin/branch-name
-	
-	$ git fetch origin master # 将远程仓库的master分支下载到本地当前branch中
-	$ git diff master origin/master # 当前master分支和仓库master比较
-	$ git log -p master  ..origin/maste	# 比较本地的master分支和origin/master分支的差别
-	$ git merge origin/master # 合并master到当前分支
-	$ git pull origin master # 从远程获取最新版本并merge到本地
+
 
 # todo标签管理
 
