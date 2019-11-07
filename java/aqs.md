@@ -189,6 +189,55 @@ public abstract class AbstractQueuedSynchronizer
 ### aqs队列
 
 ```java
+public final void acquire(int arg) {
+    if (!tryAcquire(arg) // 子类重写方法
+        // Node.EXCLUSIVE = null
+        && acquireQueued(addWaiter(Node.EXCLUSIVE), arg))
+        selfInterrupt();
+}
+
+final boolean acquireQueued(final Node node, int arg) {
+    boolean failed = true;
+    try {
+        boolean interrupted = false;
+        for (;;) {
+            // 获取node前驱节点
+            final Node p = node.predecessor();
+            // node的前驱节点是head节点时尝试获取锁
+            if (p == head && tryAcquire(arg)) {
+                setHead(node);// node设置为head
+                p.next = null; // help GC
+                failed = false;
+                return interrupted;
+            }
+            // 获取失败挂起node节点线程
+            if (shouldParkAfterFailedAcquire(p, node) &&
+                parkAndCheckInterrupt())
+                interrupted = true;
+        }
+    } finally {
+        if (failed)
+            cancelAcquire(node);
+    }
+}
+
+private Node addWaiter(Node mode) {
+    Node node = new Node(Thread.currentThread(), mode);
+    // Try the fast path of enq; backup to full enq on failure
+    // 尝试快速入队
+    Node pred = tail;
+    // 如果tail节点不为null，cas方式将node设置为tail
+    if (pred != null) {
+        node.prev = pred; // 设置node前驱节点
+        if (compareAndSetTail(pred, node)) {// cas设置tail
+            pred.next = node;// 设置pred后继节点
+            return node;
+        }
+    }
+    enq(node);// 入队
+    return node;
+}
+
 private Node enq(final Node node) {
         for (;;) {
             Node t = tail; // 第一次循环为null，第二次循环作为哨兵节点
