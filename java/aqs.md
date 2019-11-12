@@ -60,10 +60,10 @@ public abstract class AbstractQueuedSynchronizer
          * (or when possible, unconditional volatile writes).
          */
         /** 当前线程等待状态 */
-        /** CANCELLED：线程被取消 */
-        /** SIGNAL：线程需要被唤醒 */
-        /** CONDITION：线程在条件队列里等待 */
-        /** PROPAGATE：释放共享资源是需要通知其它节点 */
+        /** CANCELLED=1：线程被取消 */
+        /** SIGNAL=-1：线程需要被唤醒 */
+        /** CONDITION=-2：线程在条件队列里等待 */
+        /** PROPAGATE=-3：释放共享资源是需要通知其它节点 */
         volatile int waitStatus;
 
         /**
@@ -196,6 +196,40 @@ public final void acquire(int arg) {
         selfInterrupt();
 }
 
+private Node addWaiter(Node mode) {
+    Node node = new Node(Thread.currentThread(), mode);
+    // Try the fast path of enq; backup to full enq on failure
+    // 尝试快速入队
+    Node pred = tail;
+    // 如果tail节点不为null，cas方式将node设置为tail
+    if (pred != null) {
+        node.prev = pred; // 设置node前驱节点
+        if (compareAndSetTail(pred, node)) {// cas设置tail
+            pred.next = node;// 设置pred后继节点
+            return node;
+        }
+    }
+    // pred==null链表为空 || cas(pred,node)竞争失败
+    enq(node);// 入队
+    return node;
+}
+
+private Node enq(final Node node) {
+    for (;;) {
+        Node t = tail; // 第一次循环为null，第二次循环作为哨兵节点
+        if (t == null) { // 第一次循环tail为null，初始化队列
+            if (compareAndSetHead(new Node())) // 设置head节点
+                tail = head; // head -> 哨兵 <- tail
+        } else { //tail节点不为空，执行入队操作
+            node.prev = t; // 设置node的前驱节点为哨兵节点（tail）
+            if (compareAndSetTail(t, node)) { // 设置tail节点为node
+                t.next = node; // 设置哨兵节点的后继节点为node
+                return t;
+            }
+        }
+    }
+}
+
 final boolean acquireQueued(final Node node, int arg) {
     boolean failed = true;
     try {
@@ -221,38 +255,34 @@ final boolean acquireQueued(final Node node, int arg) {
     }
 }
 
-private Node addWaiter(Node mode) {
-    Node node = new Node(Thread.currentThread(), mode);
-    // Try the fast path of enq; backup to full enq on failure
-    // 尝试快速入队
-    Node pred = tail;
-    // 如果tail节点不为null，cas方式将node设置为tail
-    if (pred != null) {
-        node.prev = pred; // 设置node前驱节点
-        if (compareAndSetTail(pred, node)) {// cas设置tail
-            pred.next = node;// 设置pred后继节点
-            return node;
-        }
+private static boolean shouldParkAfterFailedAcquire(Node pred, Node node) {
+    int ws = pred.waitStatus;
+    if (ws == Node.SIGNAL) // 可以阻塞，等待被唤醒
+        /*
+             * This node has already set status asking a release
+             * to signal it, so it can safely park.
+             */
+        return true;
+    if (ws > 0) { // 节点取消获取锁，递归删除放弃锁的节点 
+        /*
+             * Predecessor was cancelled. Skip over predecessors and
+             * indicate retry.
+             */
+        do {
+            node.prev = pred = pred.prev;
+        } while (pred.waitStatus > 0);
+        pred.next = node;
+    } else { // waitStatus不等于Node.SIGNAL，节点没有取消获取锁
+        /*
+             * waitStatus must be 0 or PROPAGATE.  Indicate that we
+             * need a signal, but don't park yet.  Caller will need to
+             * retry to make sure it cannot acquire before parking.
+             */
+        // 尝试修改waitStatus为Node.SIGNAL
+        compareAndSetWaitStatus(pred, ws, Node.SIGNAL);
     }
-    enq(node);// 入队
-    return node;
+    return false;
 }
-
-private Node enq(final Node node) {
-        for (;;) {
-            Node t = tail; // 第一次循环为null，第二次循环作为哨兵节点
-            if (t == null) { // 第一次循环tail为null，初始化队列
-                if (compareAndSetHead(new Node())) // 设置head节点
-                    tail = head; // head -> 哨兵 <- tail
-            } else { //tail节点不为空，执行入队操作
-                node.prev = t; // 设置node的前驱节点为哨兵节点（tail）
-                if (compareAndSetTail(t, node)) { // 设置tail节点为node
-                    t.next = node; // 设置哨兵节点的后继节点为node
-                    return t;
-                }
-            }
-        }
-    }
 ```
 
 ### 条件变量
