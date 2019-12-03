@@ -1,3 +1,36 @@
+
+
+```scala
+class F{
+  private var f1:String="A" //private getter/setter
+
+  var f2:String="B" //public getter/setter
+
+  val f3:String ="C"// public getter
+
+  private[this] var f4:String="D" // 对象.f4无法获取
+
+  def m1():Unit={} // public method
+}
+
+javap
+public class oom.F {
+  public java.lang.String f2();
+  public void f2_$eq(java.lang.String);
+  public java.lang.String f3();
+  public void m1();
+  public oom.F();
+}
+```
+
+* 类不需要声明为public，一个源文件中可以包含多个类，都是public
+* scala中的属性表示：一个私有字段+公有setter/getter方法
+* private[this]中[]可以传入对象，表示只能在这个对象中访问，解决在一个对象内“对象.f4”无法获取问题
+
+
+
+
+
 ## 函数
 
 ### 偏函数
