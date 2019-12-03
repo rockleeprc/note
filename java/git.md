@@ -534,4 +534,13 @@ $  git config --global --replace-all user.name "输入你的用户名"
   - hotfix/order_service_npe ：订单模块 service 层空指针异常，`service`不是非必须的
 - **fix**/${模块/功能名称}_${bug名称} ：非紧急bug分支，跟随下一个版本发布上线
   - bug/pay_controller_npe ：pay功能 controller 层空指针异常,` controller`不是非必须的
+  
+# commit message
+feat：新功能（feature）
+fix：修补bug
+docs：文档（documentation）
+style： 格式（不影响代码运行的变动）
+refactor：重构（即不是新增功能，也不是修改bug的代码变动）
+test：增加测试
+chore：构建过程或辅助工具的变动
 
