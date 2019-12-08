@@ -141,3 +141,52 @@
     * He is forever looking for keys.
 
     
+
+# Lession 3
+
+## 单词
+
+* send sb. sth/send sth to sb.
+  * send me a card / send card to me
+* spoil
+  * 轻微的损坏
+  * 感情破坏/损害 English study spoils my holidays.
+  * 娇惯 spoil the child 惯孩子
+* server 服务员
+* lend 借给（出去）
+  * lend sth to sb./lend sb. sth 
+  * Can you lend five bucks to me?
+  * Can you lend/give me a hand. 能帮个忙吗
+* borrow 借进来
+  * borrow sth from sb.
+  * Can I borrow five bucks from you?
+* decision n.
+  * make a decision
+  * decide v.
+  * decide to do sth
+  * decide on sth 对sth做决定
+* single adj.
+  * 单一的，唯一的 
+  * single bad/single room/single ticket(return ticket)
+  * 单身的
+
+## 课文
+
+* teach-taught-taught
+* thing about 思考，考虑，反复想
+  * think 不及物动词
+  * think of 想到
+  * I will think about your advice.
+  * You make me think of an old friend.
+* spend 花费
+  * sb. spend sth 
+  * spend on + n
+  * sb. spend sth in doing
+
+## 语法
+
+* 双宾语
+  * He sent me a card. 受人与物（人物）
+  * He sent a card to me. 受物与人（物介人）
+  * me 间接宾语，card 直接宾语
+  * lend、send、pass、find、buy、give、teach、bring
