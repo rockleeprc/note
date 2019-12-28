@@ -1,5 +1,6 @@
-> https://robertgreiner.com/cap-theorem-revisited/
+## cap基本概念
 
+> https://robertgreiner.com/cap-theorem-revisited/
 
 > The CAP Theorem states that, in a distributed system (a collection of interconnected nodes that share data.), you can only have two out of the following three guarantees across a write/read pair: Consistency, Availability, and Partition Tolerance - one of them must be sacrificed.
 
@@ -27,3 +28,16 @@ CAP定理指出，在分布式系统中（共享数据的互连节点的集合�
 当发生网络分区时，系统将继续工作。
 
 * 集群提供服务的能力
+
+## cap选择
+
+### CA
+* 放弃P，但网络无法保证100%可靠，分区必然会出现，所以P是必选
+* 当分区发生时，为了保证C，系统要禁止写入，无法提供服务，又违背了A
+
+### CP
+* 放弃A，保证数据一致性
+
+### AP
+* 放弃C，保证高可用
+
