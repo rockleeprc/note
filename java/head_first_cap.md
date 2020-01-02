@@ -1,36 +1,36 @@
 ## CAP基本概念
 
-
 > https://robertgreiner.com/cap-theorem-revisited/
 
-引用Robert Greiner的一篇博文，先给CAP下个定义，以及什么样的场景适用于CAP理论v
+先引用Robert Greiner的一篇博文，先给CAP下个定义，后续在说什么样的场景适用于CAP理论讨论范围，之所以引用Robert Greiner的文章，是因为这篇文章虽然短小精悍，但定义明确
 
 > The CAP Theorem states that, in a distributed system (a collection of interconnected nodes that share data.), you can only have two out of the following three guarantees across a write/read pair: Consistency, Availability, and Partition Tolerance - one of them must be sacrificed.
 
-CAP定理指出，在分布式系统中（共享数据的互连节点的集合），在写/读操作中，只能有以下三个保证中的两个：一致性、可用性和分区容忍度，必须牺牲其中一个。
+大概意思说：CAP定理指出，在分布式系统中（共享数据的互连节点的集合），在写/读操作中，只能有以下三个保证中的两个：一致性、可用性和分区容忍度，必须牺牲其中一个。
 
-* 节点间互联
-* 节点间数据共享 
+* 解读
+    * 节点间互联
+    * 节点间数据共享 
 
 > Consistency - A read is guaranteed to return the most recent write for a given client.
 
-读操作保证返回给定客户端的最新写操作。 
+大概意思说：读操作保证返回给定客户端的最新写操作。 
 
-* 从客户端读角度描述集群内数据的一致性
+解读：从客户端读角度描述集群内数据的一致性
 
 > Availability - A non-failing node will return a reasonable response within a reasonable amount of time (no error or timeout).
 
-非故障节点将在合理的时间内（无错误或超时）返回合理的响应。
+大概意思说：非故障节点将在合理的时间内（无错误或超时）返回合理的响应。
 
-* 合理但可能不正确
-* 没有错误
-* 没有超时
+解读：
+1. 合理但可能不正确，比如实际数据为100，返回90也是可以的
+2. 没有错误
+3. 没有超时
 
 > Partition Tolerance - The system will continue to function when network partitions occur.
 
-当发生网络分区时，系统将继续工作。
-
-* 集群提供服务的能力
+大概意思说：当发生网络分区时，系统将继续工作。
+解读：重点关注的是集群提供服务的能力 
 
 ![CAP](https://robertgreiner.com/content/images/2019/09/CAP-overview.png)
 
@@ -62,6 +62,8 @@ CAP理论是忽略到网络延时的，实际场景中A节点数据复制到B节
 
 ### 二选一后放弃并不意味着什么都不做
 CAP中做二选一后，被牺牲的那个只是在P发生过程中无法保证C或A，并不意味着P恢复后，什么都不做，要早P发生后考虑后续的数据恢复，确保系统数据是CA的
+
+## CAP与ACID、BASE对比
 
 ### ACID
 * Atomicity：一个事物中的所有操作全部成功或者全部失败，不存在中间状态，一部分成功，一部分失败，事物执行过程发生错误，要会滚到事物开始之前的状态
