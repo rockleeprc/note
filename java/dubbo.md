@@ -1,30 +1,10 @@
+## é«˜å¯ç”¨
+### é›†ç¾¤å®¹é”™
+### è´Ÿè½½å‡è¡¡
+### æœåŠ¡é™çº§
+#### mock
+#### hystrix
 
+## çº¿ç¨‹æ¨¡å‹
 
-## ¹ÜÀí¿ØÖÆÌ¨µÄ´î½¨
-* ÏÂÔØÔ´Âë
-	* https://github.com/alibaba/dubbo/tree/2.5.x
-* ±àÒë
-	* ±àÒë mvn clean package
-	* dubbo-admin/targetÉú³Édubbo-admin-2.5.10.war
-* ĞŞ¸ÄÅäÖÃ
-	* dubbo-admin-2.5.10/WEB-INFÄ¿Â¼ĞŞ¸Ädubbo.properties
-	* zookeeperµØÖ·¡¢root.password¡¢guest.password
-* ÈİÆ÷²¿Êğ
-	* ¿½±´dubbo-admin-2.5.10.warµ½apache-tomcat-7.0.10/webappsÄ¿Â¼ÏÂ²¢½âÑ¹
-	* ·ÃÎÊ http://127.0.0.1:8080/dubbo-admin-2.5.10/
-	
-## ÅäÖÃ
-	
-* ¼¯ÈºÈİ´í
-	* Failover Cluster
-		* Ä¬ÈÏ£ºretries="2"
-	* Failfast Cluster
-	* Failsafe Cluster
-	* Failback Cluster
-	* Forking Cluster
-	* Broadcast Cluster
-* ¸ºÔØ¾ùºâ
-	* Random LoadBalance
-	* RoundRobin LoadBalance
-	* LeastActive LoadBalance
-	* ConsistentHash LoadBalance
+## SPI
