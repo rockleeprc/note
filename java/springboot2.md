@@ -127,8 +127,19 @@ Registrar是AutoConfigurationPackages类中的一个静态内部类，处理了�
 3. 组件自动装配
 `AutoConfigurationImportSelector`实现了`AutoConfigurationImportSelector`接口，必须实现`selectImports()`向容器中注入组件，其中核型方法是`getAutoConfigurationEntry`
 ![getAutoConfigurationEntry](../img/springboot_getAutoConfigurationEntry.png)
-`getCandidateConfigurations()`中加载了spring-boot-autoconfigure-2.2.2.RELEASE.jar包下/MATE-INF/spring.factories文件key为`org.springframework.boot.autoconfigure.EnableAutoConfiguration`的所有类，共计127个
+`getCandidateConfigurations()`中加载了spring-boot-autoconfigure-2.2.2.RELEASE.jar包下/MATE-INF/spring.factories文件中key为`org.springframework.boot.autoconfigure.EnableAutoConfiguration`的所有类，共计127个
 `removeDuplicates()`移除掉重复的
 `getExclusions()`获取需要排除的类，通过`ConditionalOnClass`排除掉不需要加载的类
 `filter()`过滤后最终返回需要加载的类，执行自动装配
 
+## @Component/@Bean + @ConfigurationProperties/@Value
+* .properties优先于.yml
+* .properties和.yml配置互补
+* @Value .properties不能读取map
+* @Value .yml不能读取数组、集合、map
+
+## @PropertiesSource + @Value
+## @ImportResource
+
+* @JsonFormat json相应转换
+* @DateTimeFormat 请求参数字符串转Date
