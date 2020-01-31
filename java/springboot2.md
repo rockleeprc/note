@@ -79,7 +79,7 @@
 ### banner
 * banner可以修改，可以定制，也可以是图片
 * banner必须放在resources目录下
-* banner的文件必须定义为`banner.txt`，图片必须定义为`banner.jpg`
+* banner的文件必须定义为`banner.txt`，图片必须定义为`banner.png`
 ```java
 SpringApplication application = new SpringApplication(HelloWorldApplication.class);
 application.setBannerMode(Banner.Mode.OFF);
