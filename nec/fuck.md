@@ -1,48 +1,64 @@
-# P1 语序和五种句型
+## 句子成分-1
 
-* 主语+ 谓语
+### 句子的成分
+主语、谓语、宾语、表语、补语、定语、状语、同位语
 
-* 主语+系动词+表语
+### 主语
+一句话主要叙述的对象或这句话主要讲的内容，`名词、代词、数次、动词不定式或动词不定式短语、动名词或动名词短语、句子、其它`可作为主语
+**名词：** 世间万物的名称
+**代词：** 为了避免重复而代替名词的词语，代替人的叫`人称代词`，代替物的叫`物主代词`
+    **代词主格：** 做主语的格式
+    **代词宾格：** 做宾语的格式
+ 
+ ### 谓语
+说明主语`动作`和`状态`的词语，动作谓语由动词构成，状态谓语由系表结构构成，谓语只跟主语有关
+* 我吃一个苹果 `吃` 动作谓语
+* 我是程序员 `是程序员` 状态谓语
+* 她很漂亮 `很漂亮` 状态谓语
+**动词：** 表示动作或心里活动的词语
+**表语：** 名词、形容词、介词短语
 
-* 主语+谓语+宾语
+## 句子成分-2
 
-* 主语+谓语+间接宾语（人）+直接宾语（物）
+### 宾语
+能做主语的词语都能做宾语
 
-*  主语+谓语+宾语+宾语补足语
+### 宾补
+形容词、名词（区别双宾语，一人、一个物就是双宾，同一事物就是宾补）
 
+### 状语
+状语说明谓语的情况，只跟谓语有关系，状语一般放在句子后面，状语一般用副词、介词短语充当
 
+## 句子成分-3
+### 定语
+修饰限定名词，没有定语，名词的范围就太广泛了，除非真的想表达泛指，专有名词一般不加定语
+前置定语：放在名词前，形容词性物主代词、形容词、名词所有格、名词、量词、代词、指示代词
+后置定语：放在名词后，介词短语、名词所有格（of+名词）、名词短语、动词不定式短语、句子
 
-# P2 be动词的形式和用法
+### 同位语
+两个不同的词语都表示同一个事物或人，起强调补充说明
 
-## be动词形式
+## 五个基本句型
 
-* 一般时：be、is、am、are
-* 过去时：was、were
-* 现在时：being
-* 完成时：been
+### 主语+谓语（不及物动词）+状语（表示动作）
+1. I work every day. 我每天都工作。“Work”是不及物动词作谓语，“every day”是时间状语。
+2. I run every day.我每天跑步。 “run”是不及物动词作谓语，“every day”是时间状语。
+3. I live in Zhongshan city.我住在中山市。 “Live”是不及物动词作谓语，“in Zhongshan city”是地点状语
+### 主语+Be+表语+状语（表示状态）
+1. She is rich now 她现在很富有。
+“Rich”是形容词作表语，“Now”是时间状语。
+2. I am in Guangdong now 我现在在广东。
+“In Guangdong”是介词短语作表语，“Now”是时间状语。
+3. I was a worker before 我以前是一个工人。 “Worker”是名词作表语，“Before”是时间状语。 
+### 主语+谓语(及物动词)+宾语+状语(表示动作)
+1. I read English every morning. 我每天早上读英语。 “read”是及物动词作谓语，“English”是名词作宾语，“every morning”是时间状语。
+2. We bake beef every month.我们每个月烤牛肉。 “bake”是及物动词作谓语，“beef”是名词作宾语，“every month”是时间状语。
+3. She learns English very hard 她很努力学英语。 “learn”是及物动词作谓语，“English”是名词作宾语，“hard”是方式副词作状语。
+### 主语 +谓语(及物动词里面的双宾动词)+双宾语+状语(表示动作)
+1. I gave her a book yesterday. 我昨天给了她一本书。 “gave”及物动词作谓语，“her”是间接宾语，“book”是直接宾语，“Yesterday”是时间状语。 
+2. They sent me a computer last week.上周，他们送我一台电脑。 “sent”是及物动词作谓语，“me”是间接宾语，“computer”是直接宾语，“last week”是时间状语。 
+### 主语 + 谓语(少数特定的及物动词)+宾语+宾补+状语(表示动作)
+1. I made her happy yesterday. 昨天，我让她开心。 “made”是及物动词作谓语，“her”作宾语，“happy”是形容词作宾补，“yesterday”是时间状语。 
+2. Her father called her Baby Bear before.她爸爸以前叫她“宝贝小熊”。 “Called”及物动词作谓语，“her”作宾语，“Baby Bear”是名词作宾补，“before”是时间状语
 
-## be动词用法
-
-* 后面接名词、形容词、地点副词或短语做补足语（连接主语）
-  * The man is a teacher.
-  * Mary's new dresses are colorful.
-  * My mother was in the kitchen.
-
-# P3 be动词的否定提问问答
-
-* 否定形式：be、is、am、are、was、were都+not，am not没有缩写
-* 疑问句，be动词和主语互换位置
-
-# P4 代词的主格和宾格
-
-* 主格代词：I、he、she、it、you we、they
-* 宾格代词：me、him、her、it、you、us、them
-
-# P5 名词/形容词性物主代词
-
-*  形容词性物主代词：修饰名词
-  * 单数：my、your、his/her/its
-  * 复数：our、your、thire
-* 名词性物主代词：单独做名词
-  * 单数：mine、yours、his/hers/its
-  * 复数：ours、yours、thires
+## 名词

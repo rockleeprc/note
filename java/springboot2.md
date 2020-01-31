@@ -142,4 +142,4 @@ Registrar是AutoConfigurationPackages类中的一个静态内部类，处理了�
 ## @ImportResource
 
 * @JsonFormat json相应转换
-* @DateTimeFormat 请求参数字符串转Date
+* @DateTimeFormat 请求参数字符串转Date spring.mvc.date-format

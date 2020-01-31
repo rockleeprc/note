@@ -82,3 +82,7 @@
 
 ![timeout_mq1](../weixin/timeout_mq1.png)
 MQ都有对应的可靠性消费策略，更具不同的MQ选择合适的策略就可以了
+
+
+
+org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration.WebMvcAutoConfigurationAdapter
