@@ -190,8 +190,10 @@ public abstract class AbstractQueuedSynchronizer
 
 ```java
 public final void acquire(int arg) {
-    if (!tryAcquire(arg) // 子类重写方法
+    if (!tryAcquire(arg) // 子类重写方法 第一次尝试获取锁
         // Node.EXCLUSIVE = null
+        // addWaiter(Node.EXCLUSIVE) 入队
+        // acquireQueued() 尝试获取锁，失败后park入队的线程
         && acquireQueued(addWaiter(Node.EXCLUSIVE), arg))
         selfInterrupt();
 }
@@ -209,22 +211,22 @@ private Node addWaiter(Node mode) {
             return node;
         }
     }
-    // pred==null链表为空 || cas(pred,node)竞争失败
+    // pred/tail == null 链表为空 || cas(pred,node)竞争失败
     enq(node);// 入队
     return node;
 }
 
 private Node enq(final Node node) {
     for (;;) {
-        Node t = tail; // 第一次循环为null，第二次循环作为哨兵节点
+        Node t = tail; // 第一次循环head/tail=null，第二次循环作为哨兵节点
         if (t == null) { // 第一次循环tail为null，初始化队列
-            if (compareAndSetHead(new Node())) // 设置head节点
+            if (compareAndSetHead(new Node())) // 设置head节点，头节点的thread永远等于null
                 tail = head; // head -> 哨兵 <- tail
         } else { //tail节点不为空，执行入队操作
-            node.prev = t; // 设置node的前驱节点为哨兵节点（tail）
-            if (compareAndSetTail(t, node)) { // 设置tail节点为node
-                t.next = node; // 设置哨兵节点的后继节点为node
-                return t;
+            node.prev = t; // 设置node的前驱节点为哨兵节点 哨兵 <- node.prev  
+            if (compareAndSetTail(t, node)) { // 设置node节点为tail node <- tail
+                t.next = node; // 设置哨兵节点的后继节点为node 哨兵.next -> node
+                return t; // 返回哨兵
             }
         }
     }
@@ -237,14 +239,14 @@ final boolean acquireQueued(final Node node, int arg) {
         for (;;) {
             // 获取node前驱节点
             final Node p = node.predecessor();
-            // node的前驱节点是head节点时尝试获取锁
+            // node.prev==head时 第二次尝试获取锁
             if (p == head && tryAcquire(arg)) {
-                setHead(node);// node设置为head
+                setHead(node);// node设置为head，head.thread永远是null
                 p.next = null; // help GC
                 failed = false;
                 return interrupted;
             }
-            // 获取失败挂起node节点线程
+            // 第二次获取锁失败（可能在for()中自旋），挂起刚入队node节点线程
             if (shouldParkAfterFailedAcquire(p, node) &&
                 parkAndCheckInterrupt())
                 interrupted = true;
@@ -256,7 +258,7 @@ final boolean acquireQueued(final Node node, int arg) {
 }
 
 private static boolean shouldParkAfterFailedAcquire(Node pred, Node node) {
-    int ws = pred.waitStatus;
+    int ws = pred.waitStatus; // 初始状态为0
     if (ws == Node.SIGNAL) // 可以阻塞，等待被唤醒
         /*
              * This node has already set status asking a release
@@ -278,7 +280,9 @@ private static boolean shouldParkAfterFailedAcquire(Node pred, Node node) {
              * need a signal, but don't park yet.  Caller will need to
              * retry to make sure it cannot acquire before parking.
              */
-        // 尝试修改waitStatus为Node.SIGNAL
+        // 尝试修改node.prev.waitStatus为Node.SIGNAL，自己被park后无法修改，自己不能获取自己的状态
+        // t2 修改t2.prev的waitStatus为-1，t2.waitStatus=0
+        // t3 修改t3.prev的waitStatus为-1，t3.waitStatus=0
         compareAndSetWaitStatus(pred, ws, Node.SIGNAL);
     }
     return false;

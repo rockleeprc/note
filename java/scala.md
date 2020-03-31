@@ -396,7 +396,7 @@ object Person{ // 伴生对象
 * scala中分主构造方法、辅助构造方法，辅助构造方法必须调用主构造方法
 ```
 class Person(name:String,age:Int){ // 主构造方法
-  this(name:String,age:Int,address:String){ // 辅助构造方法
+  def this(name:String,age:Int,address:String){ // 辅助构造方法
     this(name,age) // 必须调用主构造方法
   }
 }
@@ -559,7 +559,6 @@ class Person extends CA with TA with TB{}
 * 多trait加载顺序从左到右，方法调用顺序从右向左
 * java中的接口可以在scala中当作trait使用
 * 动态混入
-
 ```
 trait A{}
 class Person{}
@@ -579,4 +578,146 @@ val clazz:Class[Person] = classOf[Person] // 获取Person类的Class实例对象
 
 person.isInstanceOf[Person] // 判断person是否为Person对象实例
 person.asInstanceOf[Object] // person强转为Object
+```
+
+### 枚举
+```
+object Color extends Enumeration{
+  val Red = Value("Red")
+  val GREEN = Value("GREEN")
+  val YELLOW = Value("YELLOW")
+}
+```
+
+### 隐式转换
+* 隐式转换针对类型
+```
+implicit def intToDouble(i: Double): Int = {
+  i.toInt
+}
+
+val i: Int = 5.9 // 自动调用intToDouble()
+println(i)
+```
+
+## 集合
+
+### 数组
+* 不可变数组
+```
+val arr = Array(1,2,3) // apply创建数组
+arr(0) // 使用arr()获取索引值，java中使用arr[]
+arr.update(1,10) // 修改
+```
+* for
+```
+for(i <- arr){}
+arr.foreach(println(_))
+```
+* 可变数组
+```
+val arr:ArrayBuffer[Int] = ArrayBuffer[Int]()
+arr+=1
+arr+=2
+arr.insert(0,99)
+```
+### List
+* 不可变List
+```
+val list: List[Int] = List(12, 3)
+list.:+(11) // 添加一个元素
+list.++(List(99, 88)) // 添加一个List
+list.::(99).::(88) // 在List头部添加元素，元素从右往左一次添加到集合中 [88,99,12,3]
+list.::(99).::(List(0, 9)) // 添加List对象，集合类型是Any
+list.::(99).:::(List(0, 9)) // 添加List中的内容，集合类型是Int
+1 :: 2 :: Nil // Nil空List，将1，2放入到List中
+```
+* 可变ListBuffer
+```
+val list: ListBuffer[Int] = ListBuffer(1, 2, 3)
+list.head // 头
+list.last // 尾
+list.init // 除去尾的所有元素
+list.tail // 除去头的所有元素
+
+list.groupBy()
+list.sortBy()
+list.sortWith()
+list.union()  并集
+list.intersect()  交集
+list.diff()  差集
+list.reduce()
+list.fold() // 折叠
+
+```
+
+### Set
+* 不可变
+```
+val set: Set[Int] = Set[Int]()
+set + 1
+set + 3
+set - 1
+```
+* 可变mutable.Set
+
+### Map
+* 不可变
+```
+val map:Map[String,Int] = Map("a"->1,"b"->2)
+map.+("c"->3)
+map.-("a")
+map.updated("a",11)
+map.get("f").getOrElse("default") // Option两个子类：Some、None
+```
+* fold
+```
+val m1: Map[String, Int] = Map("a" -> 1, "b" -> 2)
+val m2:Map[String,Int] = Map("a"->11,"b"->22)
+
+val m3: Map[String, Int] = m1.foldLeft(m2)((left, tuple) => {
+  println(s"left = $left -- tuple=$tuple")
+  left
+})
+```
+* 可变mutable.Map
+```
+ 
+```
+
+### tuple
+
+
+## 模式匹配
+* 基本使用
+```
+val opt: String = "+"
+opt match {
+  case s: String => println("string") // 匹配类型
+  case str => println(s"str = $str") // opt赋值给变量
+  case "+" => println("*") // 匹配内容
+  case "-" => println("-")
+  case "*" => println("*")
+  case "/" => println("/")
+  case _ => println("_") // 都不匹配
+}
+
+val arr: Array[Int] = Array(1, 2, 3, 4)
+arr match {
+  case Array(x, y) => println(s"$x $y ") // 匹配数组长度
+  case Array(x, y, z) => println(s"$x $y $z")
+  case _ => println("doesn't match")
+}
+
+val t: (Int, Int) = (1, 3)
+t match {
+  case (x, y) => println(s"x = $y y=$y") // 匹配内容
+  case (1, 3) => println("1,2")
+  case (1, _) => println("1,_")
+}
+
+val list: List[(Int, String)] = List((1, "A"), (2, "B"))
+for ((x,y) <- list) { // 匹配tuple变量
+  println(s"x=$x y=$y")
+}
 ```
