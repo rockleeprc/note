@@ -50,14 +50,15 @@ PONG
 ## redis持久化
 
 * rdb（默认）：在指定的时间间隔写入硬盘
-	* 优势，只有一个文件，方便压缩转移
-	* 缺点，如果宕机，没有持久化的数据将丢失，数据损失较大
+	* 优势，只有一个文件，方便压缩转移；紧凑的压缩二进制文件
+	* 缺点，如果宕机，没有持久化的数据将丢失，数据损失较大；fork进程属于重量级操作；rdb格式在redis不同版本中不兼容
 * aof：以日志的方式记录每一个操作的命令，服务器启动后就构建数据库
 	* 优势，安全性相对rdb方式高很多
 	* 缺点，效率相对rdb方式低很多
 
 ### rdb
-redis.conf 默认配置（不配置save时，默认关闭rdb）
+* redis.conf 默认配置（不配置save时，默认关闭rdb）
+* 相关命令save、bgsave（fork进程后台执行）
 
 ```shell
 # Save the DB on disk:
@@ -78,6 +79,12 @@ rdbcompression yes
 # bgsave出错时，主进程是否停止写入
 stop-writes-on-bgsave-error yes
 ```
+
+### rdb持久化时机
+1. save m n 配置
+2. 从节点全量复制，主节点将rdb发送给从节点
+3. 执行debug reload
+4. shutdown时如果没有开启aof则执行rdb
 
 ### aof
 
