@@ -103,10 +103,43 @@ server {
 ```
 * 页面访问http://node5:9000/edu/a.html，在node4、node5两个节点轮询访问
 * 负载策略
-    * 轮询（默认）:每个请求按照时间顺序轮询分配，如果后端服务器down将被删除
-    * weight：默认值1，权重越高分配的几率越大
-    * ip_hash：请求按照ip哈希分配
-    * fair：按服务器响应时间分配，响应时间短分配优先
+    * 轮询（默认）:每个请求按时间顺序逐一分配到不同的后端服务器，如果后端服务器down掉，能自动剔除
+    * 权重：指定weight值，默认1，权重越高分配的几率越大，用于后端服务器性能不均的情况
+    * ip_hash：每个请求按访问ip的hash结果分配，这样每个访客固定访问一个后端服务器，可以解决session的问题
+    * fair（第三方）：按后端服务器的响应时间来分配请求，响应时间短的优先分配
+    * url_hash（第三方）:按访问url的hash结果来分配请求，使每个url定向到同一个后端服务器，后端服务器为缓存时比较有效
+```conf
+# 轮询
+upstream backserver { 
+    server 192.168.0.14; 
+    server 192.168.0.15; 
+} 
+# 权重
+upstream backserver { 
+    server 192.168.0.14 weight=8; 
+    server 192.168.0.15 weight=10; 
+} 
+# ip_hash
+upstream backserver { 
+    ip_hash; 
+    server 192.168.0.14:88; 
+    server 192.168.0.15:80; 
+} 
+# fair
+upstream backserver { 
+    server server1; 
+    server server2; 
+    fair; 
+} 
+# url_hash
+upstream backserver { 
+    server squid1:3128; 
+    server squid2:3128; 
+    hash $request_uri; 
+    hash_method crc32; 
+}
+```
+
 
 
 
