@@ -544,3 +544,7 @@ refactor：重构（即不是新增功能，也不是修改bug的代码变动）
 test：增加测试
 chore：构建过程或辅助工具的变动
 
+git remote add upstream git@gitlab.kuaidaoapp.com:Huixiang/ds-etl.git
+git reset upstream/v1 HEAD^
+git fetch upstream
+git merge upstream/feature/version_0.1.0

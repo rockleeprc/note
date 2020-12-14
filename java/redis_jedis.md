@@ -79,3 +79,23 @@ Jedis jedis = jedisPool.getResource();
 String ping = jedis.ping();
 System.out.println(ping);
 ```
+
+
+### 修改配置
+```
+config set maxmemory 20480mb
+CONFIG SET SAVE "900 10 300 100 60 10000"
+CONFIG REWRITE
+```
+
+### 优化
+* 问题
+```shell
+333:M 16 Nov 14:00:27.100 * 10 changes in 300 seconds. Saving...
+333:M 16 Nov 14:00:27.100 # Can't save in background: fork: Cannot allocate memory
+```
+* 解决
+```
+https://blog.csdn.net/zqz_zqz/article/details/53384854
+https://www.cnblogs.com/godfather007/p/10167849.html
+```
