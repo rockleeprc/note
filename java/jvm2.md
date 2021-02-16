@@ -79,7 +79,6 @@ StackFrame
     5 invokesynamic：java8中调用lambda表达式
 
     对类型检查 1、编译器确认的是静态类型语言 2、运行期确认的是动态类型语言
-    （类型语言是强类型还是若类型）
 
 本地方法接口
     一个native method是java方法，但具体的实现由非java语言实现
