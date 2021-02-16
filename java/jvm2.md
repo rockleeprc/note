@@ -90,7 +90,7 @@ StackFrame
 # 堆
     一个JVM进程只存在一个堆内存空间，可以处于物理不连续的内存空间
     TLAB（Thread Local Allocation Buffer）
-        在eden空间为每个线程分配一个私有的缓冲区，避免多线程操作堆空间地址是时加锁
+        在eden空间为每个线程分配一个私有的缓冲区，避免多线程操作堆空间地址是时加锁（hotspot采用的是CAS+失败重试的方案）
         这个空间非常小（占eden 1%空间），不是所有对象都能在tlab中，但是在分配空间时tlab是首选的空间
         -XX:UseTLAB 默认开启
         整个堆空间只有tlab不是共享的，其它空间都是共享的
