@@ -515,7 +515,7 @@ $  git config --global --replace-all user.name "输入你的用户名"
 	$ git pull
 	
 	# 建立本地分支和远程分支的关系
-	$ git branch --set-upstream branch-name origin/branch-name
+	$ git branch --set-upstream-to=origin/remote_branch  your_branch
 
 
 # todo标签管理
@@ -545,6 +545,6 @@ test：增加测试
 chore：构建过程或辅助工具的变动
 
 git remote add upstream git@gitlab.kuaidaoapp.com:Huixiang/ds-etl.git
-git reset upstream/v1 HEAD^
+git reset upstream/feature/version_0.1.0 HEAD^
 git fetch upstream
 git merge upstream/feature/version_0.1.0
