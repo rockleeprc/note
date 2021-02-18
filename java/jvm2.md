@@ -391,3 +391,53 @@ StackFrame
 ## 虚 Phantom
     用于追踪对象垃圾回收的过程
 
+# 垃圾收集器
+
+## Serial
+    串行，新生代，复制算法，client模式下默认的收集器，STW机制
+
+## Serial Old 
+    串行，老年代，标记压缩算法，client模式下默认的收集器，STW机制
+    java8 作为cms的后背方案，与Parallel Scavenge配置使用
+    多核CPU单线程效率不高，单线程高效,java web不会采用这种GC（STW太明显）
+    配置：
+        -XX:+UseSerialGC 将新生代和老年代都指定为Serial
+## ParNew
+    并行，新生代，Serial的多线程版本，复制算法，STW机制（比Serial时间短，毕竟多线程）
+    java8 老年代可以使用CMS、Serial Old
+    单核CPU没有Serial好
+    配置：
+        -XX:+UseParNewGC 新生代使用ParNewGC
+        -XX:ParallelGCThreads 设置并行线程数量，默认和CPU核数一致    
+
+## Paralle Scavenge
+    并行，新生代，复制算法，STW机制，吞吐量优先（不需要太多与用户交互的场景，批处理、定时任务）
+    java8 默认的收集器 
+
+## Paralle Old
+    并行，老年代，标记压缩，STW机制，吞吐量优先（不需要太多与用户交互的场景）
+    java8 默认的收集器
+    可以配置暂停时间，比例，建议使用自适应策略
+
+## CMS
+    并发（用户线程、GC线程同时工作），老年代，标记清除算法（无法解决内存碎片），STW机制，低延时（区别吞吐量，适合与用户交互程序）
+    新生代使用ParNew、Serial
+    GC过程：
+        初始标记：STW
+        并发标记：用户线程和标记线程共同执行（GC线程数=（Thread+3/4））
+        重新标记：STW
+        并发清理：用户线程和标记线程共同执行
+    缺点：
+        产生内存碎片
+        并发标记时占用系统线程
+        触发处理浮动垃圾（在并发标记时出现新的垃圾无法被标记，只能下一次GC时回收）
+
+    配置：
+        -XX:+UseConcMarkSweepGC // 老年代使用CMS 新生代使用ParNew
+                                // 默认Java8 92% 触发cms GC
+
+## G1
+    
+
+
+
