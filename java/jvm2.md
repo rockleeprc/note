@@ -437,7 +437,10 @@ StackFrame
                                 // 默认Java8 92% 触发cms GC
 
 ## G1
-    
+    把堆内存分割为多个Region，物理上可以不连续，使用不同Region表示Eden、Survivor、Old，跟踪Region里面的垃圾价值，保存在优先列表中，优先回收价值高的Region
+    针对多核CPU和大容量内存
+    配置：
+        -XX:+UseG1GC // 使用G1
 
 
 
