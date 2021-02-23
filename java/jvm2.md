@@ -439,8 +439,47 @@ StackFrame
 ## G1
     把堆内存分割为多个Region，物理上可以不连续，使用不同Region表示Eden、Survivor、Old，跟踪Region里面的垃圾价值，保存在优先列表中，优先回收价值高的Region
     针对多核CPU和大容量内存
+    优点：
+        并行与并发、分代收集、空间整合、可预测的停留时间模型
+    适用于大容量堆内存6GB或以上、低延迟场景
     配置：
         -XX:+UseG1GC // 使用G1
+
+## GC日志
+Serial [DefNew]
+ParNew [ParNew]
+Parallel Scaveng [PSYoungGen]
+
+# 字节码指令
+    成员变量赋值过程
+        默认初始化
+        显示初始化/代码块初始化
+        构造器初始化
+        对象调用设值
+    
+    字节码=操作数+操作吗（有些语言没有操作数概念）
+
+    每个类一个字节码 jclasslib、javap
+
+## class文件结构
+     魔术
+        4个字节无符号整数
+     Class文件版本
+        major version、minor version
+        java6 50 0
+        java8 52 0
+     常量池
+        常量池计数器从1开始，具体内容范围 1 ～ constant_pool_count-1
+        存放字面量和符号引用，内容会被加载到运行常量池中
+        字面量：文本字符串、声明final的常量值
+        符号引用：类和接口的全限定名、字段名称和描述符、方法名称和描述符
+     访问标志
+     类索引、父类索引、接口索引集合
+     字段表示集合
+     方法表示集合
+     属性表示集合
+
+
 
 
 
