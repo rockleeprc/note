@@ -247,15 +247,15 @@ StackFrame
         -XX:StringTableSize
     
     字符串拼接操作
-        1. 只要拼接过程中出现变量（非final），底层会new StringBuilder调用append方法进行拼接，然后toString()返回
-        2. final修饰的String拼接，直接同常量池里获取
+        1. 只要拼接过程中出现变量（非final），使用StringBuilder调用append方法进行拼接，然后toString()返回
+        2. final修饰的String拼接，直接从常量池里获取
         String s1 = "a";
         String s2 = "b";
         String s3 = s1 + s2;
         String s4 = "ab";
         此时s3、s4不相等，如果s1、s2使用final修饰将相等
 
-        String s = new String("ab");// 字符串常量池用有ab
+        String s = new String("ab");// 字符串常量池有ab
         String s = new String("a")+new String("b");// 字符串常量池中没有ab，通过StringBuilder.append()实现
 
         面试题：（理解过程大于结果）
@@ -382,12 +382,11 @@ StackFrame
     强引用的状态都是可达的
     强引用对象是内存泄漏的主要对象
 ## 软 Soft
-    JVM将要发生OOM前，会把这些对象列入回收范围进行二次回收（第一次是不可GC Roots不可达对象），如果GC后还没有足后内存就OOM
+    JVM将要发生OOM前，会把这些对象列入回收范围进行二次回收（第一次是标记GC Roots不可达对象），如果GC后还没有足后内存就OOM
     只有内存不够时才会被GC
     声明时一定要将强引用对象设置为null，只保留软饮用对象
 ## 弱 Weak
     只能生存到下一次GC前，无论内存空间是否足够都会被回收
-    
 ## 虚 Phantom
     用于追踪对象垃圾回收的过程
 
@@ -398,8 +397,8 @@ StackFrame
 
 ## Serial Old 
     串行，老年代，标记压缩算法，client模式下默认的收集器，STW机制
-    java8 作为cms的后背方案，与Parallel Scavenge配置使用
-    多核CPU单线程效率不高，单线程高效,java web不会采用这种GC（STW太明显）
+    java8 作为cms的后备方案，与Parallel Scavenge配合使用
+    多核CPU单线程效率不高，单线程高效，java web不会采用这种GC（STW太明显）
     配置：
         -XX:+UseSerialGC 将新生代和老年代都指定为Serial
 ## ParNew
