@@ -200,7 +200,7 @@ StackFrame
             6. 属性的显示初始化、代码块初始化、构造器初始化
 
     对象内存布局
-        对象头：
+        对象头（Mark Word）：
             运行时元数据：哈希值、GC分代年龄（age）、锁状态标志、线程持有的锁、偏向线程ID、偏向时间戳
             类型指针：指向元数据InstanceClass，确定对象所属的类型
             如果是数组还需要记录数组长度
@@ -247,16 +247,26 @@ StackFrame
         -XX:StringTableSize
     
     字符串拼接操作
-        1. 只要拼接过程中出现变量（非final），使用StringBuilder调用append方法进行拼接，然后toString()返回
-        2. final修饰的String拼接，直接从常量池里获取
-        String s1 = "a";
+        1. 常量于常量的拼接结果在常量池，在编译器优化（final修饰的String拼接，直接从常量池里获取）
+        2. 常量池中不会存在相同的字符串常量
+        3. 只要拼接过程中出现变量（非final），使用StringBuilder调用append方法进行拼接，然后toString()返回
+        4. 字符串拼接结果调用inter()则将结果存入常量池
+
+        String s1 = "a"; // 字面量直接进入常量池
         String s2 = "b";
-        String s3 = s1 + s2;
+        String s3 = s1 + s2; // 拼接操作，不会进入常量池
         String s4 = "ab";
         此时s3、s4不相等，如果s1、s2使用final修饰将相等
 
-        String s = new String("ab");// 字符串常量池有ab
-        String s = new String("a")+new String("b");// 字符串常量池中没有ab，通过StringBuilder.append()实现
+        String s = new String("ab");// 字符串常量池里有ab
+        String s = new String("a")+new String("b");
+            5个对象：// 字符串常量池中没有ab，通过StringBuilder.append()实现
+                1. s
+                2. new String()
+                3. "a" 常量池
+                4. new String()
+                5. "b" 常量池
+                6. new StringBuilder()
 
         面试题：（理解过程大于结果）
         ```java
@@ -264,6 +274,7 @@ StackFrame
             s1.intern();
             String s2 = "a";
             System.out.println(s1 == s2);
+
             String s3 = new String("2") + new String("2");
             s3.intern();
             String s4 = "22";
@@ -382,11 +393,12 @@ StackFrame
     强引用的状态都是可达的
     强引用对象是内存泄漏的主要对象
 ## 软 Soft
-    JVM将要发生OOM前，会把这些对象列入回收范围进行二次回收（第一次是标记GC Roots不可达对象），如果GC后还没有足后内存就OOM
+    JVM将要发生OOM前，会把这些对象列入回收范围进行二次回收（第一次是不可GC Roots不可达对象），如果GC后还没有足后内存就OOM
     只有内存不够时才会被GC
     声明时一定要将强引用对象设置为null，只保留软饮用对象
 ## 弱 Weak
     只能生存到下一次GC前，无论内存空间是否足够都会被回收
+    
 ## 虚 Phantom
     用于追踪对象垃圾回收的过程
 
@@ -397,8 +409,8 @@ StackFrame
 
 ## Serial Old 
     串行，老年代，标记压缩算法，client模式下默认的收集器，STW机制
-    java8 作为cms的后备方案，与Parallel Scavenge配合使用
-    多核CPU单线程效率不高，单线程高效，java web不会采用这种GC（STW太明显）
+    java8 作为cms的后背方案，与Parallel Scavenge配置使用
+    多核CPU单线程效率不高，单线程高效,java web不会采用这种GC（STW太明显）
     配置：
         -XX:+UseSerialGC 将新生代和老年代都指定为Serial
 ## ParNew
@@ -478,7 +490,95 @@ Parallel Scaveng [PSYoungGen]
      方法表示集合
      属性表示集合
 
+## 字节码
+
+    执行模型
+        do{
+            自动计算PC寄存器的值+1
+            根据PC寄存器的位置，从字节流中去除操作码
+            if(字节码存在操作数)
+                从字节流中取出操作数
+            执行操作码定义的操作
+        }while(字节码长度>0)
+
+    助记符中的数据类型
+        i   int、boolean
+        l   long
+        s   shor
+        b   byte
+        c   char
+        f   float
+        d   double
+        a   引用类型
+
+    加载与存储指令：将数据从栈帧的局部变量表和操作数栈之间来回传递
+    局部变量入栈指令
+        xload、xload_<n>：将局部变量表的数据压入操作数栈（n=索引位置）
+    常量入栈指令
+        xconst_<n>：常量数据压入操作数栈（n=实际值）（iconst_x -1,5）
+        aconst_null：引用类型位null
+        bipush：8位整数参数（-128,127）
+        sipush：16位整数参数 （-32768,32767）
+        ldc：以上指令都不行，8位参数（指向常量池中的int、float、String的索引值）
+        ldc_w：两个8位参数（索引值长度）
+        ldc2_w：入栈long、double
+    出栈入局部变量表指令
+        xstore、xstore_n：出栈操作，将栈顶元素弹出后存入局部变量表，用于给局部变量表赋值（n=索引位置）
+    算数指令
+
+    TODO 249    
 
 
 
+# 类的生命周期
+
+    加载
+        将Java类的字节码文件加载到内存，并构建出Java类的模版对象（方法区），生成Class的实例（堆）
+        加载源：文件系统、jar、zip、http、运行时生成Class
+        数组不是由类加载器创建的，是由JVM在运行时根据需要直接创建的
+    验证
+        保证加载字节码合法
+        格式检查：魔术检查、版本检查、长度检查
+        语义检查：是否继承final、是否有父类、抽象方法是否有实现
+        字节码验证：
+        符号引用验证：
+    准备
+        为静态变量分配内存（非final），并初始化默认值
+        JVM不支持boolean类型，使用的是int类型，int默认值0，非0都为真，0是假，boolean默认值为false
+        没有具体代码的执行，执行代码在初始化阶段
+        static final 基本数据类型、static final String 确定的值
+    解析
+        将类、接口、字段、方法的符号引用转换为直接引用
+    初始化
+        为静态变量赋值正确的初始值
+        执行<clinit>()类初始化方法，由Java编译自动生成，JVM执行调用（static静态块，静态变量赋值），优先调用父类<clinit>()
+        static final 类型=不确定的值
+        <clinit>()带锁线程安全
+        主动初始化时才会调用clinit，被动初始化时不会
+        Class.forName() 主动
+        ClassLoader.loadClass() 被动
+    使用
+
+    卸载
+
+TODO 283
+
+
+
+# 深入理解JVM虚拟机 第三版
+
+对象创建
+    指针碰撞
+    空闲列表
+    TLAB
+    CAS
+
+对象定位方式
+    句柄池
+    直接指针
+
+方法区、永久代、常量池
+堆
+虚拟机栈、本地方法栈
+程序计数器
 
