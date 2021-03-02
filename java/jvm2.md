@@ -5,7 +5,7 @@
 
  <clinit>() 过程
  1、不需要定义，由编译器自动收集类中的所有变量的赋值动作和static{}中的语句合并而来
- 2、如果类具有父类，JVM会保证父类的<clinit>()先于子类的<clinit>()执行
+ 2、如果类有父类，JVM会保证父类的<clinit>()先于子类的<clinit>()执行
  3、JVM保证一个类的<clinit>()多线程下被同步加锁，只会被初始化一次
 
  类主动使用情况
@@ -495,7 +495,7 @@ Parallel Scaveng [PSYoungGen]
     执行模型
         do{
             自动计算PC寄存器的值+1
-            根据PC寄存器的位置，从字节流中去除操作码
+            根据PC寄存器的位置，从字节流中取出操作码
             if(字节码存在操作数)
                 从字节流中取出操作数
             执行操作码定义的操作
@@ -555,8 +555,7 @@ Parallel Scaveng [PSYoungGen]
         static final 类型=不确定的值
         <clinit>()带锁线程安全
         主动初始化时才会调用clinit，被动初始化时不会
-        Class.forName() 主动
-        ClassLoader.loadClass() 被动
+        Class.forName() 主动    ClassLoader.loadClass() 被动
     使用
 
     卸载
