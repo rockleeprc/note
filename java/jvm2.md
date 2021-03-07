@@ -582,3 +582,114 @@ TODO 283
 虚拟机栈、本地方法栈
 程序计数器
 
+# JVM调优
+
+## jps
+    -m 显示参数
+    -v 虚拟机启动参数
+
+## jstat
+    显示类装载、内存、垃圾收集、JIT编译
+    没有GUI时，定位问题的首选工具
+    jstat -<option> [-t] [-h<lines>] <vmid> [<interval> [<count>]]
+
+    -class 
+        与ClassLoader相关的信息（类装载、卸载、总空间、耗时）
+    -compiler 
+        显示编译信息
+    -gc 
+        堆相关的gc信息
+    -gcutil 
+        堆相关的gc比信息
+    -gccause 
+        显示gc的原因
+
+    -t 
+        打印信息显示时间戳列
+    -h 
+        多少行显示表头信息 -h3 没个3行显示表头
+
+## jinfo
+    查看JVM配置参数，调整配置参数
+    -syspros 
+        查看System.getProperties()取得的参数
+    -flags 
+        经过赋值的参数
+    -flag 具体参数 pid
+        查看具体参数值
+    -flag -/+ 具体参数 pid
+        修改参数值，只能修改manageable的参数
+    
+## jmap
+    导出内存快照文件、查看内存使用情况
+    在安全点才会dump，如果有线程无法到达安全点，dump将一直等待
+    -dump
+        # dump 内存快照
+        -dump:format=b,file=<filename.hprof> pid
+        # dump 存活的对象
+        -dump:live,format=b,file=<filename.hprof> pid
+        # oom时自动dump
+        -XX:+HeapDumpOnOutOfMemoryError
+        -XX:HeapDumpPath=<filename.hprof>
+    -heap # 堆空间占用情况
+        堆空间大小、使用情况
+    -histo # 内存对象信息
+    -permstat # 查看系统的ClassLoader信息
+    -finalizerinfo # 查看finalizer队列中的对象
+
+## jhat
+    分析jamp -dump文件
+    建议实用工具分析dump文件，java9中该命令已经被移除
+
+## jstack
+    线程快照信息
+        Dealloc 死锁
+        Waiting on condition 等待资源
+        Waiting on monitor entry 等待获取监视器
+        Blocked 阻塞
+        Runnable 执行
+        Suspended 暂停
+        Wating 等待
+        Time_Wating 
+    -m 显示调用本地方法的堆栈信息，C/C++程序的堆栈
+    -l 显示关于锁的附加信息
+    -F 进程不响应时，强制输出线程堆栈
+
+    Thread.getAllStackTraces() // 通过代码显示线程信息
+
+## jcmd
+    实现除jstack外所有的功能
+    建议用jcmd替换jmap    
+    
+    -l 列出所有JVM进程 替换jps
+    jcmd pid help 针对pid所支持的命令
+
+## 扩展参数
+    # 查看JVM参数的最终值 被:=标记的为修改后的值   
+    java -XX:+PrintFlagsFinal -version | grep manageable
+    # 查看所有JVM参数启动的初始值
+    java -XX:+PrintFlagsInitial 
+    # 查看被用户或JVM设置的参数及值
+    java -XX:+PrintCommandLineFlags
+
+# JUI工具
+    JDK自带工具
+        jconsole
+        visualVM
+        JMC
+    三方工具
+        MAT(eclipse 插件)
+            浅堆：不包含数据
+            深堆：保留集（唯一引用）+浅堆
+        JProfiler 付费
+        Arthas 开源
+        Btrace
+
+
+
+
+
+
+
+
+
