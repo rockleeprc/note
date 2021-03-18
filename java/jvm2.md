@@ -460,6 +460,7 @@ StackFrame
 Serial [DefNew]
 ParNew [ParNew]
 Parallel Scaveng [PSYoungGen]
+Parallel Old [ParOldGen]
 
 # 字节码指令
     成员变量赋值过程
