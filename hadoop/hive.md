@@ -101,6 +101,8 @@ hive(default)>dfs -ls /;
 hive(default)>! ls /opt/module/datas;
 # beeline连接
 beeline> !connect jdbc:hive2://node1:10000 
+# beeline连接
+> beeline -u jdbc:hive2://temporaryProd2:10000 -n hx
 ```
 
 ### DDL
