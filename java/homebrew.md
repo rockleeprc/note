@@ -123,4 +123,5 @@ brew deps
 brew reps
 ```
 
-sdf
+networksetup -setv6off Wi-Fi
+networksetup -setv6automatic Wi-Fi
