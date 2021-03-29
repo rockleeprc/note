@@ -125,3 +125,5 @@ brew reps
 
 networksetup -setv6off Wi-Fi
 networksetup -setv6automatic Wi-Fi
+
+git config --global http.lowSpeedLimit 0 和 git config --global http.lowSpeedTime 999999
