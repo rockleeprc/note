@@ -209,6 +209,17 @@ $  git config --global --replace-all user.name "输入你的用户名"
 	git reset --hard the_commit_id //把the_branch本地回滚到the_commit_id
 	git push -f origin develop 强制本地代码覆盖线上代码
 
+## reset
+* 回退到指定的版本，该版本以后的版本都删除
+git reset --hard 版本号
+git push -f  # 强制提交
+
+## revert
+* 只删除指定版本信息，该版本以后的版本保留
+git revert -n 版本号
+git commit -m "revert" 
+git push 
+
 ## 撤销修改
 
 	# readme.txt自修改后还没有add到stage，现在，撤销修改就回到和版本库一模一样的状态
