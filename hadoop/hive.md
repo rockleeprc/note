@@ -641,3 +641,49 @@ from score;
   ROW_NUMBER() OVER(PARTITION BY cookieid ORDER BY pv DESC) AS rn3 
   FROM test1 
   ```
+
+## 日期函数
+```sql
+  # 将日期转化为时间戳，单位秒
+  unix_timestamp('日期','pattern')
+  
+  # 当前时间，单位毫秒
+  current_timestamp()
+  
+  # 将时间戳转换为日期
+  from_unixtime(时间戳)
+
+  # yyyy-MM-dd HH:mm:ss
+  date_format('日期','pattern')
+
+  # 提取日期，只支持‘-’分割
+  to_date('日期')
+  year()
+  month()
+  day()
+  hour()
+  minute()
+  second()
+  weakofyear()
+  dayofmonth()
+  # 日期所在的最后一天
+  last_day()
+  
+  # 两个日期间的月份，计算：前-后
+  month_between('日期','日期')
+  # 加月份
+  add_month('日期',添加的月份)
+  # 两个日期相差的天数
+  datediff('日期','日期')
+  # 日期差值
+  date_add('日期',天数)
+  date_sub('日期',天数)
+```
+## 集合操作
+```sql
+size
+map_keys
+map_values
+array_contains
+sort_array
+```
