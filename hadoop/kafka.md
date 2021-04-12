@@ -101,5 +101,9 @@ kafka-consumer-perf-test --broker-list node3:9092,node4:9092,node5:9092 --fetch-
 # 查看偏移量
 kafka-run-class kafka.tools.GetOffsetShell --broker-list node4:9092 --topic canteen --time -1
 
+# 查看偏移量
+kafka-consumer-groups --bootstrap-server prod1:9092,prod2:9092,prod3:9092,prod4:9092,prod5:9092,prod6:9092,prod7:9092  --describe --group g9
+# 重置偏移量
+kafka-consumer-groups  --bootstrap-server prod1:9092,prod2:9092,prod3:9092,prod4:9092,prod5:9092,prod6:9092,prod7:9092 --group g9 --topic  cg9  --execute --reset-offsets --to-offset 274180742
 ```
 
