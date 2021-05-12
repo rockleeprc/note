@@ -75,6 +75,9 @@ docker run --name wisdomshare-agent-service-1 -p 9900:9900 -d registry-vpc.cn-be
 
 docker run --name wisdomshare-agent-service-1 -p 9900:9900 -d registry.cn-beijing.aliyuncs.com/kdhub/huixiang-wisdomshare-agent-service:pred
 
+# jmap可以使用
+--cap-add=SYS_PTRACE 
+--security-opt seccomp:unconfined
 
 # 启动容器实例
 docker run --name wisdomshare-agent-service-2 -p 9800:9900 -d registry-vpc.cn-beijing.aliyuncs.com/fasttrack/huixiang-wisdomshare-agent-service:test
