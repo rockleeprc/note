@@ -70,27 +70,28 @@ docker stop bbd5a95346b5
 # 删除容器实例
 docker rm cc768bd3a02e
 
-# 启动容器实例
-docker run --name wisdomshare-agent-service-1 -p 9900:9900 -d registry-vpc.cn-beijing.aliyuncs.com/fasttrack/huixiang-wisdomshare-agent-service:test
 
-docker run --name wisdomshare-agent-service-1 -p 9900:9900 -d registry.cn-beijing.aliyuncs.com/kdhub/huixiang-wisdomshare-agent-service:pred
-
-# jmap可以使用
+# jmap可以使用（启动容器时配置）
 --cap-add=SYS_PTRACE 
 --security-opt seccomp:unconfined
 
-# 启动容器实例
+# agent启动容器实例
+## test
+docker run --name wisdomshare-agent-service-1 -p 9900:9900 -d registry-vpc.cn-beijing.aliyuncs.com/fasttrack/huixiang-wisdomshare-agent-service:test
 docker run --name wisdomshare-agent-service-2 -p 9800:9900 -d registry-vpc.cn-beijing.aliyuncs.com/fasttrack/huixiang-wisdomshare-agent-service:test
 
+## pred
+docker run --name wisdomshare-agent-service-1 -p 9900:9900 -d registry.cn-beijing.aliyuncs.com/kdhub/huixiang-wisdomshare-agent-service:pred
 docker run --name wisdomshare-agent-service-2 -p 9800:9900 -d registry.cn-beijing.aliyuncs.com/kdhub/huixiang-wisdomshare-agent-service:pred
 
-# 启动容器实例
-docker run --name wisdomshare-gateway-service-1 -p 8000:8000 -d registry-vpc.cn-beijing.aliyuncs.com/fasttrack/huixiang-wisdomshare-
-gateway-service:test
+# gatway启动容器实例
+## test
+docker run --name wisdomshare-gateway-service-1 -p 8000:8000 -d registry-vpc.cn-beijing.aliyuncs.com/fasttrack/huixiang-wisdomshare-gateway-service:test
+docker run --name wisdomshare-gateway-service-2 -p 8100:8000 -d registry-vpc.cn-beijing.aliyuncs.com/fasttrack/huixiang-wisdomshare-gateway-service:test
 
-# 启动容器实例
-docker run --name wisdomshare-gateway-service-2 -p 8100:8000 -d registry-vpc.cn-beijing.aliyuncs.com/fasttrack/huixiang-wisdomshare-
-gateway-service:test
+## pred
+docker run --name wisdomshare-gateway-service-1 -p 8000:8000 -d registry.cn-beijing.aliyuncs.com/kdhub/huixiang-wisdomshare-gateway-service:pred
+docker run --name wisdomshare-gateway-service-2 -p 8100:8000 -d registry.cn-beijing.aliyuncs.com/kdhub/huixiang-wisdomshare-gateway-service:pred
 
 ```
 
