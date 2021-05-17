@@ -114,6 +114,7 @@ StackFrame
             -Xmn （一般都设置比例大小，很少直接设置新生代大小）
         查看参数设置
             jinfo -flag 参数名称 pid // 查看运行时jvm进程设置的参数值
+            jinfo -flags 16589 // 查看jvm启动参数配置
             -XX:+PrintFlagsInitial // 查看所有参数的默认值
             -XX:+PrintFlagsFinal // 查看所有参数的最终值
     查看堆空间大小：
@@ -596,32 +597,21 @@ TODO 283
     没有GUI时，定位问题的首选工具
     jstat -<option> [-t] [-h<lines>] <vmid> [<interval> [<count>]]
 
-    -class 
-        与ClassLoader相关的信息（类装载、卸载、总空间、耗时）
-    -compiler 
-        显示编译信息
-    -gc 
-        堆相关的gc信息
-    -gcutil 
-        堆相关的gc比信息
-    -gccause 
-        显示gc的原因
+    -class // 与ClassLoader相关的信息（类装载、卸载、总空间、耗时）
+    -compiler // 显示编译信息
+    -gc  // 堆相关的gc信息
+    -gcutil // 堆相关的gc比信息
+    -gccause // 显示gc的原因
 
-    -t 
-        打印信息显示时间戳列
-    -h 
-        多少行显示表头信息 -h3 没个3行显示表头
+    -t  // 打印信息显示时间戳列
+    -h  // 多少行显示表头信息 -h3 没个3行显示表头
 
 ## jinfo
     查看JVM配置参数，调整配置参数
-    -syspros 
-        查看System.getProperties()取得的参数
-    -flags 
-        经过赋值的参数
-    -flag 具体参数 pid
-        查看具体参数值
-    -flag -/+ 具体参数 pid
-        修改参数值，只能修改manageable的参数
+    -syspros // 查看System.getProperties()取得的参数
+    -flags // 经过赋值的参数(jVM启动参数)
+    -flag 具体参数 pid //  查看具体参数值
+    -flag -/+ 具体参数 pid // 修改参数值，只能修改manageable的参数
     
 ## jmap
     导出内存快照文件、查看内存使用情况
@@ -656,7 +646,7 @@ TODO 283
         Time_Wating 
     -m 显示调用本地方法的堆栈信息，C/C++程序的堆栈
     -l 显示关于锁的附加信息
-    -F 进程不响应时，强制输出线程堆栈
+    -F 进程不响应时，强制输出线程堆栈
 
     Thread.getAllStackTraces() // 通过代码显示线程信息
 
