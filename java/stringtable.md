@@ -76,7 +76,7 @@
 
 
 
-## 
+## 字符串变量拼接
 ```java
 String s1 = "a";
 String s2 = "b";
@@ -84,6 +84,7 @@ String s3 = "ab";
 String s4 = s1 + s2; // 变量在运行时可能被修改
 System.out.println(s3==s4);
 ```
+
 ## 
 ```java
 String s1 = "a";
@@ -105,8 +106,8 @@ System.out.println(s3==s4);
 String s1 = new String("a")+new String("b");
 s1.intern();
 String s2="ab";
-System.out.println(s1==s2);
-System.out.println(s1=="ab");
+System.out.println(s1==s2); // 1.8 true     1.6 false
+System.out.println(s1=="ab"); // 1.8 true   1.6 true
 ```
 在程序一开始声明String s="ab"，intern()返回的是字符串常量池的对象
 1.8 intern()
