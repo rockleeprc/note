@@ -53,6 +53,8 @@ hx:hx2021
 * lb
     * 172.16.10.67:8000
     * curl -X GET "http://172.16.10.67:8000/api/stmt/test/info" -H  "accept: */*"
+    * curl -X GET "http://172.17.0.2:9900/actuator/metrics" -H  "accept: */*"
+    * curl -X GET "http://172.17.0.2:9900/actuator/prometheus" -H  "accept: */*"
 ### imapal
 * lb
     * 172.16.10.67:21050
@@ -83,7 +85,7 @@ docker pull registry.cn-beijing.aliyuncs.com/kdhub/huixiang-wisdomshare-gateway-
 docker ps -a
 
 # 获取容器ip 
-docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' f4ef91888877
+docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' a67eef8a05c3
 
 # nacos 下线服务
 
@@ -100,9 +102,7 @@ docker rm cc768bd3a02e
 
 # agent启动容器实例
 ## test
-docker run --name wisdomshare-agent-service-1 -p 9900:9900 -d registry-vpc.cn-beijing.aliyuncs.com/fasttrack/huixiang-wisdomshare-agent-service:test
-docker run --name wisdomshare-agent-service-2 -p 9800:9900 -d registry-vpc.cn-beijing.aliyuncs.com/fasttrack/huixiang-wisdomshare-agent-service:test
-
+docker run --cap-add=SYS_PTRACE --name wisdomshare-agent-service-1 -p 9900:9900 -d registry-vpc.cn-beijing.aliyuncs.com/fasttrack/huixiang-wisdomshare-agent-service:test
 docker run --cap-add=SYS_PTRACE --name wisdomshare-agent-service-2 -p 9800:9900 -d registry-vpc.cn-beijing.aliyuncs.com/fasttrack/huixiang-wisdomshare-agent-service:test
 
 ## pred
