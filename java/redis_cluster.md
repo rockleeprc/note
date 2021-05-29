@@ -150,6 +150,8 @@ save ""
 ### 集群信息
 
 ```shell
+# 登录集群
+bin/redis-cli -h node3 -p 6379 -c
 # 集群节点信息
 > cluster nodes
 # <id> <ip:port@cport> <flags> <master> <ping-sent> <pong-recv> <config-epoch> <link-state> <slot> <slot> ... <slot>
@@ -215,6 +217,6 @@ JedisCluster jedisCluster = new JedisCluster(redisNodes, 10000, 6000, 7, config)
 
 * 目前的client JedisCluster是无法感知的，只能通过执行命令后, 服务端返回的“-MOVED”信息感知节点的变化，并以此来刷新缓存信息
 
-  
+
 
   
