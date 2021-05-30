@@ -11,6 +11,7 @@
 * 该区域没有任何OutOfMemoryerror
 
 ## 虚拟机栈
+* 与数据结构中定义的栈有相同的含义，先进后出的结构，支持两种操作：出栈、入栈
 * 描述方法调用的执行过程，每个方法在执行时，会将方法参数、局部变量、操作数栈、方法出口等信息封装为栈帧（Stack Frame）
 * 方法的调用对应着栈帧的入栈和出栈
 * 栈帧的核心是局部变量表，存在编译期可知的Java基本类型数据、对象引用、returnAddress类型，这些数据存储的单位成为slot，64位长度的long、double占两个slot，其余的占一个slot
@@ -40,6 +41,7 @@
 ## 直接内存
 * 不是java虚拟机规范中定义的区域，使用本机内存，无法申请到内存抛出OutOfMemoryerror
 
+# jvm连载：对象的创建
 ## new指令执行过程
 1. 检查指令参数在常量池中是否有一个符号引用
 2. 检查符号引用的类是否已被加载、链接、初始化
@@ -73,31 +75,117 @@
 * 对齐填充
     * 占位符，对象的大小必须是8的倍数
 
+# jvm连载：垃圾收集器
 
 # jvm连载：垃圾回收
 ## GC Root
-## 引用
-### 强引用
-* 由GC Root关联的对象都是前引用对象，无法被回收
-### 软引用
-* 在GC后内存空间仍然不足时，会再次触发GC回收软引用的对象
-* 可以配合引用队列释放软饮用自身对象
-### 弱饮用
-* 在GC时无论内存是否够用，软饮用对象都会被回收
-* 可以配合引用队列释放软饮用自身对象
-### 虚引用
-* 必须配合引用队列使用
-* 主要配置ByteBuffer使用 // TODO
-### 终结器引用
-* 不需要编码，必须关联引用队列使用
+
+
+# jvm连载：引用
+## 引用定义
+* 如果reference类型的数据中存储的值代表另外一块内存的起始地址，该reference数据就代表某个对象的引用
+
+## 引用的局限
+* reference只定义了被引用、未引用两种状态
+* 当内存空间足够时，保留在内存中，当GC后内存空间紧张，回收掉一部分引用对象，reference的定义就显得有些局限
+* java对reference的被引用、未引用进行扩展，定义出强引用、弱引用、软引用、虚引用
+
+## 强引用
+* 这种引用关系就是reference定义的引用，类似`Object obj = new Object()`
+* 被GC Root关联的对象都属于强引用，无论什么情况下只要强引用关系存在，对象都不会被回收
+
+```java
+// -Xmx20M -XX:+PrintGCDetails -verbose:gc
+private static final int _4MB_LENGTH = 1024 * 1024 * 4;
+List<byte[]> list = new ArrayList<>();
+for (int i = 0; i <= 5; i++) {
+    list.add(new byte[_4MB_LENGTH]);
+    System.out.println("loop i=" + i);
+}
+```
+* 程序在循环到第3次时直接OOM，20m的内存空间无法分配6个4m的对象
+
+## 软引用
+* 描述一些在内存充足的情况下存活，在内存紧张时回收的对象，在GC后内存空间仍然不足时，会再次触发GC回收软引用的对象
+* SoftReference实现软饮用
+
+```java
+// -Xmx20M -XX:+PrintGCDetails -verbose:gc
+private static final int _4MB_LENGTH = 1024 * 1024 * 4;
+List<SoftReference<byte[]>> list = new ArrayList<>();
+for (int i = 0; i <= 5; i++) {
+    list.add( new SoftReference<>(new byte[_4MB_LENGTH]));
+    for (SoftReference ref : list) {
+        System.out.print(ref.get() + "|");
+    }
+    System.out.println();
+}
+System.out.println("list.size=" + list.size());
+for (SoftReference<byte[]> ref : list) {
+    System.out.println("ref=" + ref + ",ref.get()=" + ref.get() + " | ");
+}
+```
+* 从以下的GC日志可以看出，带循环低4次后发生了GC，回收到前4次分配的16M数组
+* 6次循环后，SoftReference中前4次的byte[]已经别回收
+
+## 弱引用
+* 比软引用强度还低，在GC时无论内存是否够用，软饮用对象都会被回收
+* WeakReference实现软引用
+
+```java
+// -Xmx20M -XX:+PrintGCDetails -verbose:gc
+private static final int _4MB_LENGTH = 1024 * 1024 * 4;
+List<WeakReference<byte[]>> list = new ArrayList<>();
+for (int i = 0; i <= 5; i++) {
+    list.add(new WeakReference<>(new byte[_4MB_LENGTH]));
+    for (WeakReference ref : list) {
+        System.out.print(ref.get() + "|");
+    }
+    System.out.println();
+}
+System.out.println("list.size=" + list.size());
+for (WeakReference<byte[]> ref : list) {
+    System.out.println("ref=" + ref + ",ref.get()=" + ref.get() + " | ");
+}
+```
+* 第1次循环添加4m对象后发生GC，4m对象马上被回收
+* 第4次循环后由于内存空间不足以容纳4m对象，又触发GC，回收到第2次循环添加到集合的对象
+
+## 虚引用
+* 最弱引用关系，无法通过虚引用获得一个对象实例，必须配合引用队列使用
+* PhantomReference实现虚引用
+
+## 终结器引用
+* Object类里都有finallize()方法，对象重写了finallize()并且没有强引用后，进行垃圾回收时，由虚拟机创建一个终结器引用，当这个对象被垃圾回收时，会把终结器引用加入到引用队列，不需要编码，必须关联引用队列使用
 * 在第一次GC时，对象的终结器引用加入引用队列，由优先级很低的Finalizer线程通过终结器引用调用finallize()，第二次GC时才能回收该对象
-### 引用队列
+## 引用队列
+* 当引用的对象将要被jvm回收时，会将其加入到引用队列中，对要jvm被回收的对象提供额外的操作
+* 在软引用的例子中，List中的SoftReference持有的byte[]已经被回收，但是SoftReference仍然得不到回收，通过引用队列回收SoftReference
 
-## 垃圾回收算法
+```java
+List<SoftReference<byte[]>> list = new ArrayList<>();
+ReferenceQueue<byte[]> queue = new ReferenceQueue();
+for (int i = 0; i <= 5; i++) {
+    list.add(new SoftReference<>(new byte[_4MB_LENGTH], queue));
+    for (SoftReference ref : list) {
+        System.out.print(ref.get() + "|");
+    }
+    System.out.println();
+}
+System.out.println("list.size=" + list.size());
+Reference<byte[]> temp = (Reference<byte[]>) queue.poll();
+while (temp != null) {
+    list.remove(temp);
+    temp = (Reference<byte[]>) queue.poll();
+}
+for (SoftReference<byte[]> ref : list) {
+    System.out.println("ref=" + ref + ",ref.get()=" + ref.get() + " | ");
+}
+```
+* 由于byte[]被回收，SoftReference在list集合中也会被回收
 
 
-
-## 
+# jvm连载：字符串常量池与String对象
 ```java
 String s1 = "a";
 String s2 = "b";
