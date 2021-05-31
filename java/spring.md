@@ -58,10 +58,59 @@ public void afterPropertiesSet() {
 * InitializingBean：bean实例已经创建好，且属性值和依赖的其他bean实例都已经注入以后执行
 * 执行afterPropertiesSet()时，targetDataSources，defaultTargetDataSource必须已经初始化完成
 
-# 扩展点
+# spring连载：
+## BeanFactoryPostProcessor
+* 允许自定义钩子修改ApplicationContext中的BeanDefinition
+* 对于使用配文件中的值修改ApplicationContext重点的配置bean非常拥有，PropertyResourceConfigurer实现采用BeanFactoryPostProcessor实现
+* BeanFactoryPostProcessor可以操作BeanDefinition，但不能操作bean实例对象，在BeanFactoryPostProcessor中与操作bean实例可能导致bean过早实例化，操作bean实例使用BeanPostProcessor
+* ApplicationContext自动在其BeanDefinition中检测BeanFactoryPostProcessor bean，并在创建任何其他bean之前应用它们，BeanFactoryPostProcessor也可以用ConfigurableApplicationContext以编程方式注册
+* 在ApplicationContext中的BeanFactoryPostProcessor可以根据org.springframework.core.PriorityOrdered和org.springframework.core.Ordered语义进行排序
+* ConfigurableApplicationContext编程注册的BeanFactoryPostProcessorbean将按注册顺序应用
+* BeanFactoryPostProcessor不考虑@Order注解
+```java
+@FunctionalInterface
+public interface BeanFactoryPostProcessor {
+
+	/**
+     * 在标准初始化后修改ApplicationContext内部的bean factory，
+     * 所有BeanDefinition定义都将被加载，但bean还没有被实例化，允许对beand重写或添加属性，甚至对bean过早实例化
+	 */
+	void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException;
+
+}
+```
 ## BeanPostProcessor 
-* postProcessBeforeInitialization()：在bean实例化前调用
-* postProcessAfterInitialization()：在bean实例化后调用，如果bean实现了InitializingBean，则在执行完，该接口的afterPropertiesSet方法后调用 ，如果实现了init-method则，在执行完init-method后调用
+* 允许自定义钩子修改bean的实例，比如：检查baen的标记接口或用代理包装bean实例
+* ApplicationContext自动在BeanDefinition中自动检测到BeanPostProcessor bean，在ApplicationContext中的BeanPostProcessor可以根据org.springframework.core.PriorityOrdered和org.springframework.core.Ordered语义进行排序
+* BeanFactory允许对后处理器进行编程注册，将它们应用于BeanFactory创建的所有bean，以编程方式向BeanFactory注册的BeanPostProcessorbean将按注册顺序应用，对于以编程方式注册的后处理器，通过实现PriorityOrdered或Ordered接口表达的任何排序语义都将被忽略
+* BeanPostProcessorbean不考虑@Order注解
+```java
+public interface BeanPostProcessor {
+
+	/**
+    * 1、在任何bean初始化前回调，比如在InitializingBean的afterPropertiesSet()或自定义init-method之前
+    * 2、bean中的属性已经被填充
+    * 3、返回的bean实例可能是原始bean的包装类，默认原样返回
+    */
+	@Nullable
+	default Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
+		return bean;
+	}
+
+	/**
+    * 1、在任何bean初始化后回调，比如InitializingBean的afterPropertiesSet()或自定义init-method之后
+    * 2、返回的bean实例可能是原始bean的包装类，默认原样返回
+    * 3、作为FactoryBean实例和FactoryBean创建对象实例的回调方法，后处理器可以通过相应的FactoryBean检查bean实例来决定是应用于FactoryBean还是应用于*    创建的对象，或者两者都应用
+    * 4、InstantiationAwareBeanPostProcessor.postProcessBeforeInstantiation()后也将调用改方法
+    */
+	@Nullable
+	default Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
+		return bean;
+	}
+}
+```
+
+
 * 调用点：
     调用类AbstractAutowireCapableBeanFactory.initializeBean(String beanName, Object bean, @Nullable RootBeanDefinition mbd)
         * invokeAwareMethods() 调用实现Aware接口方法
