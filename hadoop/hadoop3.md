@@ -119,7 +119,8 @@ node3
  集群启动
     如果集群是第一次启动，需要在 node1 节点格式化 NameNode(注意:格式化 NameNode，会产生新的集群 id，导致 NameNode 和 DataNode 的集群 id 不一致，集群找 不到已往数据。如果集群在运行过程中报错，需要重新格式化 NameNode 的话，一定要先停 止 namenode 和 datanode 进程，并且要删除所有机器的 data 和 logs 目录，然后再进行格式化。)
 
-无法识别JAVA_HOME
+无法识别JAVA_HOME hadoop-env.sh
+
 start-dfs.sh，stop-dfs.sh
 ```shell
 HDFS_DATANODE_USER=root
@@ -132,6 +133,24 @@ start-yarn.sh，stop-yarn.sh
 YARN_RESOURCEMANAGER_USER=root
 HADOOP_SECURE_DN_USER=yarn
 YARN_NODEMANAGER_USER=root
+```
+```shell
+#!/bin/bash
+if [ $# -lt 1 ]
+then
+   echo "No Args Input..."
+exit ; 
+fi
+case $1 in "start")
+echo " =================== 启动 hadoop 集群 ==================="
+echo " --------------- 启动 hdfs ---------------"
+ssh node1 "/usr/local/hadoop/sbin/start-dfs.sh" 
+echo " --------------- 启动 yarn ---------------"
+ssh node2 "/usr/local/hadoop/sbin/start-yarn.sh"
+echo " --------------- 启动 historyserver ---------------"
+ssh node1 "/usr/local/hadoop/bin/mapred --daemon start
+historyserver"
+;;
 ```
 
 集群启动
