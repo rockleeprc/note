@@ -77,6 +77,50 @@
 
 # jvm连载：垃圾收集器
 
+# jvm连载：常用的监控命令
+## jps jvm进程状态
+* 与linux中的ps命令相似，显示正在运行的jvm进程
+* 可选参数
+    * `-q`：只显示进程id，不显示主类名称
+    * `-m`：显示main()的启动参数
+    * `-l`：显示主类的全名，如果是jar包，显示jar的路径
+    * `-v`：显示jvm启动时的参数
+
+## jstat jvm统计信息
+* 显示jvm进程中的类加载、内存、垃圾收集、即时编译器等信息
+* 可选参数
+    * `-class`：类加载、卸载数量、占用空间大小及装载耗费时间
+    * `-gc`：整个堆的gc信息
+    * `-gcnew`：新生代gc信息
+    * `-gcold`：老年代gc信息
+    * `-gcutil`：整个堆使用空间占总空间的百分比
+    * `-gccase`：与gcutil一致，增加导致上一次的gc的原因
+    * `-gccapacity`：堆空间各个区域使用的最大、最小空间
+    * `-gcnewcapacity`：新生代区域使用的最大、最小空间
+    * `-gcoldcapacity`：老年代区域使用的最大、最小空间
+
+## jinfo jvm配置信息
+* 实时查看、调整jvm各项参数
+* 可选参数
+    * `-flags`：查看jvm启动参数配置
+    * `-flag`：查看参数具体值
+    * `-XX:+PrintFlagsInitial`：查看所有参数的默认值
+    * `-XX:+PrintFlagsFinal`：查看所有参数的最终值
+
+## jmap 内存映射信息
+* 用于生成堆转储快照
+* 可选参数
+    * `-dump:[live],format=b,file=filename`：dump内存苦快照，live表示存活对象
+    * `-heap`：显示堆详细信息
+    * `-histo`：显示堆中对象统计信息
+    * `-F`：强制执行
+
+## jstack 线程快照信息
+* 显示jvm中每一个线程正在执行的方法堆栈信息
+* 可选参数
+    * `-l`：锁的附加信息
+    * `-F`：强制执行
+
 # jvm连载：垃圾回收
 ## GC Root
 
@@ -250,3 +294,22 @@ System.out.println("8");
 System.out.println("9");
 System.out.println("10");
 ```
+
+## 常量池压栈操作
+栈的宽度为4字节
+bipush byte
+sipush short
+ldc int
+ldc2_w long 两次压栈，long长度是8字节
+超过short范围的值存在常量池，小于short范围的值存在.class文件中（运行后都应该存在于常量池中）
+
+## 局部变量表入/出栈操作
+iload int 将局部变量中的值保存到操作数栈
+istore int 弹出操作数栈顶元素，保存到局部变量表x slot位置
+
+
+## 其它
+iadd 加法运算
+
+int a = 10;
+int b = a++ + ++a + a--

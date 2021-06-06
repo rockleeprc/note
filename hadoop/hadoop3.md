@@ -30,7 +30,7 @@ core-site.xml
         <name>hadoop.tmp.dir</name>
         <value>/usr/local/hadoop/data</value>
     </property>
-    <!-- 配置 HDFS 网页登录使用的静态用户为 atguigu --> 
+    <!-- 配置 HDFS 网页登录使用的静态用户为 root --> 
     <property>
         <name>hadoop.http.staticuser.user</name>
         <value>root</value> 
@@ -50,6 +50,11 @@ hdfs-site.xml
     <property>
         <name>dfs.namenode.secondary.http-address</name>
         <value>node3:9868</value> 
+    </property>
+    <!-- 设置hdfs文件副本数-->
+    <property>
+        <name>dfs.replication</name>
+        <value>2</value>
     </property>
 </configuration>
 ```
@@ -124,14 +129,14 @@ node3
 start-dfs.sh，stop-dfs.sh
 ```shell
 HDFS_DATANODE_USER=root
-HADOOP_SECURE_DN_USER=hdfs
+HDFS_DATANODE_SECURE_USER=hdfs
 HDFS_NAMENODE_USER=root
 HDFS_SECONDARYNAMENODE_USER=root
 ```
 start-yarn.sh，stop-yarn.sh
 ```shell
 YARN_RESOURCEMANAGER_USER=root
-HADOOP_SECURE_DN_USER=yarn
+HDFS_DATANODE_SECURE_USER=yarn
 YARN_NODEMANAGER_USER=root
 ```
 ```shell
@@ -148,9 +153,12 @@ ssh node1 "/usr/local/hadoop/sbin/start-dfs.sh"
 echo " --------------- 启动 yarn ---------------"
 ssh node2 "/usr/local/hadoop/sbin/start-yarn.sh"
 echo " --------------- 启动 historyserver ---------------"
-ssh node1 "/usr/local/hadoop/bin/mapred --daemon start
-historyserver"
+ssh node1 "/usr/local/hadoop/bin/mapred --daemon start historyserver"
 ;;
+*)
+   echo "Input Args Error..."
+;;
+esac
 ```
 
 集群启动
@@ -181,3 +189,9 @@ web 历史服务器地址
 
 hadoop jar share/hadoop/mapreduce/hadoop-mapreduce-examples-3.1.4.jar wordcount input wcoutput
  
+
+## hdfs 写入流程
+
+## hdfs 读取流程
+
+## 
