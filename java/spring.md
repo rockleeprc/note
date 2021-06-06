@@ -59,6 +59,8 @@ public void afterPropertiesSet() {
 * 执行afterPropertiesSet()时，targetDataSources，defaultTargetDataSource必须已经初始化完成
 
 # spring连载：扩展点
+## Aware 接口
+
 ## BeanFactoryPostProcessor
 * 允许自定义hook修改ApplicationContext中的BeanDefinition
 * 对于使用配置文件中的值修改ApplicationContext中的配置bean的属性非常拥有，PropertyResourceConfigurer实现采用BeanFactoryPostProcessor实现，还有PropertyPlaceholderConfigurer、PropertySourcesPlaceholderConfigurer将配置文件中的值注入到容器中的bean
@@ -91,10 +93,10 @@ public interface BeanDefinitionRegistryPostProcessor extends BeanFactoryPostProc
 	void postProcessBeanDefinitionRegistry(BeanDefinitionRegistry registry) throws BeansException;
 }
 ```
-* ConfigurationClassPostProcessor拓展BeanDefinitionRegistryPostProcessor 解析@Configuration配置类中的@Import、@PropertySource、@ComponentScan、@ImportResource、@Bean等
+
 
 ## BeanPostProcessor 
-* 允许自定义hook修改bean的实例，比如：检查baen的标记接口或用代理包装bean实例
+* 允许自定义hook修改bean的实例，在bean实例化后，初始化方法执行前、后分别执行，比如：检查baen的标记接口或用代理包装bean实例
 * ApplicationContext自动在BeanDefinition中自动检测到BeanPostProcessor bean，在ApplicationContext中的BeanPostProcessor可以根据org.springframework.core.PriorityOrdered和org.springframework.core.Ordered语义进行排序
 * BeanFactory允许对后处理器进行编程注册，将它们应用于BeanFactory创建的所有bean，以编程方式向BeanFactory注册的BeanPostProcessor bean将按注册顺序应用，对于以编程方式注册的后处理器，通过实现PriorityOrdered或Ordered接口表达的任何排序语义都将被忽略
 * BeanPostProcessorbean不考虑@Order注解
@@ -102,7 +104,7 @@ public interface BeanDefinitionRegistryPostProcessor extends BeanFactoryPostProc
 public interface BeanPostProcessor {
 
 	/**
-    * 1、在任何bean的回调初始化前，比如在InitializingBean的afterPropertiesSet()或自定义init-method之前
+    * 1、在任何bean的回调（InitializingBean的afterPropertiesSet()或自定义init-method之前）初始化前
     * 2、调用时bean实例已经初始化，属性已经被填充
     * 3、返回的bean实例可能是原始bean的包装类，默认原样返回
     */
@@ -112,7 +114,7 @@ public interface BeanPostProcessor {
 	}
 
 	/**
-    * 1、在任何bean的回调初始化后，比如InitializingBean的afterPropertiesSet()或自定义init-method之后
+    * 1、在任何bean的回调（InitializingBean的afterPropertiesSet()或自定义init-method之前）初始化后，比如InitializingBean的afterPropertiesSet()或自定义init-method之后
     * 2、返回的bean实例可能是原始bean的包装类，默认原样返回
     * 3、作为FactoryBean实例和FactoryBean创建对象实例的回调方法，后处理器可以通过相应的FactoryBean检查bean实例来决定是应用于FactoryBean还是应用于*    创建的对象，或者两者都应用
     * 4、InstantiationAwareBeanPostProcessor.postProcessBeforeInstantiation()后也将调用该方法
@@ -124,6 +126,18 @@ public interface BeanPostProcessor {
 }
 ```
 * 在Bean中可以通过@PostConstruct注解来指定在被Construct之后紧接着做一些初始化操作, postProcessAfterInitialization()是在@PostConstruct之后被调用的
+
+## InstantiationAwareBeanPostProcessor
+* 可以在实例化Bean前（调用postProcessBeforeInstantiation方法）、后(postProcessAfterInstantiation)提供扩展的回调接口
+
+## SmartInstantiationAwareBeanPostProcessor
+* 拓展了InstantiationAwareBeanPostProcessor接口，主要是供spring内部使用
+
+## MergedBeanDefinitionPostProcessor
+* 实例化后执行，主要将那些元数据缓存起来以提供后续的postProcessPropertyValues输入注入时获取
+
+## DestructionAwareBeanPostProcessor
+* 对象销毁的前置回调
 
 ## InitializingBean/init-method
 * BeanFactory设置完所有属性后调用InitializingBean实例对象 
@@ -138,6 +152,14 @@ public interface InitializingBean {
 }
 ```
 
+# spring连载：扩展点调用流程
+
+* @Autowired 注解的处理类 AutowiredAnnotationBeanPostProcessor
+* ConfigurationClassPostProcessor拓展BeanDefinitionRegistryPostProcessor 解析@Configuration配置类中的@Import、@PropertySource、@ComponentScan、@ImportResource、@Bean等
+* @Autowired 的设计，就是用来完成对象的属性注入的。对与对象之间依赖关系的处理是在 org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory#populateBean(String beanName, RootBeanDefinition mbd, @Nullable BeanWrapper bw) 这个方法中来处理的
+* Aware接口调用AbstractAutowireCapableBeanFactory#invokeAwareMethods，其他的Aware接口呢？通过 ApplicationContextAwareProcessor
+* ServletContextAware 是什么时候注入的呢？ AbstractRefreshableWebApplicationContext 继承了  AbstractApplicationContext类，重写了 postProcessBeanFactory方法；这就是使用了Spring的钩子方法。
+
 * BeanPostProcessor调用点：
     调用类AbstractAutowireCapableBeanFactory.initializeBean(String beanName, Object bean, @Nullable RootBeanDefinition mbd)
         * invokeAwareMethods() 调用实现Aware接口方法
@@ -146,6 +168,14 @@ public interface InitializingBean {
         * applyBeanPostProcessorsAfterInitialization() 实现BeanPostProcessor类 的 postProcessAfterInitialization方法
 
 BeanFactoryPostProcessor调用点：AbstractApplicationContext#refresh 
+
+
+Spring 中定义了 3 种自定义初始化 和 销毁方法
+通过@Bean指定init-method和destroy-method属性
+Bean实现InitializingBean（定义初始化逻辑），DisposableBean（定义销毁逻辑）;
+@PostConstruct：在bean创建完成并且属性赋值完成；来执行初始化方法，@PreDestroy：在容器销毁bean之前通知我们进行清理工作。   
+InitDestroyAnnotationBeanPostProcessor的作用就是让这种方式生效
+
 
 InitializingBean调用点：
 * 为实现该接口的bean提供默认的初始化方法，也可以在xml配置bean的使用init-method来实现初始化方法
