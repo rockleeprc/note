@@ -124,6 +124,43 @@
 # jvm连载：垃圾回收
 ## GC Root
 
+# jvm连载：类加载器
+* 数组类型本身不是通过类加载创建的，是由jvm直接在内存中动态构造出来的
+* 一个类型必须与类加载器一起确定唯一性
+
+# jvm连载：<clinit>()调用细节
+* 由编译器自动收集类中的所有类变量的赋值动作和`static{}`中的语句合并而来，代码的顺序就是编译器执行的顺序
+* `static{}`中只能访问到定义在静态块之前的变量，定义在静态块后的变量只能赋值，不能访问
+```java
+static int i = 0;
+static{
+    i =10;
+    System.out.println(j); // 编译器报错Illegal forward reference
+    j = 10; // 可以赋值
+}
+static int j;
+```
+* `<clinit>()`不需要显示的调用父类的`<clinit>()`，jvm保证子类的`<clinit>()`执行前，父类的`<clinit>()`先被执行，所以jvm中第一个被调用的`<clinit>()`是Object
+* 父类的`<clinit>()`先被执行，就意味着静态块优先于子类的赋值动作先发生
+```java
+class SuperClass {
+    public static int value = 10;
+
+    static {
+        value = 2;
+    }
+}
+
+class SubClass extends SuperClass {
+    public static int result = value;
+}
+```
+* 如果类中没有`static{}`，也没有变量的赋值，编译器可以不生成`<clinit>()`
+* 接口中不能定义`static{}`但仍然有初始化赋值的操作，一样会生成`<clinit>()`，接口的实现类在初始化时不会执行接口的`<clinit>()`
+* jvm保证在一个类的`<clinit>()`被多线程执行时被正确的加锁同步，同一个类加载器下，一个类的`<clinit>()`只会被执行一次，如果在`<clinit>()`中有耗时很长的操作，在初始化阶段可能造成线程阻塞
+
+
+
 
 # jvm连载：引用
 ## 引用定义
@@ -228,6 +265,64 @@ for (SoftReference<byte[]> ref : list) {
 ```
 * 由于byte[]被回收，SoftReference在list集合中也会被回收
 
+# jvm连载：类主动初始化时机
+* 类的加载过程分为`加载`、`链接`、`初始化`，链接又细分为`验证`、`准备`、`解析`三个阶段
+* `《java虚拟机规范》`中规定了6种情况，必须对类进行初始化
+## 第一种情况
+* 遇到`new`、`getstatic`、`putstatic`、`invokestatic`四条指令时
+    * new关键词实例化对象
+    * 读取设置静态类型字段（编译器把结果放入常量池的静态字段除外）
+    * 调用一个静态方法
+## 第二种情况
+* 使用java.lang.reflect包的方法对类进行反射操作时
+## 第三种情况
+* 初始化一个类时，如果父类未初始化，优先初始化父类
+## 第四种情况
+* jvm启动时的主类，包含main()
+## 第五种情况
+* 对于动态语言的支持
+## 第六种情况 
+* 当一个接口定义了default方法，接口实现类初始化时，接口要先被初始化
+
+## 被动初始化例子一
+```java
+class SuperClass{
+    public static int value =10;
+    static{
+        System.out.println("super class");
+    }
+}
+class SubClass extends SuperClass{
+    static {
+        System.out.println("sub class");
+    }
+}
+```
+* 当调用`SubClass.value`时，只会导致SuperClass初始化，不会导致SupClass初始化
+* 对于static字段，只有直接定义的类才会初始化
+
+## 被动初始化例子二
+* 调用`SuperClass[] arr = new SuperClass[2]`时，不会导致SuperClass初始化
+* 初始化某类的数组，不会导致该类被初始化
+
+## 被动初始化例子三
+```java
+class ConstClass{
+    public static final int value =10;
+    static{
+        System.out.println("super class");
+    }
+}
+public class NotInit {
+    public static void main(String[] args) {
+        System.out.println(ConstClass.value);
+    }
+}
+```
+* 在NotInit类中调用`ConstClass.value`不会导致SuperCass初始化
+* 在编译期将`ConstClass`中的常量value直接保存到了`NotInit`类的常量池中
+* 编译期过后`ConstClass`与`NotInit`将毫无关系
+
 
 # jvm连载：字符串常量池与String对象
 ```java
@@ -313,3 +408,10 @@ iadd 加法运算
 
 int a = 10;
 int b = a++ + ++a + a--
+
+
+对象头：8/16
+mark word：4/8
+klass：4/8
+length：4
+8的倍数

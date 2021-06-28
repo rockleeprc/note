@@ -1,6 +1,6 @@
 
 
-
+brew install https://raw.github.com/eugeneoden/homebrew/eca9de1/Library/Formula/sshpass.rb
 
 *安装xcode*
 
@@ -127,3 +127,4 @@ networksetup -setv6off Wi-Fi
 networksetup -setv6automatic Wi-Fi
 
 git config --global http.lowSpeedLimit 0 和 git config --global http.lowSpeedTime 999999
+

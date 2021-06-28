@@ -1,21 +1,19 @@
 
 
-
-
 集群规划
 node1
-    NameNode
     DataNode
     NodeManager
+    NameNode
     JobHistory
 node2
     DataNode
     NodeManager
     ResourceManager
 node3
-    SecondaryNameNode
     DataNode
     NodeManager
+    SecondaryNameNode
 
 core-site.xml
 ```xml
@@ -116,7 +114,7 @@ mapred-site.xml
 </configuration>
 ```
 
-HADOOP_HOME/etc/hadoop/ 
+HADOOP_HOME/etc/hadoop/workers
 node1
 node2
 node3
@@ -124,9 +122,9 @@ node3
  集群启动
     如果集群是第一次启动，需要在 node1 节点格式化 NameNode(注意:格式化 NameNode，会产生新的集群 id，导致 NameNode 和 DataNode 的集群 id 不一致，集群找 不到已往数据。如果集群在运行过程中报错，需要重新格式化 NameNode 的话，一定要先停 止 namenode 和 datanode 进程，并且要删除所有机器的 data 和 logs 目录，然后再进行格式化。)
 
-无法识别JAVA_HOME hadoop-env.sh
+无法识别JAVA_HOME，在hadoop-env.sh配置JAVA_HOME
 
-start-dfs.sh，stop-dfs.sh
+root用户无法启动集群，修改start-dfs.sh，stop-dfs.sh
 ```shell
 HDFS_DATANODE_USER=root
 HDFS_DATANODE_SECURE_USER=hdfs

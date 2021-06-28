@@ -15,8 +15,6 @@
     * 39.96.216.143:21060
 # jenkins
 
-http://jenkins.kuaidaoapp.com
-hx:hx2021
 
 ## 预生产环境
 ### nacos
