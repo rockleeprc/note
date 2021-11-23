@@ -58,3 +58,7 @@ target/
 /dist/
 /nbdist/
 /.nb-gradle/
+
+
+.DS_Store
+.vscode/
