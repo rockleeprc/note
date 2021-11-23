@@ -171,3 +171,6 @@ public class ConfigBean {
 * 消费方在调用时需要负载均衡策略，使用`spring-cloud-starter-ribbon`，使用` @LoadBalanced`注解配置在RestTemplate上，使用RestTemplate时自动实现负载均衡策略
 * 单实例和集群配置`register-with-eureka`、`fetch-registry`两个参数配置不一样
 * @ComponentScan描到@Configuration配置的负载均衡策略，对所有微服务有效，针对某一个微服务时@Configuration不能被@ComponentScan扫描到
+
+版本
+https://start.spring.io/actuator/info
