@@ -118,18 +118,18 @@ HADOOP_HOME/etc/hadoop/workers
 node1
 node2
 node3
- 
+
  集群启动
-    如果集群是第一次启动，需要在 node1 节点格式化 NameNode(注意:格式化 NameNode，会产生新的集群 id，导致 NameNode 和 DataNode 的集群 id 不一致，集群找 不到已往数据。如果集群在运行过程中报错，需要重新格式化 NameNode 的话，一定要先停 止 namenode 和 datanode 进程，并且要删除所有机器的 data 和 logs 目录，然后再进行格式化。)
+    如果集群是第一次启动，需要在 node1 节点格式化 NameNode(注意:格式化 NameNode，会产生新的集群 id，导致 NameNode 和 DataNode 的集群 id 不一致，集群找不到已往数据。如果集群在运行过程中报错，需要重新格式化 NameNode 的话，一定要先停止 namenode 和 datanode 进程，并且要删除所有机器的 data 和 logs 目录，然后再进行格式化。)
 
 无法识别JAVA_HOME，在hadoop-env.sh配置JAVA_HOME
 
 root用户无法启动集群，修改start-dfs.sh，stop-dfs.sh
 ```shell
-HDFS_DATANODE_USER=root
-HDFS_DATANODE_SECURE_USER=hdfs
 HDFS_NAMENODE_USER=root
+HDFS_DATANODE_USER=root
 HDFS_SECONDARYNAMENODE_USER=root
+HDFS_DATANODE_SECURE_USER=hdfs
 ```
 start-yarn.sh，stop-yarn.sh
 ```shell
@@ -186,10 +186,13 @@ web 历史服务器地址
 
 
 hadoop jar share/hadoop/mapreduce/hadoop-mapreduce-examples-3.1.4.jar wordcount input wcoutput
- 
+
 
 ## hdfs 写入流程
 
 ## hdfs 读取流程
 
 ## 
+
+
+

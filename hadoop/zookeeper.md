@@ -48,7 +48,7 @@ following：leader已经被选出，当前节点与leader同步
 	server.1=hadoop1:2888:3888
 	server.2=hadoop2:2888:3888
 	server.3=hadoop3:2888:3888
-
+	
 	# 配置observer
 	peerType=observer
 	server.4=hadoop4:2888:3888:observer
@@ -76,17 +76,17 @@ following：leader已经被选出，当前节点与leader同步
 	
 	#在hdp01、hdp02、hdp03上分别启动
 	[root@hdp02 bin]# zkServer.sh start
-
+	
 	[root@hdp02 bin]# zkServer.sh status
 	JMX enabled by default
 	Using config: /usr/local/zookeeper-3.4.5/bin/../conf/zoo.cfg
 	Mode: follower
-
+	
 	[root@hadoop2 bin]# zkServer.sh status
 	JMX enabled by default
 	Using config: /usr/local/zookeeper-3.4.5/bin/../conf/zoo.cfg
 	Mode: leader
-
+	
 	[root@hadoop3 bin]# zkServer.sh status
 	JMX enabled by default
 	Using config: /usr/local/zookeeper-3.4.5/bin/../conf/zoo.cfg
@@ -111,21 +111,21 @@ zookeeper的日志文件
 	1.tickTime：CS通信心跳时间
 	Zookeeper 服务器之间或客户端与服务器之间维持心跳的时间间隔，也就是每个 tickTime 时间就会发送一个心跳。tickTime以毫秒为单位。
 	tickTime=2000  
-
+	
 	2.initLimit：LF初始通信时限
 	集群中的follower服务器(F)与leader服务器(L)之间初始连接时能容忍的最多心跳数（tickTime的数量）。
 	initLimit=5  
-
+	
 	3.syncLimit：LF同步通信时限
 	集群中的follower服务器与leader服务器之间请求和应答之间能容忍的最多心跳数（tickTime的数量）。
 	syncLimit=2 
-
+	
 	4.dataDir：数据文件目录
 	Zookeeper保存数据的目录，默认情况下，Zookeeper将写数据的日志文件也保存在这个目录里。
 	dataDir=/home/michael/opt/zookeeper/data 
 	zookeeper事务日志的存储路径，默认指定在dataDir目录下
 	dataLogDir==/home/michael/opt/zookeeper/data/ 
-
+	
 	5.clientPort：客户端连接端口
 	客户端连接 Zookeeper 服务器的端口，Zookeeper 会监听这个端口，接受客户端的访问请求。
 	clientPort=2181 
@@ -169,9 +169,6 @@ zookeeper的日志文件
 	dataLength = 7			# 当前节点数据长度
 	numChildren = 2			# 当前节点的子节点数
 
-	# 对hello节点设置watch，该异步通知只触发一次
-	[zk: localhost:2181(CONNECTED) 14] get /mysecondnode 1 hello 
-
 ### set path data [version]
 	version 类似数据库中的乐观锁，通过版本号控制
 	# 修改test节点的值
@@ -210,34 +207,34 @@ zookeeper的日志文件
 	private static final int TIMEOUT = 10 * 1000;
 	private static final CountDownLatch LATCH = new CountDownLatch(1);
 	private static ZooKeeper zkClient = null;
-
+	
 	@Test
 	public void testExist() throws KeeperException, InterruptedException {
 		Stat stat = zkClient.exists("/none", true);
 		// 节点不存在Stat对象为null
 		System.out.println(stat);
 	}
-
+	
 	@Test
 	public void testDelete() throws InterruptedException, KeeperException {
 		// -1 删除任何节点的版本数据
 		zkClient.delete("/eclipse/ide2", -1);
 	}
-
+	
 	@Test
 	public void testSetData() throws KeeperException, InterruptedException, IOException {
 		// -1 任何节点的版本数据
 		zkClient.setData("/eclipse/ide1", "i'm a ide".getBytes(), -1);
 		// System.in.read();
 	}
-
+	
 	@Test
 	public void testGetData() throws KeeperException, InterruptedException, UnsupportedEncodingException {
 		// watch==true为使用new ZooKeeper()构造方法中的Watcher
 		byte[] bytes = zkClient.getData("/eclipse", true, null);
 		System.out.println(new String(bytes, "UTF-8"));
 	}
-
+	
 	@Test
 	public void testGetChildren() throws KeeperException, InterruptedException, IOException {
 		List<String> children = zkClient.getChildren("/eclipse", true);
@@ -254,7 +251,7 @@ zookeeper的日志文件
 		zkClient.create("/eclipse/", "ide2".getBytes(), Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT_SEQUENTIAL);
 		System.in.read();
 	}
-
+	
 	@Test
 	public void testCreateChildren() throws KeeperException, InterruptedException, IOException {
 		zkClient.getChildren("/eclipse", true);// 注册Watcher
@@ -262,7 +259,7 @@ zookeeper的日志文件
 		zkClient.create("/eclipse/ide2", "ide2".getBytes(), Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
 		System.in.read();
 	}
-
+	
 	@Test
 	public void testCreate() throws KeeperException, InterruptedException {
 		// 参数1：要创建的节点的路径
@@ -272,7 +269,7 @@ zookeeper的日志文件
 		String result = zkClient.create("/eclipse", "helloZK".getBytes(), Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
 		System.out.println(result);
 	}
-
+	
 	@Before
 	public void init() throws IOException, InterruptedException {
 		zkClient = new ZooKeeper(HOSTS, TIMEOUT, new Watcher() {
@@ -291,7 +288,7 @@ zookeeper的日志文件
 		// latch.await()方法执行时，方法所在的线程会等待，当latch的count减为0时，才会唤醒等待的线程
 		LATCH.await();
 	}
-
+	
 	@After
 	public void destroy() throws InterruptedException {
 		zkClient.close();
@@ -304,7 +301,7 @@ zookeeper的日志文件
 	private static final String HOSTS = "hdp01:2181,hdp02:2181,hdp03:2181";
 	private static final int TIMEOUT = 10 * 1000;
 	private static final int MAX_RETRIES = 3;
-
+	
 	@Test
 	public void testTransaction() throws Exception {
 		Collection<CuratorTransactionResult> collection = curator.inTransaction().create()
@@ -317,7 +314,7 @@ zookeeper的日志文件
 			System.out.println("------");
 		}
 	}
-
+	
 	/**
 	 * 删除节点数据
 	 * 
@@ -327,7 +324,7 @@ zookeeper的日志文件
 	public void testDelete() throws Exception {
 		curator.delete().deletingChildrenIfNeeded().forPath("/consumers");
 	}
-
+	
 	/**
 	 * 更新节点数据
 	 * 
@@ -338,7 +335,7 @@ zookeeper的日志文件
 		Stat stat = curator.setData().forPath("/eclipse", "helloZookeeper".getBytes());
 		System.out.println(stat);
 	}
-
+	
 	/**
 	 * 获取子节点
 	 * 
@@ -351,7 +348,7 @@ zookeeper的日志文件
 			System.out.println(str);
 		}
 	}
-
+	
 	/**
 	 * 获取节点详细信息
 	 * 
@@ -364,7 +361,7 @@ zookeeper的日志文件
 		System.out.println(new String(bytes));
 		System.out.println(stat);
 	}
-
+	
 	/**
 	 * 获取节点内容
 	 * 
@@ -377,7 +374,7 @@ zookeeper的日志文件
 		System.out.println(new String(bytes));
 		System.in.read();
 	}
-
+	
 	/**
 	 * 异步操作
 	 * 
@@ -388,7 +385,7 @@ zookeeper的日志文件
 		int cores = Runtime.getRuntime().availableProcessors() + 1;
 		ExecutorService executor = Executors.newFixedThreadPool(cores);
 		curator.create().creatingParentsIfNeeded().inBackground(new BackgroundCallback() {
-
+	
 			@Override
 			public void processResult(CuratorFramework client, CuratorEvent event) throws Exception {
 				System.out.println(event.getType());
@@ -396,10 +393,10 @@ zookeeper的日志文件
 				System.out.println(event.getResultCode());
 			}
 		}, executor).forPath("/async", "threadpool".getBytes());
-
+	
 		System.in.read();
 	}
-
+	
 	/**
 	 * 创建子父节点
 	 * 
@@ -412,7 +409,7 @@ zookeeper的日志文件
 		System.out.println(result);
 		System.in.read();
 	}
-
+	
 	@Before
 	public void init() {
 		/**
