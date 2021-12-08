@@ -143,7 +143,7 @@ com.alibaba.cloud.sentinel.custom.SentinelCircuitBreakerConfiguration
 
     ## 扩展点
 
-    ### 第一次请求初始化
+    ### InitFunc
 
     * `com.alibaba.csp.sentinel.init.InitFunc`用于在请求第一次到达资源时做初始化操作
     
