@@ -46,11 +46,11 @@
 
 * 任务依赖的方式
 
-  * 定义任务时参数依赖 (dependsOn:'taskName')
-  * 任务内部依赖 dependsOn 'taskName'
-  * 外部添加依赖  taskName1.dependsOn  taskName2
+  * 定义任务时参数依赖 `(dependsOn:'taskName')`
+  * 任务内部依赖 `dependsOn 'taskName'`
+  * 外部添加依赖  `taskName1.dependsOn  taskName2`
 
-# 声明周期
+# 生命周期
 
 * 初始化阶段
   * 通过settings.gradle获取需要初始化的项目，类似maven的module配置
