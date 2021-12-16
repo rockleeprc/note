@@ -180,6 +180,8 @@ $  git config --global --replace-all user.name "输入你的用户名"
 	$ git log --pretty=oneline tadu-ios-server2.iml
 	$ git show af8b96e6b9723009701286d4e29f7568ff0b300a tadu-ios-server2.iml
 
+	# 统计信息
+ 	git log --stat
 
 ## 版本回退
 
