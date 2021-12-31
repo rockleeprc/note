@@ -235,5 +235,6 @@ gradle properties
 gradle build -x test
 ```
 
+/Users/admin/.gradle/wrapper/dists/gradle-4.9-bin/e9cinqnqvph59rr7g70qubb4t/gradle-4.9/bin/gradle build -x test
 
 
