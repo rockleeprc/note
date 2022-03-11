@@ -561,3 +561,30 @@ git remote add upstream git@gitlab.kuaidaoapp.com:Huixiang/ds-etl.git
 git reset upstream/feature/version_0.1.0 HEAD^
 git fetch upstream
 git merge upstream/feature/version_0.1.0
+
+
+# tag
+```shell
+# 列出所有的
+git tag 
+
+# 新建tag
+git tag -a [标签名称] -m '[注释]'
+# 显示标签的具体信息
+git show [标签名称]
+# 给某个commit补tag
+git tag -a [标签名称] [节点] 
+
+# 推送某个节点
+git push origin [标签名称]
+# 推送所有节点  
+git push origin --tags 
+
+# 删除本地标签
+git tag -d [标签名称] 
+#  删除远程标签
+git push origin :refs/tags/[标签名称]
+
+# 从指定tag切出分支
+git checkout tags/<tag_name> -b <branch_name>
+```
