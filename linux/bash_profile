@@ -1,0 +1,15 @@
+
+export JAVA_HOME=$(/usr/libexec/java_home)
+export PATH=$JAVA_HOME/bin:$PATH
+
+export SCALA_HOME=/usr/local/opt/scala@2.12
+export PATH=$SCALA_HOME/bin:$PATH
+
+export MAVEN_HOME=/usr/local/Cellar/maven/3.8.4/libexec
+export PATH=$MAVEN_HOME/bin:$PATH
+
+export HADOOP_HOME=/usr/local/hadoop
+export PATH=$HADOOP_HOME/bin:$PATH
+
+export CLASSPATH=$JAVA_HOME/lib/tools.jar:$JAVA_HOME/lib/dt.jar:.
+

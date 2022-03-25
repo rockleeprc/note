@@ -1,0 +1,12 @@
+alias ll='ls -alhF'
+alias la='ls -A'
+alias l='ls -CF'
+alias cdlab='cd ~/Workspaces/git_repository/gitlab'
+alias cdhub='cd ~/Workspaces/git_repository/github'
+
+alias gs='git status'
+alias ga='git add .'
+alias gb='git branch'
+alias gba='git branch -a'
+alias gpo='git push origin'
+alias glog='git log --graph --abbrev-commit --decorate --date=iso --format=format:"%C(red)%h%C(r) — %C(bold blue)%an%C(r) %C(bold blue)<%ae>%C(r)  %C(white)%s%C(r) %C(dim white) %C(bold yellow)%cd%C(r) %C(bold green)(%ar)%C(r) " --all'
