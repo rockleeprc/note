@@ -251,7 +251,7 @@ public ThreadPoolExecutor(int corePoolSize, //
 * workQueue：阻塞队列类型
     1. 当workQueue已满，线程池线程数 > corePoolSize && 线程池线程数 < maximumPoolSize  时，新提交任务会创建新线程执行
     2. 当workQueue已满，线程池线程数 > maximumPoolSize，任务由RejectedExecutionHandler处理
-* keepAliveTime：空闲线程多久后被回收
+* keepAliveTime：空闲线程多久后被回收
     1. 当线程池中线程数超过corePoolSize，超过corePoolSize这些线程的空闲时间达到keepAliveTime时，回收这些线程
     2. 当设置allowCoreThreadTimeOut(true)时，线程池中corePoolSize范围内的线程空闲时间达到keepAliveTime也将回收
 
