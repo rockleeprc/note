@@ -578,7 +578,7 @@ git tag -a [标签名称] [节点]
 # 推送某个节点
 git push origin [标签名称]
 # 推送所有节点  
-git push origin --tags 
+git push origin --tags
 
 # 删除本地标签
 git tag -d [标签名称] 
@@ -587,4 +587,20 @@ git push origin :refs/tags/[标签名称]
 
 # 从指定tag切出分支
 git checkout tags/<tag_name> -b <branch_name>
+```
+
+
+## 上线
+```shell
+# 1. 切换master分支
+# 2. merge dev分支，解决冲突
+# 3. 切换分支
+git checkout -b branch-1.2.0
+# 4. 打tag
+git tag -a release-1.2.0 -m 'version-1.2.0版本'
+# 5. 推送标签到远程仓库
+git push origin --tags
+
+branch refs/heads/branch_name
+tag refs/tags/tag_name
 ```
