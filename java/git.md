@@ -15,7 +15,7 @@ git：分布式版本控制系统，版本库存放在本地
 
 	git config user.name "liyan"
 	git config user.email "liyan@hualala.com"
-che
+
 ### 新环境配置
 	# 设置用户名
 	$ git config --global user.name "yan.li"

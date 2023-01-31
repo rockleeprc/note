@@ -40,7 +40,7 @@ docker images
 # 镜像大小
 docker system df
 # 删除镜像
-docker rmi tomcat
+docker rmi tomcatdoc
 # 启动tomcat 【宿主机端口（物理机）:容器端口（docker tomcat）】
 docker run -p 8080:8080 --name tomcat -d tomcat
 # 查看进程
@@ -52,5 +52,3 @@ docker rm -f 7285741ac0db
 # 进入到容器
 docker exec -it 7285741ac0db /bin/bash
 ```
-
-
